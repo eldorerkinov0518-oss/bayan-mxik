@@ -164,6 +164,32 @@
     box-shadow: 0 4px 12px rgba(15, 159, 135, .35); transition: transform .15s; }
   #chatf .row button:hover:not(:disabled) { transform: scale(1.06); }
   #chatf .row button:disabled { opacity: .45; cursor: default; box-shadow: none; }
+  /* Chat in a dark theme with bright neon accents. */
+  .chatbtn { background: linear-gradient(135deg, #7c3aed, #2563eb 55%, #06b6d4); box-shadow: 0 8px 24px rgba(37, 99, 235, .5); animation-name: none; }
+  .chat { background: #0b1020; border-color: rgba(34, 211, 238, .35); box-shadow: 0 24px 70px rgba(0, 0, 0, .55), 0 0 0 1px rgba(124, 58, 237, .3), 0 0 40px rgba(34, 211, 238, .15); }
+  .chat header { background: linear-gradient(135deg, #7c3aed, #2563eb 55%, #06b6d4); }
+  .chat header .ava::after { background: #4ade80; border-color: #2563eb; }
+  .chatnote { background: #111a30; border-bottom-color: #1e2a47; color: #cbd5e1; }
+  .chatnote summary { color: #22d3ee; }
+  .msgs { background: #0b1020 radial-gradient(circle at 1px 1px, rgba(148, 163, 184, .12) 1px, transparent 0) 0 0 / 16px 16px; }
+  .msg { background: #1b2540; color: #e5e7eb; box-shadow: 0 1px 2px rgba(0, 0, 0, .4); }
+  .msg small { color: #8b9bb8; }
+  .mrow.me .msg { background: linear-gradient(135deg, #06b6d4, #6366f1 60%, #a855f7); box-shadow: 0 4px 14px rgba(99, 102, 241, .35); }
+  .mrow.admin .msg { box-shadow: 0 0 0 1.5px #fbbf24, 0 0 14px rgba(251, 191, 36, .3); }
+  .msgs .sys { color: #67e8f9; background: rgba(34, 211, 238, .1); }
+  .onlist { background: #111a30; border-bottom-color: #1e2a47; } .onlist span { background: #1b2540; color: #e2e8f0; }
+  .adminlogin, .adminbar { background: #1a1530; border-bottom-color: #3b2f63; }
+  .adminlogin b { color: #fbbf24; } .adminlogin input { background: #0b1020; color: #e5e7eb; border-color: #4c3f7a; }
+  .adminbar > button { background: #241d42; color: #fde68a; border-color: #4c3f7a; } .adminbar > button:hover:not(:disabled) { background: #2f2656; }
+  #clearall { color: #fca5a5; border-color: #7f1d1d; }
+  .blklist div { background: #0b1020; color: #e2e8f0; } .blklist button { color: #22d3ee; }
+  .mtools button { background: #1b2540; border-color: #2c3a5e; color: #e2e8f0; } .mtools button:hover { background: #26324f; }
+  #chatf { background: #0f1629; border-top-color: #1e2a47; }
+  #chatf input, #chatf textarea { background-color: #0b1020; color: #e5e7eb; border-color: #2c3a5e; }
+  #chatf input::placeholder, #chatf textarea::placeholder { color: #64748b; }
+  #chatf input:focus, #chatf textarea:focus { border-color: #22d3ee; box-shadow: 0 0 0 3px rgba(34, 211, 238, .2); }
+  #chatf .row button { background: linear-gradient(135deg, #06b6d4, #6366f1 60%, #a855f7); box-shadow: 0 4px 14px rgba(99, 102, 241, .45); }
+  #chatf.blocked textarea { background: #2a1215; border-color: #7f1d1d; }
   @media (prefers-reduced-motion: reduce) { .tb-track, .chatbtn { animation: none; } }
   /* Spinning 3D syringe and ampoule beside the title: each is a stack of SVG slices along Z, so it keeps its thickness while turning. */
   .hero3d { display: none; position: absolute; right: 0; top: -2px; width: 250px; height: 150px; pointer-events: none; perspective: 700px; }
@@ -465,7 +491,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2010</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2020</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
