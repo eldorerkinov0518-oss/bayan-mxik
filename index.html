@@ -244,6 +244,33 @@
   @keyframes plstream { 0%, 24% { opacity: 0; stroke-dashoffset: 0; } 26%, 72% { opacity: 1; } 74%, 100% { opacity: 0; stroke-dashoffset: -60; } }
   @keyframes plbelt { 0% { stroke-dashoffset: 0; } 18%, 100% { stroke-dashoffset: -50; } }
   @keyframes plflame { from { transform: scale(.7); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
+  /* Packing scene (6s): five ampoules drop into the blister one by one, the blister slides into the box,
+     the lid closes, the stamp appears, then everything fades and starts again. */
+  .prodline .liqs { fill: #38bdf8; } .prodline .pkall { animation: pkall 6s linear infinite; }
+  .prodline .cover { opacity: 0; animation: pkcover 6s linear infinite; }
+  @keyframes pkcover { 0%, 74% { opacity: 0; } 77%, 100% { opacity: 1; } }
+  .prodline .stamp { font: 800 9px Inter, system-ui, sans-serif; fill: #6b4f22; letter-spacing: .5px; animation: pkstamp 6s linear infinite; }
+  .prodline .load { animation: pkload 6s ease-in-out infinite; }
+  .prodline .lid { transform-box: view-box; transform-origin: 158px 89px; animation: pklid 6s ease-in-out infinite; }
+  .prodline .feed { animation: pkfeed 6s ease-in-out infinite; }
+  .prodline .belt2 { stroke: #a5b4fc; stroke-width: 2; stroke-dasharray: 6 6; animation: pkbelt 6s ease-in-out infinite; }
+  @keyframes pkall { 0%, 92% { opacity: 1; } 97% { opacity: 0; } 100% { opacity: 1; } }
+  @keyframes pkload { 0%, 48% { transform: translateX(0); } 62%, 100% { transform: translateX(140px); } }
+  @keyframes pkbelt { 0%, 48% { stroke-dashoffset: 0; } 62%, 100% { stroke-dashoffset: -70; } }
+  @keyframes pklid { 0%, 64% { transform: rotate(-115deg); } 76%, 100% { transform: rotate(0); } }
+  @keyframes pkstamp { 0%, 78% { opacity: 0; } 84%, 92% { opacity: 1; } 97%, 100% { opacity: 0; } }
+  @keyframes pkfeed { 4%, 8% { transform: translateX(7px); } 12%, 16% { transform: translateX(29px); } 20%, 24% { transform: translateX(51px); } 28%, 32% { transform: translateX(73px); } 36%, 40% { transform: translateX(95px); } 46% { transform: translateX(95px); } 52%, 100% { transform: translateX(0); } }
+  .prodline .pk .drop { opacity: 0; }
+  .prodline .a0 .drop { animation: pkd0 6s ease-in infinite; }
+  @keyframes pkd0 { 0%, 5% { opacity: 0; transform: translateY(-46px); } 6% { opacity: 1; transform: translateY(-46px); } 9%, 100% { opacity: 1; transform: translateY(0); } }
+  .prodline .a1 .drop { animation: pkd1 6s ease-in infinite; }
+  @keyframes pkd1 { 0%, 13% { opacity: 0; transform: translateY(-46px); } 14% { opacity: 1; transform: translateY(-46px); } 17%, 100% { opacity: 1; transform: translateY(0); } }
+  .prodline .a2 .drop { animation: pkd2 6s ease-in infinite; }
+  @keyframes pkd2 { 0%, 21% { opacity: 0; transform: translateY(-46px); } 22% { opacity: 1; transform: translateY(-46px); } 25%, 100% { opacity: 1; transform: translateY(0); } }
+  .prodline .a3 .drop { animation: pkd3 6s ease-in infinite; }
+  @keyframes pkd3 { 0%, 29% { opacity: 0; transform: translateY(-46px); } 30% { opacity: 1; transform: translateY(-46px); } 33%, 100% { opacity: 1; transform: translateY(0); } }
+  .prodline .a4 .drop { animation: pkd4 6s ease-in infinite; }
+  @keyframes pkd4 { 0%, 37% { opacity: 0; transform: translateY(-46px); } 38% { opacity: 1; transform: translateY(-46px); } 41%, 100% { opacity: 1; transform: translateY(0); } }
   @media (prefers-reduced-motion: reduce) { .prodline * { animation: none !important; } }
 
   .blob { position: absolute; width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; border-radius: 50%; filter: blur(70px); opacity: .28; animation: blob 26s ease-in-out infinite alternate; }
@@ -523,7 +550,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2055</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2105</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -538,6 +565,7 @@
     <div id="forms"></div>
   </div>
   <div class="sc prodline" data-cut="0" aria-hidden="true"><svg viewBox="0 0 300 172" aria-hidden="true"><rect x="150" y="6" width="50" height="28" rx="7" fill="#281274"/><circle cx="162" cy="20" r="3" class="led"/><rect x="171" y="34" width="8" height="30" rx="2" fill="#4b5d87"/><path d="M175 64v6" stroke="#4b5d87" stroke-width="4" stroke-linecap="round"/><line class="stream" x1="175" y1="72" x2="175" y2="118"/><path d="M246 66l20 20M304 66l-20 20" stroke="#64748b" stroke-width="5" stroke-linecap="round"/><ellipse class="flame" cx="269" cy="89" rx="6" ry="3"/><ellipse class="flame f2" cx="281" cy="89" rx="6" ry="3"/><g class="row"><g transform="translate(-25 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(25 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(75 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(125 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq fill" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(175 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(225 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip seal" d="M-4 91Q0 76 4 91z"/></g><g transform="translate(275 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip" d="M-4 91Q0 76 4 91z"/></g><g transform="translate(325 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip" d="M-4 91Q0 76 4 91z"/></g></g><rect x="0" y="150" width="300" height="11" rx="5.5" fill="#281274"/><line class="belt" x1="0" y1="155.5" x2="300" y2="155.5"/><circle cx="8" cy="155.5" r="3" fill="#a5b4fc"/><circle cx="292" cy="155.5" r="3" fill="#a5b4fc"/></svg><span>Ишлаб чиқариш: ампулага дори қуйиш</span></div>
+  <div class="sc prodline" data-cut="0.5" aria-hidden="true"><svg viewBox="0 0 300 172" aria-hidden="true"><g class="pkall"><rect x="158" y="92" width="128" height="58" rx="3" fill="#c9a46a" stroke="#9c7a43" stroke-width="1.4"/><rect class="lid" x="158" y="86" width="128" height="7" rx="2" fill="#d9b67c" stroke="#9c7a43" stroke-width="1.2"/><g class="load"><rect x="20" y="124" width="118" height="10" rx="3" fill="#e2e8f0" stroke="#7c8db5" stroke-width="1.2"/><rect x="26" y="124" width="16" height="6" rx="2" fill="#cbd5e1"/><rect x="48" y="124" width="16" height="6" rx="2" fill="#cbd5e1"/><rect x="70" y="124" width="16" height="6" rx="2" fill="#cbd5e1"/><rect x="92" y="124" width="16" height="6" rx="2" fill="#cbd5e1"/><rect x="114" y="124" width="16" height="6" rx="2" fill="#cbd5e1"/><g class="pk a0" transform="translate(34 0)"><g class="drop"><rect class="glass" x="-6" y="110" width="12" height="18" rx="3"/><rect class="liqs" x="-4.5" y="116" width="9" height="11" rx="1.5"/><path class="glass" d="M-6 113q0-4 3-5v-5h6v5q3 1 3 5z"/><path class="tip" d="M-3 103q3-7 6 0z"/></g></g><g class="pk a1" transform="translate(56 0)"><g class="drop"><rect class="glass" x="-6" y="110" width="12" height="18" rx="3"/><rect class="liqs" x="-4.5" y="116" width="9" height="11" rx="1.5"/><path class="glass" d="M-6 113q0-4 3-5v-5h6v5q3 1 3 5z"/><path class="tip" d="M-3 103q3-7 6 0z"/></g></g><g class="pk a2" transform="translate(78 0)"><g class="drop"><rect class="glass" x="-6" y="110" width="12" height="18" rx="3"/><rect class="liqs" x="-4.5" y="116" width="9" height="11" rx="1.5"/><path class="glass" d="M-6 113q0-4 3-5v-5h6v5q3 1 3 5z"/><path class="tip" d="M-3 103q3-7 6 0z"/></g></g><g class="pk a3" transform="translate(100 0)"><g class="drop"><rect class="glass" x="-6" y="110" width="12" height="18" rx="3"/><rect class="liqs" x="-4.5" y="116" width="9" height="11" rx="1.5"/><path class="glass" d="M-6 113q0-4 3-5v-5h6v5q3 1 3 5z"/><path class="tip" d="M-3 103q3-7 6 0z"/></g></g><g class="pk a4" transform="translate(122 0)"><g class="drop"><rect class="glass" x="-6" y="110" width="12" height="18" rx="3"/><rect class="liqs" x="-4.5" y="116" width="9" height="11" rx="1.5"/><path class="glass" d="M-6 113q0-4 3-5v-5h6v5q3 1 3 5z"/><path class="tip" d="M-3 103q3-7 6 0z"/></g></g></g><rect class="cover" x="158" y="92" width="128" height="14" fill="#c9a46a"/><rect x="158" y="106" width="128" height="44" rx="2" fill="#d4ae72" stroke="#9c7a43" stroke-width="1.4"/><text class="stamp" x="222" y="132" text-anchor="middle">BAYAN MEDICAL</text><path d="M34 40h0" /><g class="feed"><rect x="10" y="20" width="34" height="18" rx="5" fill="#281274"/><rect x="24" y="38" width="6" height="22" rx="2" fill="#4b5d87"/></g></g><rect x="0" y="150" width="300" height="11" rx="5.5" fill="#281274"/><line class="belt2" x1="0" y1="155.5" x2="300" y2="155.5"/><circle cx="8" cy="155.5" r="3" fill="#a5b4fc"/><circle cx="292" cy="155.5" r="3" fill="#a5b4fc"/></svg><span>Ишлаб чиқариш: блистер ва қутига қадоқлаш</span></div>
 </aside>
 <aside class="side r" aria-label="BAYAN MEDICAL">
   <div class="sc co">
@@ -796,6 +824,7 @@ const I18N = {
   // Chat
   'Блокдан чиқариш': ['Разблокировать', 'Unblock'],
   'Ишлаб чиқариш: ампулага дори қуйиш': ['Производство: розлив препарата в ампулы', 'Production: filling ampoules'],
+  'Ишлаб чиқариш: блистер ва қутига қадоқлаш': ['Производство: упаковка в блистер и коробку', 'Production: packing into blisters and boxes'],
   'Тест: ёқиқ': ['Тест: вкл', 'Test: on'],
   'Тест: ўчиқ': ['Тест: выкл', 'Test: off'],
   'Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш': ['Включить или выключить надпись «тестовый режим» вверху сайта для всех', 'Turn the «test mode» notice at the top of the site on or off for everyone'],
