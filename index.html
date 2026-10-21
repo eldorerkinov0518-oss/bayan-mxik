@@ -244,7 +244,7 @@
   /* Background scene: ampoules on a conveyor are filled under the nozzle and sealed by the burners.
      The row steps one place per cycle and jumps back, so slot 3 fills and slot 5 gets sealed each time. */
   .prodline svg { display: block; width: 100%; height: auto; }
-  .side .prodline { padding: 8px 10px 6px; } .side .prodline svg { max-height: 112px; }
+  .side .prodline { padding: 8px 10px 6px; } .side .prodline svg { max-height: 112px; } .side .prodline.dv svg { max-height: 88px; }
   .prodline span { display: block; margin-top: 2px; text-align: center; font: 600 11.5px Inter, system-ui, sans-serif; color: #5b6b80; }
   .prodline .glass { fill: rgba(255, 255, 255, .85); stroke: #7c8db5; stroke-width: 1.4; }
   .prodline .liq { fill: #38bdf8; transform-box: fill-box; transform-origin: bottom; }
@@ -409,6 +409,7 @@
     color: var(--text); text-align: left; cursor: pointer; font: 600 13px "JetBrains Mono", ui-monospace, Consolas, monospace; }
   #recent button small { display: block; font: 500 11px Inter, system-ui, sans-serif; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   #recent button:hover, .lnk:hover { outline: 2px solid #0a8ee0; }
+  .lnks { position: relative; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 2px; }
   .lnk { display: block; padding: 5px 10px; margin-bottom: 4px; border-radius: 10px; background: var(--soft); color: var(--text); text-decoration: none; }
   .lnk b { display: block; font-size: 13px; color: #0a8ee0; } .lnk span { font-size: 11px; color: var(--muted); }
   .tip #tip { font-size: 13px; line-height: 1.5; }
@@ -584,7 +585,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2140</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2150</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -616,14 +617,16 @@
   </div>
   <div class="sc">
     <div class="sh">Фойдали ҳаволалар</div>
+    <div class="lnks">
     <a class="lnk" href="https://tasnif.soliq.uz/" target="_blank" rel="noopener"><b>tasnif.soliq.uz</b><span>ИКПУ (МХИК) классификатори</span></a>
     <a class="lnk" href="https://xtrace.aslbelgisi.uz/" target="_blank" rel="noopener"><b>Асл белгиси</b><span>Маркировка кабинети</span></a>
     <a class="lnk tglnk" href="#" target="_blank" rel="noopener"><b>📲 Telegram бот</b><span>Штрих код ёки ИКПУ юборинг, бот жавоб беради</span></a>
     <a class="lnk" href="https://didox.uz/" target="_blank" rel="noopener"><b>Didox</b><span>Электрон ҳужжат айланиши (ЭСФ, шартнома)</span></a>
     <a class="lnk" href="https://my.soliq.uz/" target="_blank" rel="noopener"><b>my.soliq.uz</b><span>Солиқ тўловчининг шахсий кабинети</span></a>
+    </div>
   </div>
   <div class="sc tip" data-cut="3"><div class="sh">💡 Маслаҳат</div><div id="tip"></div></div>
-  <div class="sc prodline" data-cut="0.5" aria-hidden="true"><svg viewBox="0 56 300 110" aria-hidden="true"><path d="M4 88l38-22 38 22z" fill="#281274"/><rect x="8" y="88" width="68" height="62" fill="#cbd5e1" stroke="#7c8db5" stroke-width="1.2"/><rect x="40" y="108" width="30" height="42" fill="#64748b"/><line x1="40" y1="112" x2="70" y2="112" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="119" x2="70" y2="119" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="126" x2="70" y2="126" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="133" x2="70" y2="133" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="140" x2="70" y2="140" stroke="#94a3b8" stroke-width="1.2"/><rect x="12" y="132" width="14" height="12" fill="#c9a46a" stroke="#9c7a43"/><rect x="26" y="132" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="18" y="120" width="14" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="16" y="94" width="20" height="10" rx="2" fill="#fff" stroke="#7c8db5"/><path d="M24 96v6M21 99h6" stroke="#0a8ee0" stroke-width="2"/><rect x="214" y="96" width="82" height="54" fill="#fff" stroke="#7c8db5" stroke-width="1.2"/><path d="M208 96h94l-6-12h-82z" fill="#0b8f7a"/><rect x="246" y="116" width="22" height="34" fill="#bae6fd" stroke="#7c8db5"/><rect x="220" y="110" width="20" height="18" fill="#e0f2fe" stroke="#7c8db5"/><rect x="274" y="110" width="16" height="18" fill="#e0f2fe" stroke="#7c8db5"/><g class="cross"><circle cx="255" cy="74" r="11" fill="#fff" stroke="#0b8f7a" stroke-width="2"/><path d="M255 67v14M248 74h14" stroke="#16a34a" stroke-width="4"/></g><rect x="0" y="150" width="300" height="14" fill="#475569"/><line class="road" x1="0" y1="157" x2="300" y2="157"/><rect class="unb" x="0" y="134" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><g class="truck"><rect class="ldb" x="0" y="124" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="0" y="116" width="52" height="30" rx="3" fill="#fff" stroke="#281274" stroke-width="1.6"/><text x="26" y="134" text-anchor="middle" class="tt">BAYAN</text><path d="M52 126h12l8 9v11H52z" fill="#281274"/><rect x="56" y="129" width="8" height="6" rx="1" fill="#bae6fd"/><g class="wh" transform="translate(14 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g><g class="wh" transform="translate(60 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g></g></svg><span>Омбордан дорихоналарга етказиб бериш</span></div>
+  <div class="sc prodline dv" data-cut="0.5" aria-hidden="true"><svg viewBox="0 56 300 110" aria-hidden="true"><path d="M4 88l38-22 38 22z" fill="#281274"/><rect x="8" y="88" width="68" height="62" fill="#cbd5e1" stroke="#7c8db5" stroke-width="1.2"/><rect x="40" y="108" width="30" height="42" fill="#64748b"/><line x1="40" y1="112" x2="70" y2="112" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="119" x2="70" y2="119" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="126" x2="70" y2="126" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="133" x2="70" y2="133" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="140" x2="70" y2="140" stroke="#94a3b8" stroke-width="1.2"/><rect x="12" y="132" width="14" height="12" fill="#c9a46a" stroke="#9c7a43"/><rect x="26" y="132" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="18" y="120" width="14" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="16" y="94" width="20" height="10" rx="2" fill="#fff" stroke="#7c8db5"/><path d="M24 96v6M21 99h6" stroke="#0a8ee0" stroke-width="2"/><rect x="214" y="96" width="82" height="54" fill="#fff" stroke="#7c8db5" stroke-width="1.2"/><path d="M208 96h94l-6-12h-82z" fill="#0b8f7a"/><rect x="246" y="116" width="22" height="34" fill="#bae6fd" stroke="#7c8db5"/><rect x="220" y="110" width="20" height="18" fill="#e0f2fe" stroke="#7c8db5"/><rect x="274" y="110" width="16" height="18" fill="#e0f2fe" stroke="#7c8db5"/><g class="cross"><circle cx="255" cy="74" r="11" fill="#fff" stroke="#0b8f7a" stroke-width="2"/><path d="M255 67v14M248 74h14" stroke="#16a34a" stroke-width="4"/></g><rect x="0" y="150" width="300" height="14" fill="#475569"/><line class="road" x1="0" y1="157" x2="300" y2="157"/><rect class="unb" x="0" y="134" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><g class="truck"><rect class="ldb" x="0" y="124" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="0" y="116" width="52" height="30" rx="3" fill="#fff" stroke="#281274" stroke-width="1.6"/><text x="26" y="134" text-anchor="middle" class="tt">BAYAN</text><path d="M52 126h12l8 9v11H52z" fill="#281274"/><rect x="56" y="129" width="8" height="6" rx="1" fill="#bae6fd"/><g class="wh" transform="translate(14 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g><g class="wh" transform="translate(60 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g></g></svg><span>Омбордан дорихоналарга етказиб бериш</span></div>
 </aside>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
@@ -1901,13 +1904,22 @@ addEventListener('load', fitLayout); document.fonts?.ready.then(fitLayout);
 }
 // Side panels stay put: no inner scrolling; cards that don't fit the window height are hidden, least important (data-cut) first.
 function fitSides() {
+  fitLinks();
   for (const side of document.querySelectorAll('.side')) {
     const cards = [...side.querySelectorAll('.sc[data-cut]')].sort((a, b) => b.dataset.cut - a.dataset.cut);
     side.querySelectorAll('.sc').forEach(c => c.classList.remove('cut'));
     for (const c of cards) { if (side.scrollHeight <= side.clientHeight + 1) break; c.classList.add('cut'); }
   }
 }
-for (const side of document.querySelectorAll('.side')) side.addEventListener('wheel', e => e.preventDefault(), { passive: false });
+for (const side of document.querySelectorAll('.side')) side.addEventListener('wheel', e => { if (!e.target.closest('.lnks')) e.preventDefault(); }, { passive: false });
+// Useful links: three are visible, the rest scroll inside the card.
+function fitLinks() {
+  for (const box of document.querySelectorAll('.lnks')) {
+    const l = box.querySelectorAll('.lnk'); if (l.length < 4) continue;
+    box.style.maxHeight = (l[2].offsetTop + l[2].offsetHeight + 2) + 'px';
+  }
+}
+fitLinks();
 addEventListener('resize', fitSides);
 setTimeout(fitSides, 400);
 
