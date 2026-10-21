@@ -63,6 +63,7 @@
   .tb-track span { padding: 0 34px; } .tb-track span::after { content: '•'; margin-left: 34px; opacity: .5; }
   @keyframes tbmove { to { transform: translateX(-50%); } }
   .testbar:hover .tb-track { animation-play-state: paused; }
+
   .chatbtn { position: fixed; right: 16px; bottom: 50px; z-index: 30; display: flex; align-items: center; gap: 8px; padding: 11px 18px; border: 0; border-radius: 999px;
     background: linear-gradient(135deg, #0b8f7a, #14b8a6 55%, #22c55e); color: #fff; font: 700 14px Inter, system-ui, sans-serif; cursor: pointer;
     box-shadow: 0 8px 24px rgba(11, 143, 122, .45); animation: cbpulse 3s ease-in-out infinite; }
@@ -393,7 +394,7 @@
 </head>
 <body>
 <div class="bgfx" aria-hidden="true"><b class="blob b1"></b><b class="blob b2"></b><b class="blob b3"></b><b class="blob b4"></b><div id="bgfloat"></div></div>
-<div class="testbar" role="status"><div class="tb-track"><span>⚠ Сайт тест режимида ишламоқда</span><span>Маълумотлар бирламчи ва текширув босқичида</span><span>⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span><span>⚠ Сайт тест режимида ишламоқда</span><span>Маълумотлар бирламчи ва текширув босқичида</span><span>⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span></div></div>
+<div class="testbar" role="status"><div class="tb-track"><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span></div></div>
 <div class="topbar">
   <div class="deco l" aria-hidden="true">
     <div class="scan"><svg id="bc" viewBox="0 0 95 40" preserveAspectRatio="none"></svg><i class="laser"></i></div>
@@ -457,7 +458,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1915</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1930</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -501,7 +502,7 @@
     <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
-    <div class="adminbar" id="adminbar" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div></div>
+    <div class="adminbar" id="adminbar" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div></div>
     <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
@@ -728,6 +729,10 @@ const I18N = {
   'Ишончли дори — соғлом келажак.': ['Надёжное лекарство — здоровое будущее.', 'Reliable medicine, healthy future.'],
   // Chat
   'Блокдан чиқариш': ['Разблокировать', 'Unblock'],
+  'Тест: ёқиқ': ['Тест: вкл', 'Test: on'],
+  'Тест: ўчиқ': ['Тест: выкл', 'Test: off'],
+  'Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш': ['Включить или выключить надпись «тестовый режим» вверху сайта для всех', 'Turn the «test mode» notice at the top of the site on or off for everyone'],
+  'Сақлаб бўлмади. Firebase қоидаларига «settings» бўлимини қўшинг.': ['Не удалось сохранить. Добавьте раздел «settings» в правила Firebase.', 'Could not save. Add the «settings» section to the Firebase rules.'],
   'Блокланган фойдаланувчи йўқ': ['Заблокированных нет', 'No blocked users'],
   'Текширилмоқда…': ['Проверка…', 'Checking…'],
   'Email ёки парол нотўғри.': ['Неверный email или пароль.', 'Wrong email or password.'],
@@ -1806,6 +1811,16 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const d = await r.json(); setLS('bayan-admin-rt', d.refresh_token);
     tok = d.id_token; tokExp = Date.now() + (d.expires_in - 60) * 1000; return tok;
   };
+  // Test mode is one shared setting in the database: everyone can read it, only the admin can change it.
+  let testMode = true;
+  const track = document.querySelector('.tb-track'), trackHtml = track.innerHTML;
+  const showTest = () => {
+    // Without the test notices the line gets short, so the remaining notices repeat to keep it full.
+    const keep = [...track.children].slice(0, track.children.length / 2).filter(x => !x.classList.contains('tm')).map(x => x.outerHTML).join('');
+    track.innerHTML = testMode ? trackHtml : keep.repeat(6);
+    drawBar();
+  };
+  fetch(`${CHAT_DB}/settings/testMode.json`).then(r => r.ok ? r.json() : null).then(v => { if (v === false) { testMode = false; showTest(); } }).catch(() => {});
   const adminReq = async (path, method, body) => {
     const r = await fetch(`${CHAT_DB}/${path}.json?auth=${await idToken()}`, { method, body: body === undefined ? undefined : JSON.stringify(body) });
     if (!r.ok) throw new Error(r.status);
@@ -1823,6 +1838,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     document.getElementById('delsel').textContent = `🗑 Ўчириш (${picked.size})`;
     document.getElementById('delsel').disabled = !picked.size;
     document.getElementById('blkbtn').textContent = `⛔ Блок (${ids.length})`;
+    document.getElementById('testbtn').textContent = testMode ? '🧪 Тест: ёқиқ' : '🧪 Тест: ўчиқ';
     blkBox.innerHTML = ids.length ? ids.map(id => `<div><span>${esc(blocked[id].name || id)}</span><button type="button" data-unblock="${esc(id)}">Блокдан чиқариш</button></div>`).join('')
       : '<div><span>Блокланган фойдаланувчи йўқ</span></div>';
   };
@@ -1845,6 +1861,10 @@ document.querySelectorAll('.tglnk').forEach(a => {
     if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
     try { for (const k of picked) await adminReq(`chat/${k}`, 'DELETE'); picked.clear(); await load(); }
     catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
+  });
+  document.getElementById('testbtn').addEventListener('click', async () => {
+    try { await adminReq('settings/testMode', 'PUT', !testMode); testMode = !testMode; showTest(); }
+    catch { alert('Сақлаб бўлмади. Firebase қоидаларига «settings» бўлимини қўшинг.'); }
   });
   document.getElementById('clearall').addEventListener('click', async () => {
     if (!confirm('Бутун чат тозалансинми? Барча хабарлар бутунлай ўчади.')) return;
