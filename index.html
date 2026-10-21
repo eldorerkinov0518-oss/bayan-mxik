@@ -99,6 +99,17 @@
   .mrow.admin .av { background: linear-gradient(135deg, #f59e0b, #f97316) !important; }
   .msg .tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 6px; background: #fef3c7; color: #b45309; font-size: 9.5px; letter-spacing: .4px; vertical-align: 1px; }
   .msgs .sys { align-self: center; font-size: 12px; color: #0f766e; text-align: center; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.75); }
+  .toasts { position: fixed; right: 16px; bottom: 104px; z-index: 32; display: grid; gap: 8px; width: min(320px, calc(100vw - 32px)); pointer-events: none; }
+  .toast { pointer-events: auto; display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; border-radius: 16px; background: #fff; cursor: pointer;
+    border-left: 4px solid #14b8a6; box-shadow: 0 14px 36px rgba(6, 60, 52, .28); animation: tin .35s cubic-bezier(.2, .9, .3, 1.2); }
+  .toast.out { animation: tout .3s ease forwards; }
+  .toast .av { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 13px Inter, system-ui, sans-serif; }
+  .toast div { min-width: 0; flex: 1; } .toast b { display: block; font-size: 13px; color: #0f766e; }
+  .toast b small { font-weight: 500; color: #94a3b8; margin-left: 4px; }
+  .toast p { margin: 2px 0 0; font-size: 13px; color: #1f2937; line-height: 1.4; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .toast button { flex: none; border: 0; background: none; color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 2px; }
+  @keyframes tin { from { opacity: 0; transform: translateX(40px) scale(.96); } }
+  @keyframes tout { to { opacity: 0; transform: translateX(40px); } }
   .adminlogin { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; padding: 10px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
   .adminlogin[hidden], .adminbar[hidden], .blklist[hidden] { display: none; }
   .adminlogin b { grid-column: 1 / -1; font-size: 12.5px; color: #92400e; }
@@ -417,7 +428,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1535</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1545</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -455,6 +466,7 @@
   </div>
   <div class="sc tip" data-cut="3"><div class="sh">💡 Маслаҳат</div><div id="tip"></div></div>
 </aside>
+<div class="toasts" id="toasts" aria-live="polite"></div>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
     <header><span class="ava">💬</span><div><b>Умумий чат</b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
@@ -1434,6 +1446,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const d = await r.json();
     setLS('bayan-admin-rt', d.refreshToken); tok = d.idToken; tokExp = Date.now() + (d.expiresIn - 60) * 1000;
     login.reset(); st.textContent = ''; showAdmin(); draw();
+    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {});
   });
   document.getElementById('adminout').addEventListener('click', () => { setLS('bayan-admin-rt', ''); tok = null; picked.clear(); showAdmin(); draw(); });
   document.getElementById('blkbtn').addEventListener('click', () => { blkBox.hidden = !blkBox.hidden; });
@@ -1496,15 +1509,41 @@ document.querySelectorAll('.tglnk').forEach(a => {
       blocked = (b.ok && await b.json()) || {};
       list = Object.entries(data).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       picked.forEach(k => { if (!data[k]) picked.delete(k); });
+      notify();
       state.textContent = isAdmin() ? 'Админ режими · онлайн' : 'Фойдаланувчилар ва админ · онлайн';
       if (!box.hidden) { draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
       unread(); drawBar();
     } catch { state.textContent = 'Алоқа йўқ, қайта уриниляпти…'; }
   };
-  const poll = () => { clearTimeout(timer); timer = setTimeout(async () => { await load(); poll(); }, box.hidden ? 60000 : 5000); };
+  const poll = () => { clearTimeout(timer); timer = setTimeout(async () => { await load(); poll(); }, !box.hidden ? 5000 : isAdmin() ? 15000 : 60000); };
+  // Admin only: a new message from someone else pops up at the side of the screen (and as a system
+  // notification when the tab is in the background). Visitors never see these.
+  const toasts = document.getElementById('toasts'), baseTitle = document.title;
+  let unreadTitle = 0;
+  const notify = () => {
+    if (!isAdmin()) return;
+    const last = getLS('bayan-admin-notified', 0);
+    const fresh = list.filter(m => m.ts > last && m.uid !== myId && !m.admin);
+    if (!fresh.length) return;
+    setLS('bayan-admin-notified', Math.max(...fresh.map(m => m.ts)));
+    if (!last) return; // first sign-in on this browser: don't replay the whole history
+    if (!box.hidden && !document.hidden) return;
+    fresh.slice(-3).forEach(m => {
+      const t = document.createElement('div'); t.className = 'toast';
+      t.innerHTML = `<span class="av" style="background:${hue(m.uid || m.name)}">${esc(initials(m.name))}</span><div><b>${esc(m.name)}<small>${fmt(m.ts)}</small></b><p>${esc(m.text)}</p></div><button type="button" aria-label="Ёпиш">✕</button>`;
+      const close = () => { t.classList.add('out'); setTimeout(() => t.remove(), 300); };
+      t.addEventListener('click', e => { close(); if (!e.target.closest('button') && box.hidden) btn.click(); });
+      toasts.append(t); setTimeout(close, 15000);
+      if (document.hidden && 'Notification' in window && Notification.permission === 'granted')
+        try { new Notification(`💬 ${m.name}`, { body: m.text.slice(0, 120), tag: m.key }); } catch {}
+    });
+    while (toasts.children.length > 3) toasts.firstChild.remove();
+    if (document.hidden) { unreadTitle += fresh.length; document.title = `(${unreadTitle}) Янги хабар · ${baseTitle}`; }
+  };
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) { unreadTitle = 0; document.title = baseTitle; } });
   btn.addEventListener('click', () => {
     box.hidden = !box.hidden;
-    if (!box.hidden) { draw(); load(); (nameIn.value ? textIn : nameIn).focus(); }
+    if (!box.hidden) { toasts.innerHTML = ''; draw(); load(); (nameIn.value ? textIn : nameIn).focus(); }
     unread(); poll();
   });
   document.getElementById('chatx').addEventListener('click', () => { box.hidden = true; unread(); poll(); });
