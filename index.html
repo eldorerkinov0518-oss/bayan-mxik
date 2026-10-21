@@ -53,6 +53,12 @@
   .floaters i { position: absolute; bottom: -60px; color: #fff; opacity: 0; animation: drift linear infinite; }
   @keyframes drift { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: var(--o); } 90% { opacity: var(--o); } 100% { transform: translateY(-380px) rotate(var(--r)); opacity: 0; } }
   .hero-in { position: relative; z-index: 1; }
+  /* Desktop: the page itself never scrolls; the middle column and the product list scroll inside. */
+  @media (min-width: 1000px) and (min-height: 600px) {
+    html.fixed, html.fixed body { height: 100%; overflow: hidden; }
+    html.fixed main { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-bottom: 16px; }
+    html.fixed main .search { position: sticky; top: 0; z-index: 3; }
+  }
   /* Page background: slow colour blobs and floating medical shapes behind everything. */
   .bgfx { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
   .blob { position: absolute; width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; border-radius: 50%; filter: blur(70px); opacity: .28; animation: blob 26s ease-in-out infinite alternate; }
@@ -773,7 +779,7 @@ lt.addEventListener('click', e => {
   if (!tr) return;
   q.value = tr.dataset.g; q.dispatchEvent(new Event('input'));
   document.getElementById('f').requestSubmit();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toTop();
 });
 
 const checkBtn = document.getElementById('checkAll');
@@ -1062,9 +1068,30 @@ document.getElementById('recent').addEventListener('click', e => {
   if (!b) return;
   q.value = b.dataset.c; q.dispatchEvent(new Event('input'));
   document.getElementById('f').requestSubmit();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  toTop();
 });
 drawRecent();
+
+// Desktop layout: size the middle column to the window and let the product list fill what is left.
+const mainEl = document.querySelector('main'), tblEl = document.querySelector('.tbl');
+const fixedMQ = matchMedia('(min-width: 1000px) and (min-height: 600px)');
+function fitLayout() {
+  document.documentElement.classList.toggle('fixed', fixedMQ.matches);
+  if (!fixedMQ.matches) { mainEl.style.height = ''; tblEl.style.maxHeight = ''; return; }
+  scrollTo(0, 0);
+  const top = mainEl.getBoundingClientRect().top;
+  mainEl.style.height = (innerHeight - top) + 'px';
+  // Where the table would start with no search result above it.
+  const tTop = tblEl.getBoundingClientRect().top - top + mainEl.scrollTop - document.getElementById('out').offsetHeight;
+  let h = Math.max(260, innerHeight - top - tTop - 40);
+  tblEl.style.maxHeight = h + 'px';
+  // Trim whatever still overflows (footer, paddings) so the column doesn't scroll when there is no result.
+  const extra = mainEl.scrollHeight - mainEl.clientHeight - document.getElementById('out').offsetHeight;
+  if (extra > 0) tblEl.style.maxHeight = Math.max(260, h - extra) + 'px';
+}
+function toTop() { mainEl.scrollTo({ top: 0, behavior: 'smooth' }); window.scrollTo({ top: 0, behavior: 'smooth' }); }
+addEventListener('resize', fitLayout);
+fitLayout(); setTimeout(fitLayout, 300);
 
 {
   // Top-bar barcode: draw a real EAN-13 from the catalog and move to the next product every few seconds.
