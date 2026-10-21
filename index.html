@@ -99,6 +99,8 @@
   .mrow.admin .av { background: linear-gradient(135deg, #f59e0b, #f97316) !important; }
   .msg .tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 6px; background: #fef3c7; color: #b45309; font-size: 9.5px; letter-spacing: .4px; vertical-align: 1px; }
   .msgs .sys { align-self: center; font-size: 12px; color: #0f766e; text-align: center; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.75); }
+  .raw { margin-top: 12px; font-size: 12px; } .raw summary { cursor: pointer; color: var(--muted); font-weight: 600; }
+  .raw pre { max-height: 320px; overflow: auto; padding: 10px; border-radius: 10px; background: #0f172a; color: #e2e8f0; font: 500 11.5px 'JetBrains Mono', monospace; white-space: pre-wrap; word-break: break-all; }
   .gal { margin-top: 12px; } .gal .label { margin-bottom: 6px; }
   .gal-row { display: flex; flex-wrap: wrap; gap: 8px; }
   .gal-it { display: block; width: 120px; height: 120px; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #fff; cursor: zoom-in; transition: transform .15s, box-shadow .15s; }
@@ -446,7 +448,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1630</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1640</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -774,7 +776,11 @@ function cardImages(c) {
   const out = new Set(), IMG = /^https?:\/\/\S+\.(jpe?g|png|webp|gif)(\?\S*)?$/i, KEY = /image|photo|picture|rasm|img/i;
   const walk = (v, k, d) => {
     if (d > 4 || v == null) return;
-    if (typeof v === 'string') { if (IMG.test(v) || (KEY.test(k) && /^https?:\/\//.test(v))) out.add(v); }
+    if (typeof v === 'string') {
+      if (IMG.test(v) || (KEY.test(k) && /^https?:\/\//.test(v))) out.add(v);
+      // Relative paths (e.g. "/uploads/x.jpg") are served by tasnif itself.
+      else if (/^\/?[\w\-./]+\.(jpe?g|png|webp|gif)$/i.test(v)) out.add('https://tasnif.soliq.uz/' + v.replace(/^\//, ''));
+    }
     else if (Array.isArray(v)) v.forEach(x => walk(x, k, d + 1));
     else if (typeof v === 'object') Object.entries(v).forEach(([kk, x]) => walk(x, kk, d + 1));
   };
@@ -834,6 +840,8 @@ function render(item, card) {
   }
   if (details) html += `<div class="sec"><div class="label">Қўшимча маълумотлар</div><dl>${details}</dl></div>`;
   html += gallery('tasnif.soliq.uz даги расмлар', cardImages(c));
+  // Admin only: the raw tasnif record, to see which fields (photo, price, …) tasnif actually sends.
+  if (getLS('bayan-admin-rt', '')) html += `<details class="raw"><summary>📄 tasnif хом маълумоти (фақат админ учун)</summary><pre>${esc(JSON.stringify(card || item, null, 1))}</pre></details>`;
   const pk = Array.isArray(c.packages) ? c.packages : [];
   if (pk.length) {
     html += `<div class="sec"><div class="label">Қадоқ кодлари</div><table><tr><th>Код</th><th>Номи</th><th>Миқдори</th></tr>` +
