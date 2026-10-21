@@ -110,6 +110,16 @@
   .toast button { flex: none; border: 0; background: none; color: #94a3b8; font-size: 14px; cursor: pointer; padding: 0 2px; }
   @keyframes tin { from { opacity: 0; transform: translateX(40px) scale(.96); } }
   @keyframes tout { to { opacity: 0; transform: translateX(40px); } }
+  .onl { display: inline-flex; align-items: center; gap: 5px; margin: 2px 0 1px; padding: 1px 8px; border: 0; border-radius: 999px; background: rgba(255,255,255,.2); color: #fff;
+    font: 600 11.5px Inter, system-ui, sans-serif; cursor: default; white-space: nowrap; }
+  .chat header .onl { width: auto; height: auto; border-radius: 999px; margin-left: 6px; vertical-align: 2px; font-size: 11px; }
+  .onl[hidden] { display: none; } .onl::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #a3ff7a; box-shadow: 0 0 0 2px rgba(163,255,122,.35); }
+  .chat.adm .onl { cursor: pointer; } .chat.adm .onl:hover { background: rgba(255,255,255,.32); }
+  .onlist { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 12px; background: #f0fdfa; border-bottom: 1px solid #ccf3ea; }
+  .onlist[hidden] { display: none; }
+  .onlist span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 4px; border-radius: 999px; background: #fff; font-size: 12px; color: #134e4a; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .onlist span i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 9px Inter, system-ui, sans-serif; font-style: normal; }
+  .chat header small { display: block; }
   .adminlogin { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; padding: 10px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
   .adminlogin[hidden], .adminbar[hidden], .blklist[hidden] { display: none; }
   .adminlogin b { grid-column: 1 / -1; font-size: 12.5px; color: #92400e; }
@@ -428,7 +438,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1545</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1600</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -469,10 +479,11 @@
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
-    <header><span class="ava">💬</span><div><b>Умумий чат</b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
+    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
     <div class="adminbar" id="adminbar" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div></div>
+    <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
       <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
@@ -1509,12 +1520,35 @@ document.querySelectorAll('.tglnk').forEach(a => {
       blocked = (b.ok && await b.json()) || {};
       list = Object.entries(data).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       picked.forEach(k => { if (!data[k]) picked.delete(k); });
-      notify();
-      state.textContent = isAdmin() ? 'Админ режими · онлайн' : 'Фойдаланувчилар ва админ · онлайн';
+      notify(); readOnline();
+      state.textContent = isAdmin() ? 'Админ режими' : 'Фойдаланувчилар ва админ';
       if (!box.hidden) { draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
       unread(); drawBar();
     } catch { state.textContent = 'Алоқа йўқ, қайта уриниляпти…'; }
   };
+  // Presence: every open page refreshes /online/<id> twice a minute; whoever refreshed in the last 75 s counts as online.
+  // Everyone sees how many people are here; only the admin can open the list of names.
+  const onl = document.getElementById('onl'), onlist = document.getElementById('onlist');
+  let online = [];
+  const beat = () => { if (CHAT_DB) fetch(`${CHAT_DB}/online/${myId}.json`, { method: 'PUT', body: JSON.stringify({ name: (nameIn.value.trim() || getLS('bayan-chat-name', '') || 'Меҳмон').slice(0, 40), admin: isAdmin(), ts: { '.sv': 'timestamp' } }) }).catch(() => {}); };
+  const readOnline = async () => {
+    if (!CHAT_DB) return;
+    try {
+      const r = await fetch(`${CHAT_DB}/online.json`); if (!r.ok) return;
+      const d = await r.json() || {}, srv = Math.max(Date.now(), ...Object.values(d).map(v => v.ts || 0));
+      online = Object.entries(d).filter(([, v]) => v && srv - v.ts < 75000).map(([id, v]) => Object.assign({ id }, v));
+      onl.hidden = !online.length; onl.textContent = `${online.length} киши онлайн`;
+      onl.title = isAdmin() ? 'Кимлар онлайн — кўриш учун босинг' : '';
+      if (!onlist.hidden) drawOnline();
+    } catch {}
+  };
+  const drawOnline = () => {
+    onlist.innerHTML = online.map(v => `<span><i style="background:${v.admin ? '#f59e0b' : hue(v.id)}">${esc(initials(v.name))}</i>${esc(v.name)}${v.id === myId ? ' (сиз)' : ''}</span>`).join('');
+  };
+  onl.addEventListener('click', () => { if (!isAdmin()) return; onlist.hidden = !onlist.hidden; if (!onlist.hidden) drawOnline(); });
+  addEventListener('pagehide', () => { if (CHAT_DB) fetch(`${CHAT_DB}/online/${myId}.json`, { method: 'DELETE', keepalive: true }).catch(() => {}); });
+  beat(); setInterval(beat, 30000);
+  nameIn.addEventListener('change', beat);
   const poll = () => { clearTimeout(timer); timer = setTimeout(async () => { await load(); poll(); }, !box.hidden ? 5000 : isAdmin() ? 15000 : 60000); };
   // Admin only: a new message from someone else pops up at the side of the screen (and as a system
   // notification when the tab is in the background). Visitors never see these.
