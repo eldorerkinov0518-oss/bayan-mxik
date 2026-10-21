@@ -442,6 +442,15 @@
   button.go:disabled { opacity: .65; cursor: wait; }
   .hint { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-top: 10px; font-size: 13px; color: var(--muted); }
   .chips { display: flex; gap: 6px; }
+  .infob { cursor: pointer; font: inherit; font-weight: 600; color: var(--accent, #2563eb); }
+  .infob[aria-expanded="true"] { border-color: #2563eb; }
+  .codeinfo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+  .codeinfo[hidden] { display: none; }
+  .codeinfo .ci { background: var(--soft); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; font-size: 13px; line-height: 1.45; }
+  .codeinfo .ci b { display: block; margin-bottom: 4px; font-size: 14px; }
+  .codeinfo .ci p { margin: 0 0 4px; }
+  .codeinfo .ci small { color: var(--muted, #64748b); font-family: ui-monospace, monospace; }
+  @media (max-width: 760px) { .codeinfo { grid-template-columns: 1fr; } }
   .chip { padding: 2px 10px; border-radius: 999px; background: var(--soft); border: 1px solid var(--line); font-weight: 600; }
   .chip.on { background: var(--accent-soft); border-color: var(--brand2); color: var(--brand); }
   .status { margin-top: 18px; padding: 14px 18px; border-radius: 14px; font-weight: 600; display: flex; gap: 12px; align-items: center; }
@@ -563,8 +572,13 @@
       <button class="go" id="btn" type="submit">Излаш</button>
     </form>
     <div class="hint">
-      <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">ИКПУ: 17</span></div>
+      <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">ИКПУ: 17</span><button type="button" class="chip infob" id="infob" aria-expanded="false">ℹ Кодлар ҳақида</button></div>
       <span id="cnt">0 рақам</span>
+    </div>
+    <div class="codeinfo" id="codeinfo" hidden>
+      <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
+      <div class="ci"><b>🧾 МХИК (ИКПУ) коди</b><p>Маҳсулот ва хизматларнинг идентификация коди, 17 рақамдан иборат.</p><p>Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.</p><small>Мисол: 03004172006063001</small></div>
+      <div class="ci"><b>▦ Маркировка коди</b><p>Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).</p><p>Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.</p><small>Ҳар бир қутида бошқача бўлади</small></div>
     </div>
   </section>
   <div id="out"></div>
@@ -585,7 +599,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2150</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2200</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -740,6 +754,19 @@ const I18N = {
   'Тошкент ш., Бўғишамол кўчаси, 160': ['г. Ташкент, ул. Богишамол, 160', '160 Bogishamol St., Tashkent'],
   'Мўлжал: Юнусобод кичик саноат зонаси': ['Ориентир: малая промзона Юнусабад', 'Landmark: Yunusabad small industrial zone'],
   'Охирги излашлар': ['Последние поиски', 'Recent searches'],
+  'ℹ Кодлар ҳақида': ['ℹ О кодах', 'ℹ About codes'],
+  '▌▌▌ Штрих код (GTIN)': ['▌▌▌ Штрих-код (GTIN)', '▌▌▌ Barcode (GTIN)'],
+  'Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.': ['Линейный код на упаковке из 8, 12, 13 или 14 цифр.', 'The striped code on the box, 8, 12, 13 or 14 digits long.'],
+  'Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.': ['Определяет товар и производителя во всём мире. Одинаков на всех упаковках одного товара.', 'Identifies the product and its maker worldwide. It is the same on every box of the same product.'],
+  'Мисол: 4780090866873': ['Пример: 4780090866873', 'Example: 4780090866873'],
+  '🧾 МХИК (ИКПУ) коди': ['🧾 Код ИКПУ (MXIK)', '🧾 IKPU (MXIK) code'],
+  'Маҳсулот ва хизматларнинг идентификация коди, 17 рақамдан иборат.': ['Идентификационный код продукции и услуг из 17 цифр.', 'The 17-digit identification code of goods and services.'],
+  'Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.': ['Присваивается в классификаторе tasnif.soliq.uz Налогового комитета. Используется в электронных счетах-фактурах, кассовых чеках и маркировке.', 'Assigned in the Tax Committee classifier tasnif.soliq.uz. Used in e-invoices, cash register receipts and marking.'],
+  'Мисол: 03004172006063001': ['Пример: 03004172006063001', 'Example: 03004172006063001'],
+  '▦ Маркировка коди': ['▦ Код маркировки', '▦ Marking code'],
+  'Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).': ['Квадратный код DataMatrix, наносимый на каждую упаковку отдельно (система «Asl Belgisi»).', 'A square DataMatrix code printed on each box separately (the «Asl Belgisi» system).'],
+  'Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.': ['Содержит штрих-код, уникальный серийный номер и код проверки. Позволяет отследить каждую упаковку от производства до продажи, для лекарств обязателен.', 'It holds the barcode, a unique serial number and a check code. It lets each box be traced from production to sale and is mandatory for medicines.'],
+  'Ҳар бир қутида бошқача бўлади': ['На каждой упаковке свой', 'Different on every box'],
   'Фойдали ҳаволалар': ['Полезные ссылки', 'Useful links'],
   'ИКПУ (МХИК) классификатори': ['Классификатор ИКПУ (МХИК)', 'IKPU (MXIK) classifier'],
   'Асл белгиси': ['Асл белгиси', 'Asl Belgisi'],
@@ -1903,6 +1930,9 @@ addEventListener('load', fitLayout); document.fonts?.ready.then(fitLayout);
   }).join('');
 }
 // Side panels stay put: no inner scrolling; cards that don't fit the window height are hidden, least important (data-cut) first.
+document.getElementById('infob').addEventListener('click', e => {
+  const box = document.getElementById('codeinfo'); box.hidden = !box.hidden; e.currentTarget.setAttribute('aria-expanded', !box.hidden);
+});
 function fitSides() {
   fitLinks();
   for (const side of document.querySelectorAll('.side')) {
