@@ -25,7 +25,7 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text);
     font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .topbar { background: #fff; border-bottom: 4px solid #0a8ee0; padding: 10px 16px; position: relative; overflow: hidden; }
+  .topbar { background: #fff; border-bottom: 4px solid #0a8ee0; padding: 10px 16px; position: relative; }
   /* Decorations in the empty top-bar edges on wide screens: a barcode being scanned and a heartbeat line. */
   .deco { display: none; position: absolute; top: 0; bottom: 0; align-items: center; gap: 14px; pointer-events: none; }
   @media (min-width: 1300px) {
@@ -53,6 +53,19 @@
   .floaters i { position: absolute; bottom: -60px; color: #fff; opacity: 0; animation: drift linear infinite; }
   @keyframes drift { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: var(--o); } 90% { opacity: var(--o); } 100% { transform: translateY(-380px) rotate(var(--r)); opacity: 0; } }
   .hero-in { position: relative; z-index: 1; }
+  /* Page background: slow colour blobs and floating medical shapes behind everything. */
+  .bgfx { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  .blob { position: absolute; width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; border-radius: 50%; filter: blur(70px); opacity: .28; animation: blob 26s ease-in-out infinite alternate; }
+  .b1 { background: #0a8ee0; left: -12vw; top: 30vh; }
+  .b2 { background: #6a4cff; right: -14vw; top: 45vh; animation-duration: 32s; animation-delay: -8s; }
+  .b3 { background: #2bd4c4; left: 18vw; bottom: -30vh; opacity: .18; animation-duration: 38s; animation-delay: -14s; }
+  .b4 { background: #ff7aa8; right: 16vw; top: 70vh; width: 26vw; height: 26vw; opacity: .14; animation-duration: 29s; animation-delay: -4s; }
+  @keyframes blob { 0% { transform: translate(0, 0) scale(1); } 50% { transform: translate(6vw, -8vh) scale(1.15); } 100% { transform: translate(-4vw, 6vh) scale(.92); } }
+  #bgfloat i { position: absolute; top: 100%; color: #281274; opacity: 0; animation: bgdrift linear infinite; }
+  #bgfloat i.c { color: #0a8ee0; }
+  @keyframes bgdrift { 0% { transform: translateY(0) rotate(0); opacity: 0; } 8% { opacity: var(--o); } 92% { opacity: var(--o); } 100% { transform: translateY(-115vh) rotate(var(--r)); opacity: 0; } }
+  .hero { z-index: 1; } .topbar { z-index: 3; } .credit { z-index: 4; }
+  @media (prefers-reduced-motion: reduce) { .blob, #bgfloat i { animation: none; } #bgfloat { display: none; } }
   @media (prefers-reduced-motion: reduce) { .laser, .ecgln, .pulse, .floaters i { animation: none; } .floaters { display: none; } }
   .topbar-in { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .topbar img { height: 52px; display: block; }
@@ -228,6 +241,7 @@
 </style>
 </head>
 <body>
+<div class="bgfx" aria-hidden="true"><b class="blob b1"></b><b class="blob b2"></b><b class="blob b3"></b><b class="blob b4"></b><div id="bgfloat"></div></div>
 <div class="topbar">
   <div class="deco l" aria-hidden="true">
     <div class="scan"><svg id="bc" viewBox="0 0 95 40" preserveAspectRatio="none"></svg><i class="laser"></i></div>
@@ -1085,6 +1099,12 @@ drawRecent();
     '<svg viewBox="0 0 48 24" width="30" height="15"><rect x="2" y="2" width="44" height="20" rx="10" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M24 2v20" stroke="currentColor" stroke-width="2.4"/></svg>',
     '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill="currentColor"/></svg>',
     '<svg viewBox="0 0 40 40" width="24" height="24"><circle cx="8" cy="20" r="4" fill="currentColor"/><circle cx="30" cy="9" r="4" fill="currentColor"/><circle cx="30" cy="31" r="4" fill="currentColor"/><path d="M8 20 30 9M8 20l22 11" stroke="currentColor" stroke-width="2"/></svg>'];
+  // Page background floaters: larger and slower, in brand colours.
+  const bg = document.getElementById('bgfloat');
+  bg.innerHTML = Array.from({ length: 26 }, (_, i) => {
+    const left = (i * 37 + 3) % 100, dur = 26 + (i * 11) % 22, delay = -((i * 5.3) % dur), sc = 1.2 + (i % 3) * 0.45;
+    return `<i class="${i % 3 ? '' : 'c'}" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;--o:${(0.1 + (i % 4) * 0.04).toFixed(2)};--r:${(i % 2 ? 1 : -1) * (60 + i * 7)}deg;scale:${sc}">${SHAPES[(i + 1) % SHAPES.length]}</i>`;
+  }).join('');
   const fl = document.getElementById('floaters');
   fl.innerHTML = Array.from({ length: 18 }, (_, i) => {
     const left = (i * 53 + 7) % 100, dur = 14 + (i * 7) % 12, delay = -((i * 3.7) % dur);
