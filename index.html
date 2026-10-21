@@ -28,7 +28,9 @@
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--text);
     font: 15px/1.55 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
-  .topbar { background: #fff; border-bottom: 4px solid #0a8ee0; padding: 10px 16px; position: relative; }
+  /* Top bar: soft blue-lavender tint with a faint pattern of crosses, pills and dots. */
+  .topbar { background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56'%3E%3Cg fill='%23281274' fill-opacity='.06'%3E%3Cpath d='M12 6h4v6h6v4h-6v6h-4v-6H6v-4h6z'/%3E%3Ccircle cx='42' cy='40' r='3'/%3E%3Crect x='34' y='12' width='14' height='6' rx='3' transform='rotate%2835 41 15%29'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(100deg, #e8f3fd 0%, #f3eefe 45%, #eaf6fb 100%); border-bottom: 4px solid #0a8ee0; padding: 10px 16px; position: relative; }
+  .topbar-in > img { mix-blend-mode: multiply; }
   /* Decorations in the empty top-bar edges on wide screens: a barcode being scanned and a heartbeat line. */
   .deco { display: none; position: absolute; top: 0; bottom: 0; align-items: center; gap: 14px; pointer-events: none; }
   @media (min-width: 1300px) {
@@ -463,7 +465,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2000</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2010</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
