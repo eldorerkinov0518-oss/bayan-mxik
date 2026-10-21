@@ -236,11 +236,15 @@
   .calpop .ft { margin-top: 10px; font-size: 12px; color: #5b6b80; }
   @media (max-width: 760px) { .week span:not(.today) { display: none; } .cmon { display: none; } }
   @media (max-width: 560px) { .clock { gap: 6px; padding: 5px 10px 5px 8px; } .clock b { font-size: 14px; } .topbar .tag { font-size: 11px; } }
-  .langs { display: inline-flex; gap: 4px; padding: 3px; margin-bottom: 4px; border-radius: 999px; background: #eef2f7; border: 1px solid #e2e8f0; }
+  .langs { display: inline-flex; gap: 6px; padding: 4px 6px; margin-bottom: 4px; border-radius: 999px; background: #eef2f7; border: 1px solid #e2e8f0; }
   .langs button { border: 0; background: none; padding: 3px 10px; border-radius: 999px; font: 700 11.5px Inter, system-ui, sans-serif; color: #5b6b80; cursor: pointer; }
+  /* Wide screens: the language switch sits in the top-right corner of the page. */
+  @media (min-width: 1280px) { .langs { position: absolute; top: 50%; right: 18px; transform: translateY(-50%); z-index: 5; margin: 0; } }
+  @media (min-width: 1300px) { .deco.r { width: calc(50vw - 690px); } }
+  @media (min-width: 1300px) and (max-width: 1500px) { .deco.r { display: none; } }
   /* Each language button shows its flag behind the label. */
-  .langs button { min-width: 46px; color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,.75); background-size: cover !important; background-position: center !important; opacity: .55; transition: opacity .15s, box-shadow .15s; }
-  .langs button:hover { opacity: .85; } .langs button.on { opacity: 1; box-shadow: 0 0 0 2px #281274; }
+  .langs button { min-width: 46px; color: #fff !important; text-shadow: 0 1px 2px rgba(0,0,0,.75); background-size: cover !important; background-position: center !important; transition: transform .15s, box-shadow .15s; }
+  .langs button:hover { transform: translateY(-1px); } .langs button.on { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #281274; }
   .langs [data-lang="uz"] { background: linear-gradient(rgba(0,0,0,.18), rgba(0,0,0,.18)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3Crect width='60' height='30' fill='%231eb53a'/%3E%3Crect width='60' height='20' fill='%23fff'/%3E%3Crect width='60' height='10' fill='%230099b5'/%3E%3Crect y='9.6' width='60' height='.8' fill='%23ce1126'/%3E%3Crect y='19.6' width='60' height='.8' fill='%23ce1126'/%3E%3Ccircle cx='7.5' cy='5' r='3.4' fill='%23fff'/%3E%3Ccircle cx='8.8' cy='5' r='3' fill='%230099b5'/%3E%3Cg fill='%23fff'%3E%3Ccircle cx='13' cy='3' r='.55'/%3E%3Ccircle cx='15' cy='3' r='.55'/%3E%3Ccircle cx='17' cy='3' r='.55'/%3E%3Ccircle cx='15' cy='5' r='.55'/%3E%3Ccircle cx='17' cy='5' r='.55'/%3E%3Ccircle cx='17' cy='7' r='.55'/%3E%3C/g%3E%3C/svg%3E"); }
   .langs [data-lang="ru"] { background: linear-gradient(rgba(0,0,0,.25), rgba(0,0,0,.25)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 6'%3E%3Crect width='9' height='6' fill='%23d52b1e'/%3E%3Crect width='9' height='4' fill='%230039a6'/%3E%3Crect width='9' height='2' fill='%23fff'/%3E%3C/svg%3E"); }
   .langs [data-lang="en"] { background: linear-gradient(rgba(0,0,0,.15), rgba(0,0,0,.15)), url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 30'%3E%3CclipPath id='c'%3E%3Cpath d='M30 15h30v15zv15H0zH0V0zV0h30z'/%3E%3C/clipPath%3E%3Crect width='60' height='30' fill='%23012169'/%3E%3Cpath d='M0 0l60 30m0-30L0 30' stroke='%23fff' stroke-width='6'/%3E%3Cpath d='M0 0l60 30m0-30L0 30' clip-path='url%28%23c%29' stroke='%23c8102e' stroke-width='4'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23fff' stroke-width='10'/%3E%3Cpath d='M30 0v30M0 15h60' stroke='%23c8102e' stroke-width='6'/%3E%3C/svg%3E"); }
@@ -458,7 +462,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1930</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1950</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
