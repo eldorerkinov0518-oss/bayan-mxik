@@ -305,16 +305,16 @@
         <option value="">Ҳаммаси</option><option value="yes">ИКПУ бор</option><option value="no">ИКПУ йўқ</option>
         <option value="main">❗ Асосий хато</option><option value="diff">Фарқ бор (ҳаммаси)</option><option value="wait">Текширилмаган</option>
       </select>
-      <button class="go" id="checkAll" type="button">Барчасини текшириш</button>
+      <button class="go" id="checkAll" type="button">Қайта текшириш</button>
       <button class="copy" id="csv" type="button" title="Excel'га юклаш">Excel</button>
       <button class="copy" id="pdf" type="button">PDF</button>
       <button class="copy" id="txt" type="button">TXT</button>
     </div>
-    <div class="prog" id="prog">«Барчасини текшириш» тугмаси ҳар бир штрих кодни tasnif.soliq.uz да текшириб, ИКПУ бор-йўқлигини белгилайди.</div>
+    <div class="prog" id="prog">Маҳсулотлар tasnif.soliq.uz да текширилмоқда…</div>
     <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>ИКПУ</th></tr></thead><tbody id="lt"></tbody></table></div>
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1340</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1345</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -566,11 +566,19 @@ function compare(own, it) {
     .sort((a, b) => (!a.ok && isMain(a) ? 0 : 1) - (!b.ok && isMain(b) ? 0 : 1));
 }
 const mainOf = (own, items) => (issuesOf(own, items) || []).filter(isMain);
+// Memoised per result (the list, side panel and progress line ask for the same product many times);
+// acceptVer drops the cache when a difference is accepted.
+const issueCache = new WeakMap();
+let acceptVer = 0;
 const issuesOf = (own, items) => {
   if (!own || !items?.length) return [];
+  const hit = issueCache.get(items);
+  if (hit && hit.v === acceptVer && hit.g === own[0]) return hit.res;
   // Several IKPU for one barcode: judge by the closest one.
   const mains = l => l.filter(isMain).length;
-  return items.map(i => compare(own, i).filter(x => !x.ok)).sort((a, b) => mains(a) - mains(b) || a.length - b.length)[0];
+  const res = items.map(i => compare(own, i).filter(x => !x.ok)).sort((a, b) => mains(a) - mains(b) || a.length - b.length)[0];
+  issueCache.set(items, { v: acceptVer, g: own[0], res });
+  return res;
 };
 function compareBlock(own, it) {
   const res = compare(own, it);
@@ -588,6 +596,7 @@ document.addEventListener('click', e => {
   const b = e.target.closest('.acc');
   if (!b) return;
   (acceptLocal[b.dataset.g] ||= []).push(b.dataset.k);
+  acceptVer++;
   try { localStorage.setItem(ACCEPT_STORE, JSON.stringify(acceptLocal)); } catch {}
   document.getElementById('f').requestSubmit();
   renderList();
@@ -711,10 +720,13 @@ const results = new Map(); // gtin -> {state: 'yes'|'no'|'err', items}
 const STORE = 'bayan-ikpu-results';
 try { for (const [g, r] of JSON.parse(localStorage.getItem(STORE) || '[]')) results.set(g, r); } catch {}
 let saveTimer;
-const saveResults = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => {
+const writeResults = () => {
   try { localStorage.setItem(STORE, JSON.stringify([...results].map(([g, r]) => [g, { state: r.state,
     items: r.items.slice(0, 3).map(i => ({ mxikCode: i.mxikCode, mxikName: i.mxikName || i.name, brandName: i.brandName, attributeName: i.attributeName })) }]))); } catch {}
-}, 500); };
+};
+const saveResults = () => { clearTimeout(saveTimer); saveTimer = setTimeout(writeResults, 500); };
+// Closing or reloading right after a check must not lose the last half second of results.
+addEventListener('pagehide', () => { clearTimeout(saveTimer); writeResults(); });
 function pill(g) {
   const r = results.get(g);
   if (!r) return '<span class="pill wait">—</span>';
@@ -793,12 +805,14 @@ lt.addEventListener('click', e => {
 
 const checkBtn = document.getElementById('checkAll');
 let running = false;
-checkBtn.addEventListener('click', async () => {
-  if (running) { running = false; return; }
-  let todo = filtered().map(r => r[0]).filter(g => !results.has(g) || results.get(g).state === 'err');
-  // Everything already checked: a second press re-checks the whole list for fresh data.
-  if (!todo.length) todo = filtered().map(r => r[0]);
-  running = true; checkBtn.textContent = 'Тўхтатиш';
+const LAST_TS = 'bayan-last-check-ts', STALE_MS = 12 * 3600e3;
+checkBtn.addEventListener('click', () => { if (running) running = false; else runCheck(false); });
+// auto: started on page open. Checks every product that has no result yet, or the whole catalog when the last
+// full check is older than STALE_MS, and leaves the list on "all" so the overall result is what you see.
+async function runCheck(auto) {
+  const pool = (auto ? CATALOG : filtered()).map(r => r[0]);
+  let todo = pool.filter(g => !results.has(g) || results.get(g).state === 'err');
+  if (!todo.length && (!auto || Date.now() - (getLS(LAST_TS, 0) || 0) > STALE_MS)) todo = pool;
   let done = 0;
   const total = todo.length;
   const tick = () => {
@@ -808,6 +822,8 @@ checkBtn.addEventListener('click', async () => {
     prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${main ? `<a href="#" class="showdiff" data-f="main" style="color:var(--bad)">❗ асосий хато: <b>${main}</b> (кўриш)</a> · ` : ''}${diff ? `<a href="#" class="showdiff" data-f="diff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
       (all.some(r => r.state === 'err') ? ` · хато: <b>${all.filter(r => r.state === 'err').length}</b>` : '');
   };
+  if (!todo.length) { tick(); prog.innerHTML = prog.innerHTML.replace(/^Текширилди: <b>0<\/b> \/ 0 · /, 'Умумий натижа · ') + ' · тайёр ✓'; return; }
+  running = true; checkBtn.textContent = 'Тўхтатиш';
   tick();
   const worker = async () => {
     while (running && todo.length) {
@@ -817,16 +833,20 @@ checkBtn.addEventListener('click', async () => {
     }
   };
   await Promise.all([worker(), worker(), worker()]);
-  running = false; checkBtn.textContent = 'Барчасини текшириш';
+  running = false; checkBtn.textContent = 'Қайта текшириш';
   prog.innerHTML += todo.length ? ' · тўхтатилди' : ' · тайёр ✓';
-  if (!todo.length) { const n = nowTk(); setLS(LAST_CHECK, `${String(n.d).padStart(2, '0')}.${String(n.m + 1).padStart(2, '0')}.${n.y} ${n.time.slice(0, 5)}`); updateSide(); }
-  // Finished with discrepancies: show only those rows so they are reviewed first.
-  if (!todo.length) {
+  if (!todo.length && pool.length === CATALOG.length) {
+    const n = nowTk();
+    setLS(LAST_CHECK, `${String(n.d).padStart(2, '0')}.${String(n.m + 1).padStart(2, '0')}.${n.y} ${n.time.slice(0, 5)}`);
+    setLS(LAST_TS, Date.now()); updateSide();
+  }
+  // A manual check that finished with discrepancies shows only those rows so they are reviewed first.
+  if (!todo.length && !auto) {
     const has = fn => filtered().some(r => { const x = results.get(r[0]); return x?.state === 'yes' && fn(r, x.items).length; });
     const f = has(mainOf) ? 'main' : has(issuesOf) ? 'diff' : '';
     if (f) { document.getElementById('lst').value = f; renderList(); }
   }
-});
+}
 prog.addEventListener('click', e => {
   const a = e.target.closest('.showdiff');
   if (!a) return;
@@ -1031,7 +1051,7 @@ function updateSide() {
       + row('no', '#c0362c', 'ИКПУ йўқ', c.no) + row('main', '#e5484d', '❗ Асосий хато', c.main) + row('diff', '#d08a00', '⚠ Фарқ бор (ҳаммаси)', c.main + c.diff)
       + row('wait', '#9aa6b8', 'Текширилмаган', c.wait);
     const lc = getLS(LAST_CHECK, null);
-    document.getElementById('lastcheck').textContent = lc ? `Охирги тўлиқ текширув: ${lc}` : '«Барчасини текшириш» ҳали бажарилмаган';
+    document.getElementById('lastcheck').textContent = lc ? `Охирги тўлиқ текширув: ${lc}` : 'Тўлиқ текширув ҳали тугамаган';
   }, 300);
 }
 document.getElementById('stats').addEventListener('click', e => {
@@ -1190,6 +1210,7 @@ addEventListener('resize', fitSides);
 setTimeout(fitSides, 400);
 
 renderList();
+setTimeout(() => runCheck(true), 600);
 </script>
 </body>
 </html>
