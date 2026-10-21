@@ -169,6 +169,8 @@
       </select>
       <button class="go" id="checkAll" type="button">Барчасини текшириш</button>
       <button class="copy" id="csv" type="button">Excel'га юклаш</button>
+      <button class="copy" id="pdf" type="button">PDF</button>
+      <button class="copy" id="txt" type="button">TXT</button>
     </div>
     <div class="prog" id="prog">«Барчасини текшириш» тугмаси ҳар бир штрих кодни tasnif.soliq.uz да текшириб, ИКПУ бор-йўқлигини белгилайди.</div>
     <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>ИКПУ</th></tr></thead><tbody id="lt"></tbody></table></div>
@@ -692,6 +694,60 @@ document.getElementById('csv').addEventListener('click', async () => {
   a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
   a.download = `BAYAN-MEDICAL-IKPU-${new Date().toISOString().slice(0, 10)}.xlsx`;
   document.body.appendChild(a); a.click(); a.remove();
+});
+
+// Rows for PDF/TXT: the same columns and notes as the Excel file.
+function exportRows() {
+  return filtered().map(([g, name, brand, desc, pack], i) => {
+    const r = results.get(g), it = r?.items?.[0];
+    const st = !r ? 'Текширилмаган' : r.state === 'yes' ? 'Бор' : r.state === 'no' ? 'Йўқ' : 'Хато';
+    const iss = r?.state === 'yes' ? issuesOf([g, name, brand, desc, pack], r.items) : [];
+    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => '⚠ ' + x.text).join('\n') : '✓ Мос') : '';
+    return { n: i + 1, g, name, brand, desc, pack, st, code: it?.mxikCode || '', iname: it?.mxikName || it?.name || '', note, bad: iss.length > 0 };
+  });
+}
+const exportSummary = rows => `Сана: ${new Date().toLocaleDateString('ru-RU')} · Жами: ${rows.length} · ИКПУ бор: ${rows.filter(r => r.st === 'Бор').length} · ИКПУ йўқ: ${rows.filter(r => r.st === 'Йўқ').length} · фарқ бор: ${rows.filter(r => r.bad).length} · Манба: tasnif.soliq.uz · Тузувчи: Элдор Эркинов`;
+const fileStem = () => `BAYAN-MEDICAL-IKPU-${new Date().toISOString().slice(0, 10)}`;
+
+document.getElementById('txt').addEventListener('click', () => {
+  const rows = exportRows();
+  const clean = v => String(v ?? '').replace(/\s*\n\s*/g, '; ').replace(/\t/g, ' ');
+  const lines = ['BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси', exportSummary(rows), '',
+    ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'ИКПУ ҳолати', 'ИКПУ коди', 'ИКПУ номи', 'Изоҳ (солиштириш)'].join('\t'),
+    ...rows.map(r => [r.n, r.g, r.name, r.brand, r.desc, r.pack, r.st, r.code, r.iname, r.note].map(clean).join('\t'))];
+  const a = document.createElement('a');
+  // BOM + CRLF so Notepad on Windows shows Cyrillic and line breaks correctly.
+  a.href = URL.createObjectURL(new Blob(['﻿' + lines.join('\r\n')], { type: 'text/plain;charset=utf-8' }));
+  a.download = fileStem() + '.txt';
+  document.body.appendChild(a); a.click(); a.remove();
+});
+
+// PDF: a print-ready page; the browser's "Save as PDF" printer writes the file.
+document.getElementById('pdf').addEventListener('click', () => {
+  const rows = exportRows();
+  const fr = document.createElement('iframe');
+  fr.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  document.body.appendChild(fr);
+  const d = fr.contentDocument;
+  d.open();
+  d.write(`<!doctype html><html><head><meta charset="utf-8"><title>${fileStem()}</title><style>
+    @page { size: A4 landscape; margin: 10mm; }
+    body { font: 9px Arial, sans-serif; color: #1a2233; margin: 0; }
+    h1 { font-size: 15px; color: #281274; margin: 0 0 2px; } .sum { color: #5b6b80; margin-bottom: 8px; }
+    table { width: 100%; border-collapse: collapse; } thead { display: table-header-group; }
+    th { background: #281274; color: #fff; padding: 4px; text-align: left; border-bottom: 2px solid #0a8ee0; }
+    td { padding: 3px 4px; border: 1px solid #d9dee8; vertical-align: top; } tr { page-break-inside: avoid; }
+    tbody tr:nth-child(even) td { background: #f5f8fc; } .c { font-family: Consolas, monospace; white-space: nowrap; }
+    .yes { color: #0b7a55; font-weight: bold; } .no { color: #c0362c; font-weight: bold; } .bad { background: #fff4dc !important; color: #9a6200; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  </style></head><body><h1>BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси</h1><div class="sum">${esc(exportSummary(rows))}</div>
+  <table><thead><tr><th>№</th><th>Штрих код</th><th>Номи</th><th>Тавсифи</th><th>Қадоқ</th><th>ИКПУ</th><th>ИКПУ коди</th><th>ИКПУ номи</th><th>Изоҳ</th></tr></thead><tbody>
+  ${rows.map(r => `<tr><td>${r.n}</td><td class="c">${esc(r.g)}</td><td>${esc(r.name)}${r.brand && r.brand !== r.name ? `<br>${esc(r.brand)}` : ''}</td>
+    <td>${esc(r.desc)}</td><td>${esc(r.pack)}</td><td class="${r.st === 'Бор' ? 'yes' : r.st === 'Йўқ' ? 'no' : ''}">${esc(r.st)}</td>
+    <td class="c">${esc(r.code)}</td><td>${esc(r.iname)}</td><td class="${r.bad ? 'bad' : ''}">${esc(r.note).replace(/\n/g, '<br>')}</td></tr>`).join('')}
+  </tbody></table></body></html>`);
+  d.close();
+  setTimeout(() => { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(() => fr.remove(), 60000); }, 300);
 });
 
 renderList();
