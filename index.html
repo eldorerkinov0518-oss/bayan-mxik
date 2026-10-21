@@ -1120,17 +1120,20 @@ fitLayout(); setTimeout(fitLayout, 300);
   };
   show(); setInterval(show, 3200);
 
+  // A glass ampoule: ball head, narrow neck, body with liquid and a break ring.
+  const AMPOULE = (w, h) => `<svg viewBox="0 0 30 80" width="${w}" height="${h}"><path d="M15 2a5 5 0 0 1 5 5c0 3-2 4-2.6 6.5-.4 1.6 1 2.8 1 4.5 0 1.4-1.4 2.6-1.4 4.2 0 1.6 1.4 2.5 4.6 4.4A8 8 0 0 1 25 33v39a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6V33a8 8 0 0 1 3.4-6.4c3.2-1.9 4.6-2.8 4.6-4.4 0-1.6-1.4-2.8-1.4-4.2 0-1.7 1.4-2.9 1-4.5C12 11 10 10 10 7a5 5 0 0 1 5-5z" fill="currentColor" fill-opacity=".18" stroke="currentColor" stroke-width="1.8"/><path d="M6.5 46h17v26a4.5 4.5 0 0 1-4.5 4.5h-8A4.5 4.5 0 0 1 6.5 72z" fill="currentColor" fill-opacity=".55"/><path d="M12.4 19.5h5.2" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M9 36v28" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/></svg>`;
   // Hero floaters.
   const SHAPES = [
-    '<svg viewBox="0 0 24 48" width="14" height="28"><path d="M8 2h8v6l3 4v32a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V12l3-4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 26h14" stroke="currentColor" stroke-width="2"/></svg>',
+    AMPOULE(14, 38),
     '<svg viewBox="0 0 48 24" width="30" height="15"><rect x="2" y="2" width="44" height="20" rx="10" fill="none" stroke="currentColor" stroke-width="2.4"/><path d="M24 2v20" stroke="currentColor" stroke-width="2.4"/></svg>',
     '<svg viewBox="0 0 24 24" width="18" height="18"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" fill="currentColor"/></svg>',
     '<svg viewBox="0 0 40 40" width="24" height="24"><circle cx="8" cy="20" r="4" fill="currentColor"/><circle cx="30" cy="9" r="4" fill="currentColor"/><circle cx="30" cy="31" r="4" fill="currentColor"/><path d="M8 20 30 9M8 20l22 11" stroke="currentColor" stroke-width="2"/></svg>'];
   // Page background floaters: larger and slower, in brand colours.
   const bg = document.getElementById('bgfloat');
-  bg.innerHTML = Array.from({ length: 26 }, (_, i) => {
+  bg.innerHTML = Array.from({ length: 30 }, (_, i) => {
     const left = (i * 37 + 3) % 100, dur = 26 + (i * 11) % 22, delay = -((i * 5.3) % dur), sc = 1.2 + (i % 3) * 0.45;
-    return `<i class="${i % 3 ? '' : 'c'}" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;--o:${(0.1 + (i % 4) * 0.04).toFixed(2)};--r:${(i % 2 ? 1 : -1) * (60 + i * 7)}deg;scale:${sc}">${SHAPES[(i + 1) % SHAPES.length]}</i>`;
+    const amp = i % 2 === 0;
+    return `<i class="${i % 3 ? '' : 'c'}" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;--o:${(amp ? 0.22 : 0.1) + (i % 4) * 0.04};--r:${(i % 2 ? 1 : -1) * (amp ? 25 + i * 3 : 60 + i * 7)}deg;scale:${sc}">${amp ? AMPOULE(18 + (i % 3) * 6, 48 + (i % 3) * 16) : SHAPES[(i + 1) % SHAPES.length]}</i>`;
   }).join('');
   const fl = document.getElementById('floaters');
   fl.innerHTML = Array.from({ length: 18 }, (_, i) => {
