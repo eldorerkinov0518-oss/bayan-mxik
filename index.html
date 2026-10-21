@@ -224,6 +224,28 @@
   }
   /* Page background: slow colour blobs and floating medical shapes behind everything. */
   .bgfx { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+  /* Background scene: ampoules on a conveyor are filled under the nozzle and sealed by the burners.
+     The row steps one place per cycle and jumps back, so slot 3 fills and slot 5 gets sealed each time. */
+  .prodline svg { display: block; width: 100%; height: auto; }
+  .prodline span { display: block; margin-top: 2px; text-align: center; font: 600 11.5px Inter, system-ui, sans-serif; color: #5b6b80; }
+  .prodline .glass { fill: rgba(255, 255, 255, .85); stroke: #7c8db5; stroke-width: 1.4; }
+  .prodline .liq { fill: #38bdf8; transform-box: fill-box; transform-origin: bottom; }
+  .prodline .tip { fill: rgba(255, 255, 255, .9); stroke: #7c8db5; stroke-width: 1.2; }
+  .prodline .row { animation: plrow 3.2s ease-in-out infinite; }
+  .prodline .fill { animation: plfill 3.2s linear infinite; }
+  .prodline .seal { animation: plseal 3.2s linear infinite; }
+  .prodline .stream { stroke: #38bdf8; stroke-width: 3; stroke-dasharray: 5 4; animation: plstream 3.2s linear infinite; }
+  .prodline .belt { stroke: #a5b4fc; stroke-width: 2; stroke-dasharray: 6 6; animation: plbelt 3.2s ease-in-out infinite; }
+  .prodline .flame { fill: #fb923c; transform-box: fill-box; transform-origin: center; animation: plflame .35s ease-in-out infinite alternate; }
+  .prodline .f2 { animation-delay: .17s; } .prodline .led { fill: #4ade80; animation: plflame .6s steps(2) infinite; }
+  @keyframes plrow { 0% { transform: translateX(0); } 18%, 100% { transform: translateX(50px); } }
+  @keyframes plfill { 0%, 26% { transform: scaleY(0); } 72%, 100% { transform: scaleY(1); } }
+  @keyframes plseal { 0%, 62% { opacity: 0; } 80%, 100% { opacity: 1; } }
+  @keyframes plstream { 0%, 24% { opacity: 0; stroke-dashoffset: 0; } 26%, 72% { opacity: 1; } 74%, 100% { opacity: 0; stroke-dashoffset: -60; } }
+  @keyframes plbelt { 0% { stroke-dashoffset: 0; } 18%, 100% { stroke-dashoffset: -50; } }
+  @keyframes plflame { from { transform: scale(.7); opacity: .7; } to { transform: scale(1.15); opacity: 1; } }
+  @media (prefers-reduced-motion: reduce) { .prodline * { animation: none !important; } }
+
   .blob { position: absolute; width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; border-radius: 50%; filter: blur(70px); opacity: .28; animation: blob 26s ease-in-out infinite alternate; }
   .b1 { background: #0a8ee0; left: -12vw; top: 30vh; }
   .b2 { background: #6a4cff; right: -14vw; top: 45vh; animation-duration: 32s; animation-delay: -8s; }
@@ -330,6 +352,16 @@
   .lnk { display: block; padding: 5px 10px; margin-bottom: 4px; border-radius: 10px; background: var(--soft); color: var(--text); text-decoration: none; }
   .lnk b { display: block; font-size: 13px; color: #0a8ee0; } .lnk span { font-size: 11px; color: var(--muted); }
   .tip #tip { font-size: 13px; line-height: 1.5; }
+  /* Side panels: a darker blue-lavender card with a clear border, so they don't glare next to the white main column. */
+  @media (prefers-color-scheme: light) {
+    .side .sc { background: linear-gradient(180deg, #e6e9f7, #dbe2f3); border: 1px solid #aeb8dd; box-shadow: 0 10px 26px rgba(40, 18, 116, .16); }
+    .side .sh { color: #3b3f73; }
+    .side .stats button, .side .lnk, .side #recent button { background: rgba(255, 255, 255, .8); box-shadow: 0 1px 2px rgba(40, 18, 116, .08); }
+    .side .fr s, .side .ring .rb { background: #c7cfe9; stroke: #c7cfe9; }
+    .side .addr { background: rgba(255, 255, 255, .7); }
+    .side .co { border-top-color: #281274; }
+  }
+
   .empty { font-size: 12px; color: var(--muted); }
   main { position: relative; z-index: 1; padding: 0 16px 72px; margin-top: -64px; }
   .search { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px; }
@@ -491,7 +523,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2030</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2055</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -505,6 +537,7 @@
     <div class="sh">Дори шакли бўйича</div>
     <div id="forms"></div>
   </div>
+  <div class="sc prodline" data-cut="0" aria-hidden="true"><svg viewBox="0 0 300 172" aria-hidden="true"><rect x="150" y="6" width="50" height="28" rx="7" fill="#281274"/><circle cx="162" cy="20" r="3" class="led"/><rect x="171" y="34" width="8" height="30" rx="2" fill="#4b5d87"/><path d="M175 64v6" stroke="#4b5d87" stroke-width="4" stroke-linecap="round"/><line class="stream" x1="175" y1="72" x2="175" y2="118"/><path d="M246 66l20 20M304 66l-20 20" stroke="#64748b" stroke-width="5" stroke-linecap="round"/><ellipse class="flame" cx="269" cy="89" rx="6" ry="3"/><ellipse class="flame f2" cx="281" cy="89" rx="6" ry="3"/><g class="row"><g transform="translate(-25 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(25 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(75 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(125 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq fill" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(175 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/></g><g transform="translate(225 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip seal" d="M-4 91Q0 76 4 91z"/></g><g transform="translate(275 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip" d="M-4 91Q0 76 4 91z"/></g><g transform="translate(325 0)"><rect class="glass" x="-9" y="104" width="18" height="46" rx="5"/><rect class="liq" x="-7" y="118" width="14" height="30" rx="2"/><path class="glass" d="M-9 108Q-9 100-4 98V91h8v7q5 2 5 10z"/><path class="tip" d="M-4 91Q0 76 4 91z"/></g></g><rect x="0" y="150" width="300" height="11" rx="5.5" fill="#281274"/><line class="belt" x1="0" y1="155.5" x2="300" y2="155.5"/><circle cx="8" cy="155.5" r="3" fill="#a5b4fc"/><circle cx="292" cy="155.5" r="3" fill="#a5b4fc"/></svg><span>Ишлаб чиқариш: ампулага дори қуйиш</span></div>
 </aside>
 <aside class="side r" aria-label="BAYAN MEDICAL">
   <div class="sc co">
@@ -762,6 +795,7 @@ const I18N = {
   'Ишончли дори — соғлом келажак.': ['Надёжное лекарство — здоровое будущее.', 'Reliable medicine, healthy future.'],
   // Chat
   'Блокдан чиқариш': ['Разблокировать', 'Unblock'],
+  'Ишлаб чиқариш: ампулага дори қуйиш': ['Производство: розлив препарата в ампулы', 'Production: filling ampoules'],
   'Тест: ёқиқ': ['Тест: вкл', 'Test: on'],
   'Тест: ўчиқ': ['Тест: выкл', 'Test: off'],
   'Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш': ['Включить или выключить надпись «тестовый режим» вверху сайта для всех', 'Turn the «test mode» notice at the top of the site on or off for everyone'],
