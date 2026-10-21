@@ -331,6 +331,7 @@
   .name { font-size: 19px; font-weight: 700; margin: 10px 0 0; line-height: 1.35; }
   .tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--line); }
   .tile { background: var(--card); padding: 14px 22px; }
+  .tiles .tile:last-child:nth-child(3n+2) { grid-column: span 2; } .tiles .tile:last-child:nth-child(3n+1) { grid-column: span 3; }
   .tile .v { font-weight: 600; margin-top: 2px; overflow-wrap: anywhere; }
   .sec { padding: 18px 22px; border-top: 1px solid var(--line); }
   .crumbs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
@@ -376,7 +377,7 @@
     .hero h1 { font-size: 24px; }
     form { flex-direction: column; }
     button.go { justify-content: center; padding: 14px; }
-    .tiles { grid-template-columns: 1fr; }
+    .tiles { grid-template-columns: 1fr; } .tiles .tile:last-child { grid-column: auto !important; }
     dl { grid-template-columns: 1fr; gap: 0; } dd { margin-bottom: 8px; }
     .code { font-size: 21px; }
   }
@@ -448,7 +449,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1640</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1710</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -806,6 +807,16 @@ function tile(label, value) {
   return `<div class="tile"><div class="label">${esc(label)}</div><div class="v">${has(value) ? esc(value) : '—'}</div></div>`;
 }
 
+// Find a scalar field anywhere in the record whose key matches re (price, prescription, …).
+function pick(o, re, d = 0) {
+  if (!o || typeof o !== 'object' || d > 3) return null;
+  for (const [k, v] of Object.entries(o)) if (re.test(k) && has(v) && typeof v !== 'object') return v;
+  for (const v of Object.values(o)) { const r = typeof v === 'object' ? pick(v, re, d + 1) : null; if (has(r)) return r; }
+  return null;
+}
+const sum = v => isNaN(+v) ? v : (+v).toLocaleString('ru-RU').replace(/,/g, ' ') + ' сўм';
+const recipeText = v => typeof v === 'boolean' || /^[01]$/.test(String(v)) ? (v === true || +v === 1 ? 'Рецепт бўйича' : 'Рецептсиз') : v;
+
 function render(item, card) {
   const c = Object.assign({}, item, card || {});
   const name = c.mxikName || c.name;
@@ -817,8 +828,9 @@ function render(item, card) {
   ].filter(x => has(x[2]));
   const details = [
     row('Хусусияти', c.attributeName), row('Қисқа номи', c.shortName),
-    row('Халқаро патентланмаган номи', c.mnnName), row('Солиқ имтиёзи', c.lgotaName),
   ].join('');
+  const recipe = pick(c, /recipe|retsept|prescri|otpusk|dispens|condition/i);
+  const price = pick(c, /price|narx|cost|tsena/i);
   let html = `<article class="card">
     <div class="card-top">
       <div class="label">ИКПУ коди</div>
@@ -833,6 +845,11 @@ function render(item, card) {
       ${tile('Ишлаб чиқарувчи / бренд', c.brandName)}
       ${tile('Ўлчов бирлиги', unit)}
       ${tile('Штрих код (GTIN)', c.internationalCode)}
+      ${tile('Маркировка', has(c.label) ? (marked ? 'Ҳа, мажбурий' : 'Йўқ') : null)}
+      ${tile('Солиқ имтиёзи', has(c.lgotaName) ? c.lgotaName : 'Мавжуд эмас')}
+      ${tile('Халқаро патентланмаган номи (МНН)', c.mnnName)}
+      ${has(recipe) ? tile('Сотиш шарти', recipeText(recipe)) : ''}
+      ${has(price) ? tile('Базавий улгуржи нарх', sum(price)) : ''}
     </div>`;
   if (crumbs.length) {
     html += `<div class="sec"><div class="label">Таснифдаги ўрни</div><div class="crumbs">` +
