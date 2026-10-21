@@ -61,31 +61,51 @@
   @keyframes tbmove { to { transform: translateX(-50%); } }
   .testbar:hover .tb-track { animation-play-state: paused; }
   .chatbtn { position: fixed; right: 16px; bottom: 50px; z-index: 30; display: flex; align-items: center; gap: 8px; padding: 11px 18px; border: 0; border-radius: 999px;
-    background: linear-gradient(135deg, #281274, #0a8ee0); color: #fff; font: 700 14px Inter, system-ui, sans-serif; cursor: pointer;
-    box-shadow: 0 8px 24px rgba(40, 18, 116, .4); animation: cbpulse 3s ease-in-out infinite; }
+    background: linear-gradient(135deg, #0b8f7a, #14b8a6 55%, #22c55e); color: #fff; font: 700 14px Inter, system-ui, sans-serif; cursor: pointer;
+    box-shadow: 0 8px 24px rgba(11, 143, 122, .45); animation: cbpulse 3s ease-in-out infinite; }
   .chatbtn span { font-size: 18px; }
-  .chatbtn b { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #e5484d; font-size: 12px; line-height: 20px; }
-  @keyframes cbpulse { 0%, 100% { box-shadow: 0 8px 24px rgba(40, 18, 116, .4), 0 0 0 0 rgba(10, 142, 224, .5); } 50% { box-shadow: 0 8px 24px rgba(40, 18, 116, .4), 0 0 0 10px rgba(10, 142, 224, 0); } }
-  .chat { position: fixed; right: 16px; bottom: 104px; z-index: 31; width: min(380px, calc(100vw - 32px)); height: min(560px, calc(100vh - 150px));
-    display: flex; flex-direction: column; border-radius: 18px; overflow: hidden; background: var(--card); box-shadow: 0 20px 60px rgba(20, 20, 60, .35); }
+  .chatbtn b { min-width: 20px; height: 20px; padding: 0 6px; border-radius: 10px; background: #ef4444; font-size: 12px; line-height: 20px; }
+  @keyframes cbpulse { 0%, 100% { box-shadow: 0 8px 24px rgba(11, 143, 122, .45), 0 0 0 0 rgba(20, 184, 166, .55); } 50% { box-shadow: 0 8px 24px rgba(11, 143, 122, .45), 0 0 0 12px rgba(20, 184, 166, 0); } }
+  .chat { position: fixed; right: 16px; bottom: 104px; z-index: 31; width: min(390px, calc(100vw - 32px)); height: min(580px, calc(100vh - 150px));
+    display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 24px 70px rgba(6, 60, 52, .35); border: 1px solid rgba(20, 184, 166, .25); }
   .chat[hidden] { display: none; }
-  .chat header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px; color: #fff; background: linear-gradient(135deg, #281274, #0a8ee0); }
-  .chat header b { display: block; font-size: 15px; } .chat header small { font-size: 11.5px; opacity: .85; }
-  .chat header button { width: 30px; height: 30px; border: 0; border-radius: 8px; background: rgba(255,255,255,.18); color: #fff; cursor: pointer; }
-  .chatnote { margin: 10px 12px 0; padding: 10px 12px; border-radius: 12px; background: #fff7e6; border-left: 4px solid #ff9f1c; color: #5a3d00; font-size: 12.5px; line-height: 1.5; }
-  .msgs { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
-  .msg { max-width: 82%; padding: 8px 12px; border-radius: 14px 14px 14px 4px; background: var(--soft); color: var(--text); font-size: 13.5px; line-height: 1.45; word-wrap: break-word; }
-  .msg i { display: block; font-style: normal; font-size: 11px; font-weight: 700; color: #0a8ee0; margin-bottom: 2px; }
-  .msg small { display: block; font-size: 10.5px; color: var(--muted); margin-top: 3px; text-align: right; }
-  .msg.me { align-self: flex-end; border-radius: 14px 14px 4px 14px; background: linear-gradient(135deg, #281274, #3b2a9e); color: #fff; }
-  .msg.me i, .msg.me small { color: rgba(255,255,255,.75); }
-  .msg.admin { background: #e3f7ee; border: 1px solid #b6e8cf; } .msg.admin i { color: #0b7a55; }
-  .msgs .sys { align-self: center; font-size: 12px; color: var(--muted); text-align: center; padding: 6px 10px; }
-  #chatf { padding: 10px 12px 12px; border-top: 1px solid var(--line); display: grid; gap: 8px; }
-  #chatf input, #chatf textarea { width: 100%; padding: 9px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--soft); color: var(--text);
-    font: 500 13.5px Inter, system-ui, sans-serif; resize: none; box-sizing: border-box; }
-  #chatf .row { display: flex; gap: 8px; } #chatf .row button { flex: none; width: 46px; border: 0; border-radius: 10px; background: #0a8ee0; color: #fff; font-size: 18px; cursor: pointer; }
-  #chatf .row button:disabled { opacity: .5; cursor: default; }
+  .chat header { display: flex; align-items: center; gap: 11px; padding: 13px 14px; color: #fff; background: linear-gradient(135deg, #0b8f7a, #14b8a6 60%, #22c55e); }
+  .chat header .ava { position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.22); font-size: 20px; }
+  .chat header .ava::after { content: ''; position: absolute; right: 1px; bottom: 1px; width: 10px; height: 10px; border-radius: 50%; background: #a3ff7a; border: 2px solid #14b8a6; }
+  .chat header > div { flex: 1; min-width: 0; }
+  .chat header b { display: block; font-size: 15.5px; letter-spacing: .2px; } .chat header small { font-size: 11.5px; opacity: .9; }
+  .chat header button { flex: none; width: 32px; height: 32px; border: 0; border-radius: 50%; background: rgba(255,255,255,.2); color: #fff; cursor: pointer; font-size: 14px; }
+  .chat header button:hover { background: rgba(255,255,255,.32); }
+  .chatnote { margin: 0; padding: 0; background: #f0fdfa; border-bottom: 1px solid #ccf3ea; color: #134e4a; font-size: 12.5px; line-height: 1.5; }
+  .chatnote summary { list-style: none; cursor: pointer; padding: 9px 14px; font-weight: 700; color: #0f766e; display: flex; align-items: center; gap: 6px; }
+  .chatnote summary::-webkit-details-marker { display: none; }
+  .chatnote summary::after { content: '▾'; margin-left: auto; transition: transform .2s; } .chatnote[open] summary::after { transform: rotate(180deg); }
+  .chatnote p { margin: 0; padding: 0 14px 10px; }
+  .msgs { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px;
+    background: #eef7f4 radial-gradient(circle at 1px 1px, rgba(15, 118, 110, .09) 1px, transparent 0) 0 0 / 16px 16px; }
+  .mrow { display: flex; align-items: flex-end; gap: 7px; max-width: 88%; }
+  .mrow .av { flex: none; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 12px Inter, system-ui, sans-serif; }
+  .mrow.me { align-self: flex-end; flex-direction: row-reverse; } .mrow.me .av { display: none; }
+  .msg { padding: 8px 12px 6px; border-radius: 16px 16px 16px 5px; background: #fff; color: #1f2937; font-size: 13.5px; line-height: 1.45; word-wrap: break-word; min-width: 90px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+  .msg i { display: block; font-style: normal; font-size: 11.5px; font-weight: 700; margin-bottom: 2px; }
+  .msg small { display: block; font-size: 10.5px; color: #94a3b8; margin-top: 3px; text-align: right; }
+  .mrow.me .msg { border-radius: 16px 16px 5px 16px; background: linear-gradient(135deg, #0f9f87, #14b8a6); color: #fff; }
+  .mrow.me .msg i { color: rgba(255,255,255,.85) !important; } .mrow.me .msg small { color: rgba(255,255,255,.75); }
+  .mrow.admin .msg { box-shadow: 0 0 0 1.5px #f59e0b, 0 2px 6px rgba(245, 158, 11, .25); }
+  .mrow.admin .av { background: linear-gradient(135deg, #f59e0b, #f97316) !important; }
+  .msg .tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 6px; background: #fef3c7; color: #b45309; font-size: 9.5px; letter-spacing: .4px; vertical-align: 1px; }
+  .msgs .sys { align-self: center; font-size: 12px; color: #0f766e; text-align: center; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.75); }
+  #chatf { padding: 10px 12px 12px; border-top: 1px solid #e2efec; display: grid; gap: 8px; background: #fff; }
+  #chatf input, #chatf textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #d6ebe6; border-radius: 14px; background: #f7fbfa; color: #1f2937;
+    font: 500 13.5px Inter, system-ui, sans-serif; resize: none; box-sizing: border-box; outline: none; transition: border-color .15s, box-shadow .15s; }
+  #chatf input { padding-left: 36px; background: #f7fbfa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2314b8a6' stroke-width='2.2'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4 4-6 8-6s8 2 8 6'/%3E%3C/svg%3E") 12px 50% no-repeat; }
+  #chatf input:focus, #chatf textarea:focus { border-color: #14b8a6; box-shadow: 0 0 0 3px rgba(20, 184, 166, .15); }
+  #chatf .row { display: flex; gap: 8px; align-items: flex-end; }
+  #chatf .row button { flex: none; width: 46px; height: 46px; border: 0; border-radius: 50%; background: linear-gradient(135deg, #0f9f87, #22c55e); color: #fff; font-size: 18px; cursor: pointer;
+    box-shadow: 0 4px 12px rgba(15, 159, 135, .35); transition: transform .15s; }
+  #chatf .row button:hover:not(:disabled) { transform: scale(1.06); }
+  #chatf .row button:disabled { opacity: .45; cursor: default; box-shadow: none; }
   @media (prefers-reduced-motion: reduce) { .tb-track, .chatbtn { animation: none; } }
   /* Spinning 3D syringe and ampoule beside the title: each is a stack of SVG slices along Z, so it keeps its thickness while turning. */
   .hero3d { display: none; position: absolute; right: 0; top: -2px; width: 250px; height: 150px; pointer-events: none; perspective: 700px; }
@@ -373,7 +393,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1445</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1455</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -413,8 +433,8 @@
 </aside>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
-    <header><div><b>Умумий чат</b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
-    <div class="chatnote">ℹ️ Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></div>
+    <header><span class="ava">💬</span><div><b>Умумий чат</b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
+    <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
       <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
@@ -1344,11 +1364,15 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const myId = getLS('bayan-chat-id', null) || (() => { const id = Math.random().toString(36).slice(2, 10); setLS('bayan-chat-id', id); return id; })();
   nameIn.value = getLS('bayan-chat-name', isAdmin ? 'Админ' : '');
   let list = [], seen = getLS('bayan-chat-seen', 0), timer;
+  // Each person gets a steady colour from their id, like in messengers.
+  const hue = k => { let h = 0; for (const ch of String(k)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h}, 62%, 42%)`; };
+  const initials = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const fmt = ts => { const d = new Date(ts); return d.toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
   const draw = () => {
     if (!CHAT_DB) { msgs.innerHTML = '<div class="sys">Чат уланмоқда. Тез орада бу ерда изоҳ қолдириб, бошқа фойдаланувчилар ва админ билан ёзишишингиз мумкин бўлади.</div>'; return; }
     const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40;
-    msgs.innerHTML = list.length ? list.map(m => `<div class="msg${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}"><i>${m.admin ? '🛡 ' : ''}${esc(m.name)}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small></div>`).join('')
+    msgs.innerHTML = list.length ? list.map(m => { const c = hue(m.uid || m.name);
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small></div></div>`; }).join('')
       : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
     if (atEnd || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
     box.dataset.drawn = 1;
@@ -1391,6 +1415,10 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   textIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
   form.querySelector('button').disabled = !CHAT_DB;
+  // The notice is open on the first visit; once someone folds it, it stays folded.
+  const note = document.getElementById('chatnote');
+  if (getLS('bayan-chat-note', '') === 'closed') note.open = false;
+  note.addEventListener('toggle', () => setLS('bayan-chat-note', note.open ? 'open' : 'closed'));
   load(); poll();
 }
 
