@@ -227,6 +227,7 @@
   /* Background scene: ampoules on a conveyor are filled under the nozzle and sealed by the burners.
      The row steps one place per cycle and jumps back, so slot 3 fills and slot 5 gets sealed each time. */
   .prodline svg { display: block; width: 100%; height: auto; }
+  .side .prodline { padding: 8px 10px 6px; } .side .prodline svg { max-height: 112px; }
   .prodline span { display: block; margin-top: 2px; text-align: center; font: 600 11.5px Inter, system-ui, sans-serif; color: #5b6b80; }
   .prodline .glass { fill: rgba(255, 255, 255, .85); stroke: #7c8db5; stroke-width: 1.4; }
   .prodline .liq { fill: #38bdf8; transform-box: fill-box; transform-origin: bottom; }
@@ -357,9 +358,9 @@
   .side { display: none; }
   @media (min-width: 1400px) {
     .side { display: grid; gap: 10px; align-content: start; position: fixed; top: 142px; z-index: 2; width: min(300px, calc(50vw - 478px));
-      max-height: calc(100vh - 190px); overflow: hidden; }
+      max-height: calc(100vh - 165px); overflow: hidden; }
     .side .sc.cut { display: none; }
-    .side.l { right: calc(50% + 454px); } .side.r { left: calc(50% + 454px); }
+    .side.l { right: calc(50% + 454px); } .side.r { left: calc(50% + 454px); max-height: calc(100vh - 210px); }
   }
   .sc { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 12px 14px; }
   .sh { font: 800 12px Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 8px; }
@@ -565,7 +566,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2115</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2125</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
