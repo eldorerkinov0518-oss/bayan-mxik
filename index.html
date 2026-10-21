@@ -100,8 +100,8 @@
     border-left: 6px solid var(--brand2); }
   .own .t { font-size: 18px; font-weight: 700; margin: 4px 0 8px; }
   .cmp ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
-  .cmp li.ok { color: var(--ok); } .cmp li.bad { color: var(--bad); font-weight: 600; }
-  .cmp.warn { border-left-color: var(--warn); } .cmp.good { border-left-color: var(--ok); }
+  .cmp li.ok { color: var(--ok); } .cmp li.bad { color: var(--warn); font-weight: 600; } .cmp li.bad.main { color: var(--bad); font-size: 15px; }
+  .cmp.warn { border-left-color: var(--warn); } .cmp.warn:has(li.main) { border-left-color: var(--bad); background: var(--badbg); } .cmp.good { border-left-color: var(--ok); }
   .list { margin-top: 28px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 20px 22px; }
   .list h2 { margin: 0; font-size: 19px; }
   .list h2 span { color: var(--muted); font-weight: 500; font-size: 15px; }
@@ -166,10 +166,10 @@
       <input id="lf" autocomplete="off" placeholder="Номи, штрих код ёки ИКПУ коди бўйича излаш">
       <select id="lst" class="copy" title="Ҳолат бўйича">
         <option value="">Ҳаммаси</option><option value="yes">ИКПУ бор</option><option value="no">ИКПУ йўқ</option>
-        <option value="diff">Фарқ бор</option><option value="wait">Текширилмаган</option>
+        <option value="main">❗ Асосий хато</option><option value="diff">Фарқ бор (ҳаммаси)</option><option value="wait">Текширилмаган</option>
       </select>
       <button class="go" id="checkAll" type="button">Барчасини текшириш</button>
-      <button class="copy" id="csv" type="button">Excel'га юклаш</button>
+      <button class="copy" id="csv" type="button" title="Excel'га юклаш">Excel</button>
       <button class="copy" id="pdf" type="button">PDF</button>
       <button class="copy" id="txt" type="button">TXT</button>
     </div>
@@ -338,6 +338,10 @@ let acceptLocal = {};
 try { acceptLocal = JSON.parse(localStorage.getItem(ACCEPT_STORE)) || {}; } catch {}
 const isAccepted = (g, k) => (ACCEPT_BASE[g] || []).includes(k) || (acceptLocal[g] || []).includes(k);
 const checkName = x => x.text.split(':')[0];
+// Wrong trade name or wrong pack count (№5 vs №1) are the main errors; dose, volume and form are secondary.
+const MAIN = ['Номи', 'Қадоқ сони'];
+const isMain = x => MAIN.includes(checkName(x));
+const mark = x => isMain(x) ? '❗ Асосий хато. ' : '⚠ ';
 // "каталог бўйича … бўлиши керак" is the correct value; it is shown in green so it stands out from what tasnif has.
 const WANT_RE = /(каталог бўйича .+? бўлиши керак)/;
 const hiNote = t => esc(t).replace(WANT_RE, '<b class="want">$1</b>');
@@ -386,20 +390,25 @@ function compare(own, it) {
   if (vm && tVol.length) out.push(tVol.includes(+vm[1])
     ? { ok: true, text: `Ҳажми: ${vm[1]} мл` }
     : { ok: false, text: `Ҳажми: каталог бўйича ${vm[1]} мл бўлиши керак, tasnif'да ${tVol.join(', ')} мл` });
-  return out.map(x => !x.ok && isAccepted(own[0], checkName(x)) ? { ok: true, accepted: true, text: x.text } : x);
+  return out.map(x => !x.ok && isAccepted(own[0], checkName(x)) ? { ok: true, accepted: true, text: x.text } : x)
+    .sort((a, b) => (!a.ok && isMain(a) ? 0 : 1) - (!b.ok && isMain(b) ? 0 : 1));
 }
+const mainOf = (own, items) => (issuesOf(own, items) || []).filter(isMain);
 const issuesOf = (own, items) => {
   if (!own || !items?.length) return [];
   // Several IKPU for one barcode: judge by the closest one.
-  return items.map(i => compare(own, i).filter(x => !x.ok)).sort((a, b) => a.length - b.length)[0];
+  const mains = l => l.filter(isMain).length;
+  return items.map(i => compare(own, i).filter(x => !x.ok)).sort((a, b) => mains(a) - mains(b) || a.length - b.length)[0];
 };
 function compareBlock(own, it) {
   const res = compare(own, it);
   if (!res.length) return '';
   const bad = res.filter(x => !x.ok), acc = res.filter(x => x.accepted);
   return `<div class="own cmp ${bad.length ? 'warn' : 'good'}"><div class="label">Каталог бўйича текширув</div>
-    <div class="t">${bad.length ? `⚠ ${bad.length} та жиддий фарқ` : `✓ Каталогга мос (${res.map(x => checkName(x).toLowerCase()).join(', ')})`}</div>
-    ${bad.length || acc.length ? `<ul>${bad.map(x => `<li class="bad">⚠ ${hiNote(x.text)}
+    <div class="t">${bad.length ? [bad.filter(isMain).length && `<span style="color:var(--bad)">❗ ${bad.filter(isMain).length} та асосий хато</span>`,
+      bad.filter(x => !isMain(x)).length && `⚠ ${bad.filter(x => !isMain(x)).length} та бошқа фарқ`].filter(Boolean).join(' · ')
+      : `✓ Каталогга мос (${res.map(x => checkName(x).toLowerCase()).join(', ')})`}</div>
+    ${bad.length || acc.length ? `<ul>${bad.map(x => `<li class="bad${isMain(x) ? ' main' : ''}">${mark(x)}${hiNote(x.text)}
       <button class="copy acc" data-g="${esc(own[0])}" data-k="${esc(checkName(x))}">Тўғри деб қабул қилиш</button></li>`).join('')}
       ${acc.map(x => `<li class="ok">✓ ${esc(checkName(x))}: тўғри деб қабул қилинган</li>`).join('')}</ul>` : ''}</div>`;
 }
@@ -539,8 +548,9 @@ function pill(g) {
   if (r.state === 'err') return '<span class="pill err">Хато</span>';
   if (r.state === 'no') return '<span class="pill no">Йўқ</span>';
   const iss = issuesOf(ownOf(g), r.items);
-  return `<span class="pill yes">Бор</span>${iss.length ? ` <span class="pill err" title="${esc(iss.map(x => x.text).join('\n'))}">⚠ ${iss.length} фарқ</span>` : ''}<small>${esc(r.items[0].mxikCode)}</small>`
-    + (iss.length ? `<small style="color:var(--warn)">${iss.map(x => hiNote(x.text)).join('<br>')}</small>` : '');
+  const m = iss.filter(isMain).length;
+  return `<span class="pill yes">Бор</span>${m ? ` <span class="pill no">❗ Асосий хато</span>` : iss.length ? ` <span class="pill err">⚠ ${iss.length} фарқ</span>` : ''}<small>${esc(r.items[0].mxikCode)}</small>`
+    + (iss.length ? `<small>${iss.map(x => `<span style="color:var(--${isMain(x) ? 'bad);font-weight:600' : 'warn)'}">${mark(x)}${hiNote(x.text)}</span>`).join('<br>')}</small>` : '');
 }
 function setResult(code, items, state) {
   const r = ownOf(code);
@@ -557,6 +567,7 @@ function filtered() {
     if (st === 'wait') return !res;
     if (st === 'yes' || st === 'no') return res?.state === st;
     if (st === 'diff') return res?.state === 'yes' && issuesOf(r, res.items).length > 0;
+    if (st === 'main') return res?.state === 'yes' && mainOf(r, res.items).length > 0;
     return true;
   };
   if (!f) return CATALOG.filter(byState);
@@ -618,7 +629,8 @@ checkBtn.addEventListener('click', async () => {
   const tick = () => {
     const all = [...results.values()];
     const diff = [...results].filter(([g, r]) => r.state === 'yes' && issuesOf(ownOf(g), r.items).length).length;
-    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${diff ? `<a href="#" class="showdiff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
+    const main = [...results].filter(([g, r]) => r.state === 'yes' && mainOf(ownOf(g), r.items).length).length;
+    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${main ? `<a href="#" class="showdiff" data-f="main" style="color:var(--bad)">❗ асосий хато: <b>${main}</b> (кўриш)</a> · ` : ''}${diff ? `<a href="#" class="showdiff" data-f="diff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
       (all.some(r => r.state === 'err') ? ` · хато: <b>${all.filter(r => r.state === 'err').length}</b>` : '');
   };
   tick();
@@ -633,14 +645,17 @@ checkBtn.addEventListener('click', async () => {
   running = false; checkBtn.textContent = 'Барчасини текшириш';
   prog.innerHTML += todo.length ? ' · тўхтатилди' : ' · тайёр ✓';
   // Finished with discrepancies: show only those rows so they are reviewed first.
-  if (!todo.length && filtered().some(r => { const x = results.get(r[0]); return x?.state === 'yes' && issuesOf(r, x.items).length; })) {
-    document.getElementById('lst').value = 'diff'; renderList();
+  if (!todo.length) {
+    const has = fn => filtered().some(r => { const x = results.get(r[0]); return x?.state === 'yes' && fn(r, x.items).length; });
+    const f = has(mainOf) ? 'main' : has(issuesOf) ? 'diff' : '';
+    if (f) { document.getElementById('lst').value = f; renderList(); }
   }
 });
 prog.addEventListener('click', e => {
-  if (!e.target.closest('.showdiff')) return;
+  const a = e.target.closest('.showdiff');
+  if (!a) return;
   e.preventDefault();
-  document.getElementById('lst').value = 'diff'; renderList();
+  document.getElementById('lst').value = a.dataset.f; renderList();
 });
 
 document.getElementById('csv').addEventListener('click', async () => {
@@ -677,7 +692,7 @@ document.getElementById('csv').addEventListener('click', async () => {
     const r = results.get(g), it = r?.items?.[0];
     const st = !r ? 'Текширилмаган' : r.state === 'yes' ? 'Бор' : r.state === 'no' ? 'Йўқ' : 'Хато';
     const iss = r?.state === 'yes' ? issuesOf([g, name, brand, desc, pack], r.items) : [];
-    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => '⚠ ' + x.text).join('\n') : '✓ Мос') : '';
+    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => mark(x) + x.text).join('\n') : '✓ Мос') : '';
     const row = ws.addRow([i + 1, g, name, brand, desc, pack, st, it?.mxikCode || '', it?.mxikName || it?.name || '', note]);
     row.eachCell({ includeEmpty: true }, (c, col) => {
       c.alignment = { vertical: 'top', wrapText: true, horizontal: col === 1 || col === 7 ? 'center' : 'left' };
@@ -689,8 +704,10 @@ document.getElementById('csv').addEventListener('click', async () => {
     if (iss.length) {
       const n = row.getCell(10);
       n.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF4DC' } };
-      const warn = { color: { argb: 'FF9A6200' } }, want = { bold: true, color: { argb: 'FF0B7A55' } };
-      n.value = { richText: note.split(WANT_RE).filter(Boolean).map(text => ({ text, font: WANT_RE.test(text) ? want : warn })) };
+      const warn = { color: { argb: 'FF9A6200' } }, main = { bold: true, color: { argb: 'FFC0362C' } }, want = { bold: true, color: { argb: 'FF0B7A55' } };
+      n.value = { richText: note.split('\n').flatMap((line, k) => [...(k ? [{ text: '\n' }] : []),
+        ...line.split(WANT_RE).filter(Boolean).map(text => ({ text, font: WANT_RE.test(text) ? want : line.startsWith('❗') ? main : warn }))]) };
+      if (iss.some(isMain)) n.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFDECEB' } };
     }
     const s = row.getCell(7);
     const color = st === 'Бор' ? ['FFE3F7EE', 'FF0B7A55'] : st === 'Йўқ' ? ['FFFDECEB', 'FFC0362C'] : ['FFFFF4DC', 'FF9A6200'];
@@ -711,7 +728,7 @@ function exportRows() {
     const r = results.get(g), it = r?.items?.[0];
     const st = !r ? 'Текширилмаган' : r.state === 'yes' ? 'Бор' : r.state === 'no' ? 'Йўқ' : 'Хато';
     const iss = r?.state === 'yes' ? issuesOf([g, name, brand, desc, pack], r.items) : [];
-    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => '⚠ ' + x.text).join('\n') : '✓ Мос') : '';
+    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => mark(x) + x.text).join('\n') : '✓ Мос') : '';
     return { n: i + 1, g, name, brand, desc, pack, st, code: it?.mxikCode || '', iname: it?.mxikName || it?.name || '', note, bad: iss.length > 0 };
   });
 }
@@ -747,13 +764,13 @@ document.getElementById('pdf').addEventListener('click', () => {
     th { background: #281274; color: #fff; padding: 4px; text-align: left; border-bottom: 2px solid #0a8ee0; }
     td { padding: 3px 4px; border: 1px solid #d9dee8; vertical-align: top; } tr { page-break-inside: avoid; }
     tbody tr:nth-child(even) td { background: #f5f8fc; } .c { font-family: Consolas, monospace; white-space: nowrap; }
-    .yes { color: #0b7a55; font-weight: bold; } .no { color: #c0362c; font-weight: bold; } .bad { background: #fff4dc !important; color: #9a6200; } .want { color: #0b7a55; }
+    .yes { color: #0b7a55; font-weight: bold; } .no { color: #c0362c; font-weight: bold; } .bad { background: #fff4dc !important; color: #9a6200; } .want { color: #0b7a55; } .main { color: #c0362c; font-weight: bold; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   </style></head><body><h1>BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси</h1><div class="sum">${esc(exportSummary(rows))}</div>
   <table><thead><tr><th>№</th><th>Штрих код</th><th>Номи</th><th>Тавсифи</th><th>Қадоқ</th><th>ИКПУ</th><th>ИКПУ коди</th><th>ИКПУ номи</th><th>Изоҳ</th></tr></thead><tbody>
   ${rows.map(r => `<tr><td>${r.n}</td><td class="c">${esc(r.g)}</td><td>${esc(r.name)}${r.brand && r.brand !== r.name ? `<br>${esc(r.brand)}` : ''}</td>
     <td>${esc(r.desc)}</td><td>${esc(r.pack)}</td><td class="${r.st === 'Бор' ? 'yes' : r.st === 'Йўқ' ? 'no' : ''}">${esc(r.st)}</td>
-    <td class="c">${esc(r.code)}</td><td>${esc(r.iname)}</td><td class="${r.bad ? 'bad' : ''}">${r.note.split('\n').map(hiNote).join('<br>')}</td></tr>`).join('')}
+    <td class="c">${esc(r.code)}</td><td>${esc(r.iname)}</td><td class="${r.bad ? 'bad' : ''}">${r.note.split('\n').map(l => l.startsWith('❗') ? `<span class="main">${hiNote(l)}</span>` : hiNote(l)).join('<br>')}</td></tr>`).join('')}
   </tbody></table></body></html>`);
   d.close();
   setTimeout(() => { fr.contentWindow.focus(); fr.contentWindow.print(); setTimeout(() => fr.remove(), 60000); }, 300);
