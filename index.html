@@ -449,7 +449,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1710</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1800</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -612,11 +612,16 @@ async function findByIkpu(code) {
 }
 
 async function getCard(mxik) {
-  try {
-    const { ok, body } = await api('/mxik/get/by-mxik', { mxikCode: mxik, lang: LANG });
-    if (!ok || !body) return null;
-    return body.data && body.data.mxikCode ? body.data : body;
-  } catch { return null; }
+  // Medicines also have a pharmacy record with the wholesale price and prescription status.
+  const [card, farm] = await Promise.all([
+    api('/mxik/get/by-mxik', { mxikCode: mxik, lang: LANG }).catch(() => ({})),
+    api('/farm-mxik/get/by-mxik', { mxik, lang: 'ru' }).catch(() => ({})),
+  ]);
+  const unwrap = r => r.ok && r.body ? (r.body.data !== undefined ? r.body.data : r.body) : null;
+  const c = unwrap(card), f = unwrap(farm);
+  if (!c) return null;
+  if (f && typeof f === 'object') c.farm = f;
+  return c;
 }
 
 // Bayan Medical products from the GS1 barcode register: [gtin, name, brand, description, package].
@@ -814,8 +819,17 @@ function pick(o, re, d = 0) {
   for (const v of Object.values(o)) { const r = typeof v === 'object' ? pick(v, re, d + 1) : null; if (has(r)) return r; }
   return null;
 }
+function pickVal(o, re, d = 0) {
+  if (!o || typeof o !== 'object' || d > 3) return null;
+  for (const v of Object.values(o)) {
+    if (typeof v === 'string' && re.test(v) && v.length < 60) return v;
+    const r = typeof v === 'object' ? pickVal(v, re, d + 1) : null; if (r) return r;
+  }
+  return null;
+}
 const sum = v => isNaN(+v) ? v : (+v).toLocaleString('ru-RU').replace(/,/g, ' ') + ' сўм';
-const recipeText = v => typeof v === 'boolean' || /^[01]$/.test(String(v)) ? (v === true || +v === 1 ? 'Рецепт бўйича' : 'Рецептсиз') : v;
+const recipeText = v => typeof v === 'boolean' || /^[01]$/.test(String(v)) ? (v === true || +v === 1 ? 'Рецепт бўйича' : 'Рецептсиз')
+  : /без\s*рецепт/i.test(v) ? 'Рецептсиз' : /по\s*рецепт/i.test(v) ? 'Рецепт бўйича' : v;
 
 function render(item, card) {
   const c = Object.assign({}, item, card || {});
@@ -829,8 +843,8 @@ function render(item, card) {
   const details = [
     row('Хусусияти', c.attributeName), row('Қисқа номи', c.shortName),
   ].join('');
-  const recipe = pick(c, /recipe|retsept|prescri|otpusk|dispens|condition/i);
-  const price = pick(c, /price|narx|cost|tsena/i);
+  const recipe = c.farm?.prescriptionRequired ?? pick(c, /recipe|retsept|prescri|otpusk|dispens|condition|release/i) ?? pickVal(c.farm, /рецепт|retsept/i);
+  const price = c.farm?.wholesalePriceBase ?? pick(c, /price|narx|cost|tsena/i);
   let html = `<article class="card">
     <div class="card-top">
       <div class="label">ИКПУ коди</div>
