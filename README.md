@@ -4,3 +4,6 @@
 Маҳсулотлар рўйхати (`bayan-gtin.json`) саҳифанинг ичига жойланган.
 
 Тузувчи: Элдор Эркинов
+
+`catalog.json` — Telegram бот учун каталог ва «тўғри деб қабул қилинган» фарқлар. `index.html` ўзгарганда янгиланади:
+`python3 make-catalog.py index.html catalog.json`
