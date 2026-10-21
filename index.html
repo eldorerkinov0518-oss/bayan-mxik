@@ -96,6 +96,27 @@
   .mrow.admin .av { background: linear-gradient(135deg, #f59e0b, #f97316) !important; }
   .msg .tag { display: inline-block; margin-left: 5px; padding: 0 6px; border-radius: 6px; background: #fef3c7; color: #b45309; font-size: 9.5px; letter-spacing: .4px; vertical-align: 1px; }
   .msgs .sys { align-self: center; font-size: 12px; color: #0f766e; text-align: center; padding: 6px 12px; border-radius: 10px; background: rgba(255,255,255,.75); }
+  .adminlogin { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; padding: 10px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
+  .adminlogin[hidden], .adminbar[hidden], .blklist[hidden] { display: none; }
+  .adminlogin b { grid-column: 1 / -1; font-size: 12.5px; color: #92400e; }
+  .adminlogin input { min-width: 0; padding: 7px 10px; border: 1px solid #fcd34d; border-radius: 9px; font: 500 12.5px Inter, system-ui, sans-serif; }
+  .adminlogin button { padding: 0 12px; border: 0; border-radius: 9px; background: #f59e0b; color: #fff; font-weight: 700; cursor: pointer; }
+  .adminlogin small { grid-column: 1 / -1; font-size: 11.5px; color: #b45309; } .adminlogin small:empty { display: none; }
+  .adminbar { position: relative; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
+  .adminbar > button { padding: 5px 10px; border: 1px solid #fcd34d; border-radius: 999px; background: #fff; color: #92400e; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
+  .adminbar > button:hover:not(:disabled) { background: #fef3c7; } .adminbar > button:disabled { opacity: .5; cursor: default; }
+  #clearall { color: #b91c1c; border-color: #fca5a5; } #adminout { margin-left: auto; }
+  .blklist { flex-basis: 100%; display: grid; gap: 4px; max-height: 130px; overflow: auto; }
+  .blklist div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 8px; border-radius: 8px; background: #fff; font-size: 12.5px; }
+  .blklist button { border: 0; background: none; color: #0f766e; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
+  .mtools { display: flex; flex-direction: column; gap: 3px; opacity: .35; transition: opacity .15s; }
+  .mrow:hover .mtools, .mrow.sel .mtools { opacity: 1; }
+  .mtools button { width: 24px; height: 24px; border: 1px solid #e2e8f0; border-radius: 7px; background: #fff; font-size: 11px; cursor: pointer; padding: 0; }
+  .mtools button:hover { background: #f1f5f9; }
+  .mrow.sel .msg { box-shadow: 0 0 0 2.5px #ef4444; } .mrow.sel .pick { background: #ef4444; color: #fff; border-color: #ef4444; }
+  .mrow.isblk .msg { opacity: .6; }
+  .msg .tag.red { background: #fee2e2; color: #b91c1c; }
+  #chatf.blocked textarea { background: #fef2f2; border-color: #fecaca; }
   #chatf { padding: 10px 12px 12px; border-top: 1px solid #e2efec; display: grid; gap: 8px; background: #fff; }
   #chatf input, #chatf textarea { width: 100%; padding: 10px 14px; border: 1.5px solid #d6ebe6; border-radius: 14px; background: #f7fbfa; color: #1f2937;
     font: 500 13.5px Inter, system-ui, sans-serif; resize: none; box-sizing: border-box; outline: none; transition: border-color .15s, box-shadow .15s; }
@@ -393,7 +414,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1455</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1510</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -435,6 +456,8 @@
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
     <header><span class="ava">💬</span><div><b>Умумий чат</b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
+    <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
+    <div class="adminbar" id="adminbar" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
       <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
@@ -1350,6 +1373,8 @@ setTimeout(fitSides, 400);
 const CHAT_DB = 'https://bayan-chat-1b132-default-rtdb.europe-west1.firebasedatabase.app';
 // Telegram bot username without @ (the token never goes here). Empty: the links say the bot is coming soon.
 const TG_BOT = 'bayan_mxik_bot';
+// Firebase Web API key (public by design) for the admin's e-mail/password sign-in. Empty: no admin tools yet.
+const FB_KEY = '';
 document.querySelectorAll('.tglnk').forEach(a => {
   if (TG_BOT) { a.href = `https://t.me/${TG_BOT}`; a.title = '@' + TG_BOT; return; }
   a.removeAttribute('href'); a.style.cursor = 'default';
@@ -1359,23 +1384,101 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const btn = document.getElementById('chatbtn'), box = document.getElementById('chat'), msgs = document.getElementById('msgs');
   const nameIn = document.getElementById('chatname'), textIn = document.getElementById('chattext'), form = document.getElementById('chatf');
   const badge = document.getElementById('chatbadge'), state = document.getElementById('chatstate');
-  if (location.hash === '#admin') setLS('bayan-chat-admin', true);
-  const isAdmin = !!getLS('bayan-chat-admin', false);
+  const bar = document.getElementById('adminbar'), login = document.getElementById('adminlogin'), blkBox = document.getElementById('blklist');
   const myId = getLS('bayan-chat-id', null) || (() => { const id = Math.random().toString(36).slice(2, 10); setLS('bayan-chat-id', id); return id; })();
-  nameIn.value = getLS('bayan-chat-name', isAdmin ? 'Админ' : '');
-  let list = [], seen = getLS('bayan-chat-seen', 0), timer;
+  let list = [], blocked = {}, picked = new Set(), seen = getLS('bayan-chat-seen', 0), timer;
+
+  // Admin signs in with the e-mail and password made in Firebase Authentication; the database rules
+  // only let that account delete, block or post as admin, so the #admin link alone gives nothing.
+  let tok = null, tokExp = 0;
+  const isAdmin = () => !!getLS('bayan-admin-rt', '');
+  const idToken = async () => {
+    if (tok && Date.now() < tokExp) return tok;
+    const r = await fetch(`https://securetoken.googleapis.com/v1/token?key=${FB_KEY}`, { method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(getLS('bayan-admin-rt', ''))}` });
+    if (!r.ok) { setLS('bayan-admin-rt', ''); showAdmin(); throw new Error('auth'); }
+    const d = await r.json(); setLS('bayan-admin-rt', d.refresh_token);
+    tok = d.id_token; tokExp = Date.now() + (d.expires_in - 60) * 1000; return tok;
+  };
+  const adminReq = async (path, method, body) => {
+    const r = await fetch(`${CHAT_DB}/${path}.json?auth=${await idToken()}`, { method, body: body === undefined ? undefined : JSON.stringify(body) });
+    if (!r.ok) throw new Error(r.status);
+  };
+  const showAdmin = () => {
+    bar.hidden = !isAdmin();
+    login.hidden = isAdmin() || location.hash !== '#admin';
+    if (isAdmin() && !nameIn.value) nameIn.value = 'Админ';
+    box.classList.toggle('adm', isAdmin());
+    if (isAdmin()) document.getElementById('chatnote').open = false;
+    drawBar();
+  };
+  const drawBar = () => {
+    const ids = Object.keys(blocked);
+    document.getElementById('delsel').textContent = `🗑 Ўчириш (${picked.size})`;
+    document.getElementById('delsel').disabled = !picked.size;
+    document.getElementById('blkbtn').textContent = `⛔ Блок (${ids.length})`;
+    blkBox.innerHTML = ids.length ? ids.map(id => `<div><span>${esc(blocked[id].name || id)}</span><button type="button" data-unblock="${esc(id)}">Блокдан чиқариш</button></div>`).join('')
+      : '<div><span>Блокланган фойдаланувчи йўқ</span></div>';
+  };
+  login.addEventListener('submit', async e => {
+    e.preventDefault();
+    const st = login.querySelector('small');
+    if (!FB_KEY) { st.textContent = 'Админ кириши ҳали созланмаган.'; return; }
+    st.textContent = 'Текширилмоқда…';
+    const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FB_KEY}`, { method: 'POST',
+      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: login.email.value.trim(), password: login.pass.value, returnSecureToken: true }) }).catch(() => null);
+    if (!r || !r.ok) { st.textContent = 'Email ёки парол нотўғри.'; return; }
+    const d = await r.json();
+    setLS('bayan-admin-rt', d.refreshToken); tok = d.idToken; tokExp = Date.now() + (d.expiresIn - 60) * 1000;
+    login.reset(); st.textContent = ''; showAdmin(); draw();
+  });
+  document.getElementById('adminout').addEventListener('click', () => { setLS('bayan-admin-rt', ''); tok = null; picked.clear(); showAdmin(); draw(); });
+  document.getElementById('blkbtn').addEventListener('click', () => { blkBox.hidden = !blkBox.hidden; });
+  document.getElementById('delsel').addEventListener('click', async () => {
+    if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
+    try { for (const k of picked) await adminReq(`chat/${k}`, 'DELETE'); picked.clear(); await load(); }
+    catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
+  });
+  document.getElementById('clearall').addEventListener('click', async () => {
+    if (!confirm('Бутун чат тозалансинми? Барча хабарлар бутунлай ўчади.')) return;
+    try { await adminReq('chat', 'DELETE'); picked.clear(); await load(); } catch { alert('Тозалаб бўлмади. Админ сифатида қайта киринг.'); }
+  });
+  blkBox.addEventListener('click', async e => {
+    const id = e.target.dataset.unblock; if (!id) return;
+    try { await adminReq(`blocked/${id}`, 'DELETE'); await load(); } catch { alert('Бажариб бўлмади.'); }
+  });
+  msgs.addEventListener('click', async e => {
+    const row = e.target.closest('.mrow'); if (!row || !isAdmin()) return;
+    const m = list.find(x => x.key === row.dataset.k); if (!m) return;
+    if (e.target.closest('.blk')) {
+      if (!confirm(`«${m.name}» блоклансинми? У бошқа ёза олмайди.`)) return;
+      try { await adminReq(`blocked/${m.uid}`, 'PUT', { name: m.name, ts: { '.sv': 'timestamp' } }); await load(); } catch { alert('Блоклаб бўлмади.'); }
+    } else if (e.target.closest('.del')) {
+      if (!confirm('Шу хабар ўчирилсинми?')) return;
+      try { await adminReq(`chat/${m.key}`, 'DELETE'); picked.delete(m.key); await load(); } catch { alert('Ўчириб бўлмади.'); }
+    } else if (e.target.closest('.pick')) {
+      picked.has(m.key) ? picked.delete(m.key) : picked.add(m.key); row.classList.toggle('sel', picked.has(m.key)); drawBar();
+    }
+  });
+
+  nameIn.value = getLS('bayan-chat-name', '');
   // Each person gets a steady colour from their id, like in messengers.
   const hue = k => { let h = 0; for (const ch of String(k)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h}, 62%, 42%)`; };
   const initials = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const fmt = ts => { const d = new Date(ts); return d.toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
   const draw = () => {
     if (!CHAT_DB) { msgs.innerHTML = '<div class="sys">Чат уланмоқда. Тез орада бу ерда изоҳ қолдириб, бошқа фойдаланувчилар ва админ билан ёзишишингиз мумкин бўлади.</div>'; return; }
-    const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40;
+    const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40, adm = isAdmin();
     msgs.innerHTML = list.length ? list.map(m => { const c = hue(m.uid || m.name);
-      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small></div></div>`; }).join('')
+      const tools = adm ? `<span class="mtools"><button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>` : '';
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small></div>${tools}</div>`; }).join('')
       : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
     if (atEnd || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
     box.dataset.drawn = 1;
+    const me = !!blocked[myId] && !adm;
+    form.classList.toggle('blocked', me);
+    textIn.placeholder = me ? 'Сиз админ томонидан блоклангансиз' : 'Изоҳингизни ёзинг…';
+    textIn.disabled = me; form.querySelector('button').disabled = me || !CHAT_DB;
   };
   const unread = () => {
     const n = list.filter(m => m.ts > seen && m.uid !== myId).length;
@@ -1384,13 +1487,15 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const load = async () => {
     if (!CHAT_DB) return;
     try {
-      const r = await fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`);
+      const [r, b] = await Promise.all([fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`), fetch(`${CHAT_DB}/blocked.json`)]);
       if (!r.ok) { state.textContent = 'Чат вақтинча ёпиқ'; return; }
       const data = await r.json() || {};
-      list = Object.values(data).filter(m => m && m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
-      state.textContent = 'Фойдаланувчилар ва админ · онлайн';
+      blocked = (b.ok && await b.json()) || {};
+      list = Object.entries(data).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      picked.forEach(k => { if (!data[k]) picked.delete(k); });
+      state.textContent = isAdmin() ? 'Админ режими · онлайн' : 'Фойдаланувчилар ва админ · онлайн';
       if (!box.hidden) { draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
-      unread();
+      unread(); drawBar();
     } catch { state.textContent = 'Алоқа йўқ, қайта уриниляпти…'; }
   };
   const poll = () => { clearTimeout(timer); timer = setTimeout(async () => { await load(); poll(); }, box.hidden ? 60000 : 5000); };
@@ -1407,11 +1512,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
     setLS('bayan-chat-name', name);
     const send = form.querySelector('button'); send.disabled = true;
     try {
-      const r = await fetch(`${CHAT_DB}/chat.json`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: isAdmin, ts: { '.sv': 'timestamp' } }) });
+      const adm = isAdmin();
+      const r = await fetch(`${CHAT_DB}/chat.json${adm ? `?auth=${await idToken()}` : ''}`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: adm, ts: { '.sv': 'timestamp' } }) });
       if (!r.ok) throw new Error(r.status);
       textIn.value = ''; await load(); msgs.scrollTop = msgs.scrollHeight;
-    } catch { alert('Хабар юборилмади. Интернетни текширинг.'); }
-    send.disabled = false;
+    } catch { await load(); if (!blocked[myId]) alert('Хабар юборилмади. Интернетни текширинг.'); }
+    send.disabled = false; draw();
   });
   textIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
   form.querySelector('button').disabled = !CHAT_DB;
@@ -1419,7 +1525,9 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const note = document.getElementById('chatnote');
   if (getLS('bayan-chat-note', '') === 'closed') note.open = false;
   note.addEventListener('toggle', () => setLS('bayan-chat-note', note.open ? 'open' : 'closed'));
-  load(); poll();
+  addEventListener('hashchange', showAdmin);
+  if (location.hash === '#admin' && !isAdmin()) { box.hidden = false; }
+  showAdmin(); load(); poll();
 }
 
 renderList();
