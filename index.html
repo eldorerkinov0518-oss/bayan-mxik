@@ -99,6 +99,9 @@
   .own { margin-top: 16px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px 22px;
     border-left: 6px solid var(--brand2); }
   .own .t { font-size: 18px; font-weight: 700; margin: 4px 0 8px; }
+  .cmp ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+  .cmp li.ok { color: var(--ok); } .cmp li.bad { color: var(--bad); font-weight: 600; }
+  .cmp.warn { border-left-color: var(--warn); } .cmp.good { border-left-color: var(--ok); }
   .list { margin-top: 28px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 20px 22px; }
   .list h2 { margin: 0; font-size: 19px; }
   .list h2 span { color: var(--muted); font-weight: 500; font-size: 15px; }
@@ -160,6 +163,10 @@
     <h2>BAYAN MEDICAL маҳсулотлари <span id="lcount"></span></h2>
     <div class="tools">
       <input id="lf" autocomplete="off" placeholder="Номи, штрих код ёки ИКПУ коди бўйича излаш">
+      <select id="lst" class="copy" title="Ҳолат бўйича">
+        <option value="">Ҳаммаси</option><option value="yes">ИКПУ бор</option><option value="no">ИКПУ йўқ</option>
+        <option value="diff">Фарқ бор</option><option value="wait">Текширилмаган</option>
+      </select>
       <button class="go" id="checkAll" type="button">Барчасини текшириш</button>
       <button class="copy" id="csv" type="button">Excel'га юклаш</button>
     </div>
@@ -292,6 +299,67 @@ const strip0 = c => String(c).replace(/^0+/, '');
 const byCore = new Map(CATALOG.map(r => [strip0(r[0]), r]));
 const ownOf = code => byCore.get(strip0(code));
 
+// Compare our catalog entry with the tasnif record: name, dose, pack count, volume, manufacturer.
+const CYR = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'j',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'x',ц:'ts',ч:'ch',ш:'sh',щ:'sh',ъ:'',ы:'i',ь:'',э:'e',ю:'yu',я:'ya',ў:'o',қ:'q',ғ:'g',ҳ:'h' };
+const nameKey = t => String(t || '').toLowerCase().replace(/[а-яёўқғҳ]/g, c => CYR[c] ?? c)
+  .replace(/x/g, 'ks').replace(/[cq]/g, 'k').replace(/w/g, 'v').replace(/[^a-z0-9]/g, '');
+const normT = t => String(t || '').toLowerCase().replace(/,/g, '.').replace(/(\d)\s+(?=[a-zа-яё%])/gi, '$1').replace(/\s+/g, ' ');
+const reEsc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const hasTok = (text, tok) => new RegExp('(^|[^\\d.])' + reEsc(tok) + '(?![а-яёa-z])', 'i').test(text);
+const UNITS = 'мкг|мг|г|мл|ме|ед|%';
+
+function compare(own, it) {
+  if (!own || !it) return [];
+  const [, name, brand, desc, pack] = own;
+  const tName = it.mxikName || it.name || '';
+  const T = normT(`${tName} ${it.attributeName || ''} ${it.brandName || ''}`);
+  const out = [];
+  // Name: our Latin or Cyrillic trade name should appear in the tasnif name.
+  const keyT = nameKey(T);
+  const cands = [brand, name].filter(x => nameKey(x).length >= 3);
+  if (cands.length) {
+    const ok = cands.some(c => keyT.includes(nameKey(c)) || keyT.includes(nameKey(String(c).split(/[\s(]/)[0])));
+    out.push(ok ? { ok, text: `Номи мос: ${brand || name}` }
+      : { ok, text: `Номи мос эмас: каталогда «${brand || name}», tasnif'да бу ном йўқ` });
+  }
+  // Dose: every number+unit in our description should be in the tasnif name.
+  const doses = [...new Set([...normT(desc).matchAll(new RegExp(`(\\d+(?:\\.\\d+)?)(${UNITS})(?![а-яёa-z])`, 'gi'))].map(m => m[1] + m[2]))];
+  const missing = doses.filter(d => !hasTok(T, d));
+  if (doses.length) out.push(missing.length
+    ? { ok: false, text: `Доза фарқ: каталогда ${doses.join(', ')}, tasnif'да ${missing.join(', ')} йўқ` }
+    : { ok: true, text: `Доза мос: ${doses.join(', ')}` });
+  // Pack count: "5 стеклянных ампул" vs "№5".
+  const pk = normT(pack);
+  const cm = pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор)/);
+  const tm = T.match(/№\s*(\d+)/);
+  if (cm && tm) out.push(+cm[1] === +tm[1]
+    ? { ok: true, text: `Қадоқ сони мос: ${cm[1]} та` }
+    : { ok: false, text: `Қадоқ сони фарқ: каталогда ${cm[1]} та, tasnif'да №${tm[1]}` });
+  // Volume of one unit: "ампул 5 мл".
+  const vm = [...pk.matchAll(/(\d+(?:\.\d+)?)мл/g)].pop();
+  if (vm && /мл/.test(T)) out.push(hasTok(T, vm[1] + 'мл')
+    ? { ok: true, text: `Ҳажми мос: ${vm[1]} мл` }
+    : { ok: false, text: `Ҳажми фарқ: каталогда ${vm[1]} мл, tasnif номида йўқ` });
+  // Manufacturer.
+  out.push(/bayan|баян/i.test(T)
+    ? { ok: true, text: 'Ишлаб чиқарувчи: BAYAN MEDICAL' }
+    : { ok: false, text: "tasnif номида ишлаб чиқарувчи BAYAN MEDICAL кўрсатилмаган" });
+  return out;
+}
+const issuesOf = (own, items) => {
+  if (!own || !items?.length) return [];
+  // Several IKPU for one barcode: judge by the closest one.
+  return items.map(i => compare(own, i).filter(x => !x.ok)).sort((a, b) => a.length - b.length)[0];
+};
+function compareBlock(own, it) {
+  const res = compare(own, it);
+  if (!res.length) return '';
+  const bad = res.filter(x => !x.ok).length;
+  return `<div class="own cmp ${bad ? 'warn' : 'good'}"><div class="label">Каталог ↔ tasnif.soliq.uz солиштириш</div>
+    <div class="t">${bad ? `⚠ ${bad} та фарқ топилди` : '✓ Маълумотлар мос'}</div>
+    <ul>${res.map(x => `<li class="${x.ok ? 'ok' : 'bad'}">${x.ok ? '✓' : '⚠'} ${esc(x.text)}</li>`).join('')}</ul></div>`;
+}
+
 function ownBlock(r) {
   if (!r) return '';
   const [gtin, name, brand, desc, pack] = r;
@@ -393,6 +461,7 @@ document.getElementById('f').addEventListener('submit', async e => {
     }
     const cards = await Promise.all(items.map(i => getCard(i.mxikCode)));
     out.innerHTML = status('ok', '✓', `ИКПУ мавжуд: ${items.length} та натижа топилди.`) + ownBlock(own) +
+      (own ? compareBlock(own, Object.assign({}, items[0], cards[0] || {})) : '') +
       items.map((it, i) => render(it, cards[i])).join('');
   } catch (err) {
     out.innerHTML = status('bad', '✕', 'tasnif.soliq.uz билан боғланиб бўлмади.', `Интернетни текширинг. ${esc(err.message)}`);
@@ -410,14 +479,16 @@ try { for (const [g, r] of JSON.parse(localStorage.getItem(STORE) || '[]')) resu
 let saveTimer;
 const saveResults = () => { clearTimeout(saveTimer); saveTimer = setTimeout(() => {
   try { localStorage.setItem(STORE, JSON.stringify([...results].map(([g, r]) => [g, { state: r.state,
-    items: r.items.slice(0, 3).map(i => ({ mxikCode: i.mxikCode, mxikName: i.mxikName || i.name })) }]))); } catch {}
+    items: r.items.slice(0, 3).map(i => ({ mxikCode: i.mxikCode, mxikName: i.mxikName || i.name, brandName: i.brandName, attributeName: i.attributeName })) }]))); } catch {}
 }, 500); };
 function pill(g) {
   const r = results.get(g);
   if (!r) return '<span class="pill wait">—</span>';
   if (r.state === 'err') return '<span class="pill err">Хато</span>';
   if (r.state === 'no') return '<span class="pill no">Йўқ</span>';
-  return `<span class="pill yes">Бор</span><small>${esc(r.items[0].mxikCode)}</small>`;
+  const iss = issuesOf(ownOf(g), r.items);
+  return `<span class="pill yes">Бор</span>${iss.length ? ` <span class="pill err" title="${esc(iss.map(x => x.text).join('\n'))}">⚠ ${iss.length} фарқ</span>` : ''}<small>${esc(r.items[0].mxikCode)}</small>`
+    + (iss.length ? `<small style="color:var(--warn)">${iss.map(x => esc(x.text)).join('<br>')}</small>` : '');
 }
 function setResult(code, items, state) {
   const r = ownOf(code);
@@ -428,10 +499,17 @@ function setResult(code, items, state) {
   if (cell) cell.innerHTML = pill(r[0]);
 }
 function filtered() {
-  const f = lf.value.trim().toLowerCase();
-  if (!f) return CATALOG;
+  const f = lf.value.trim().toLowerCase(), st = document.getElementById('lst').value;
+  const byState = r => {
+    const res = results.get(r[0]);
+    if (st === 'wait') return !res;
+    if (st === 'yes' || st === 'no') return res?.state === st;
+    if (st === 'diff') return res?.state === 'yes' && issuesOf(r, res.items).length > 0;
+    return true;
+  };
+  if (!f) return CATALOG.filter(byState);
   // Match product fields and, once checked, the IKPU code and name too.
-  return CATALOG.filter(r => {
+  return CATALOG.filter(byState).filter(r => {
     const its = results.get(r[0])?.items || [];
     const ikpu = its.map(i => `${i.mxikCode} ${i.mxikName || i.name || ''}`).join(' ');
     return `${r.join(' ')} ${ikpu}`.toLowerCase().includes(f);
@@ -446,6 +524,7 @@ function renderList() {
 }
 // A full IKPU code that isn't in the checked results yet: ask tasnif which barcodes it has.
 let lookupSeq = 0;
+document.getElementById('lst').addEventListener('change', renderList);
 lf.addEventListener('input', async () => {
   renderList();
   const f = lf.value.replace(/\D+/g, '');
@@ -486,7 +565,8 @@ checkBtn.addEventListener('click', async () => {
   const total = todo.length;
   const tick = () => {
     const all = [...results.values()];
-    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b>` +
+    const diff = [...results].filter(([g, r]) => r.state === 'yes' && issuesOf(ownOf(g), r.items).length).length;
+    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · фарқ бор: <b>${diff}</b>` +
       (all.some(r => r.state === 'err') ? ` · хато: <b>${all.filter(r => r.state === 'err').length}</b>` : '');
   };
   tick();
@@ -511,19 +591,19 @@ document.getElementById('csv').addEventListener('click', async () => {
   const NAVY = 'FF281274', BLUE = 'FF0A8EE0';
   ws.columns = [
     { key: 'n', width: 6 }, { key: 'g', width: 17 }, { key: 'name', width: 24 }, { key: 'brand', width: 22 },
-    { key: 'desc', width: 34 }, { key: 'pack', width: 40 }, { key: 'st', width: 13 }, { key: 'code', width: 21 }, { key: 'iname', width: 60 },
+    { key: 'desc', width: 34 }, { key: 'pack', width: 40 }, { key: 'st', width: 13 }, { key: 'code', width: 21 }, { key: 'iname', width: 60 }, { key: 'note', width: 55 },
   ];
   const all = rows.map(r => results.get(r[0]));
   const yes = all.filter(r => r?.state === 'yes').length, no = all.filter(r => r?.state === 'no').length;
-  ws.mergeCells('A1:I1');
+  ws.mergeCells('A1:J1');
   Object.assign(ws.getCell('A1'), { value: 'BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси' });
   ws.getCell('A1').font = { name: 'Calibri', size: 16, bold: true, color: { argb: NAVY } };
   ws.getRow(1).height = 26;
-  ws.mergeCells('A2:I2');
+  ws.mergeCells('A2:J2');
   ws.getCell('A2').value = `Сана: ${new Date().toLocaleDateString('ru-RU')}   ·   Жами: ${rows.length}   ·   ИКПУ бор: ${yes}   ·   ИКПУ йўқ: ${no}   ·   Манба: tasnif.soliq.uz   ·   Тузувчи: Элдор Эркинов`;
   ws.getCell('A2').font = { size: 10, color: { argb: 'FF5B6B80' } };
   const head = ws.getRow(4);
-  head.values = ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'ИКПУ ҳолати', 'ИКПУ коди', 'ИКПУ номи'];
+  head.values = ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'ИКПУ ҳолати', 'ИКПУ коди', 'ИКПУ номи', 'Изоҳ (солиштириш)'];
   head.height = 30;
   head.eachCell(c => {
     c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
@@ -535,7 +615,9 @@ document.getElementById('csv').addEventListener('click', async () => {
   rows.forEach(([g, name, brand, desc, pack], i) => {
     const r = results.get(g), it = r?.items?.[0];
     const st = !r ? 'Текширилмаган' : r.state === 'yes' ? 'Бор' : r.state === 'no' ? 'Йўқ' : 'Хато';
-    const row = ws.addRow([i + 1, g, name, brand, desc, pack, st, it?.mxikCode || '', it?.mxikName || it?.name || '']);
+    const iss = r?.state === 'yes' ? issuesOf([g, name, brand, desc, pack], r.items) : [];
+    const note = r?.state === 'yes' ? (iss.length ? iss.map(x => '⚠ ' + x.text).join('\n') : '✓ Мос') : '';
+    const row = ws.addRow([i + 1, g, name, brand, desc, pack, st, it?.mxikCode || '', it?.mxikName || it?.name || '', note]);
     row.eachCell({ includeEmpty: true }, (c, col) => {
       c.alignment = { vertical: 'top', wrapText: true, horizontal: col === 1 || col === 7 ? 'center' : 'left' };
       c.border = { top: thin, bottom: thin, left: thin, right: thin };
@@ -543,12 +625,13 @@ document.getElementById('csv').addEventListener('click', async () => {
     });
     // Codes stay text so Excel doesn't turn them into 4,78E+12.
     for (const col of [2, 8]) { const c = row.getCell(col); c.numFmt = '@'; c.font = { name: 'Consolas' }; }
+    if (iss.length) { const n = row.getCell(10); n.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFFFF4DC' } }; n.font = { color: { argb: 'FF9A6200' } }; }
     const s = row.getCell(7);
     const color = st === 'Бор' ? ['FFE3F7EE', 'FF0B7A55'] : st === 'Йўқ' ? ['FFFDECEB', 'FFC0362C'] : ['FFFFF4DC', 'FF9A6200'];
     s.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color[0] } };
     s.font = { bold: true, color: { argb: color[1] } };
   });
-  ws.autoFilter = { from: { row: 4, column: 1 }, to: { row: 4 + rows.length, column: 9 } };
+  ws.autoFilter = { from: { row: 4, column: 1 }, to: { row: 4 + rows.length, column: 10 } };
   const buf = await wb.xlsx.writeBuffer();
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
