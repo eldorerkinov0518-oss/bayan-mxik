@@ -373,7 +373,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1440</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1445</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1327,7 +1327,7 @@ setTimeout(fitSides, 400);
 
 // Comments chat. Messages live in a Firebase Realtime Database (REST, no SDK); CHAT_DB stays empty until it is set up.
 // Opening the page with #admin marks this browser's messages as the administrator's.
-const CHAT_DB = '';
+const CHAT_DB = 'https://bayan-chat-1b132-default-rtdb.europe-west1.firebasedatabase.app';
 // Telegram bot username without @ (the token never goes here). Empty: the links say the bot is coming soon.
 const TG_BOT = 'bayan_mxik_bot';
 document.querySelectorAll('.tglnk').forEach(a => {
@@ -1361,6 +1361,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     if (!CHAT_DB) return;
     try {
       const r = await fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`);
+      if (!r.ok) { state.textContent = 'Чат вақтинча ёпиқ'; return; }
       const data = await r.json() || {};
       list = Object.values(data).filter(m => m && m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       state.textContent = 'Фойдаланувчилар ва админ · онлайн';
@@ -1382,7 +1383,8 @@ document.querySelectorAll('.tglnk').forEach(a => {
     setLS('bayan-chat-name', name);
     const send = form.querySelector('button'); send.disabled = true;
     try {
-      await fetch(`${CHAT_DB}/chat.json`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: isAdmin, ts: { '.sv': 'timestamp' } }) });
+      const r = await fetch(`${CHAT_DB}/chat.json`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: isAdmin, ts: { '.sv': 'timestamp' } }) });
+      if (!r.ok) throw new Error(r.status);
       textIn.value = ''; await load(); msgs.scrollTop = msgs.scrollHeight;
     } catch { alert('Хабар юборилмади. Интернетни текширинг.'); }
     send.disabled = false;
