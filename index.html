@@ -271,6 +271,21 @@
   @keyframes pkd3 { 0%, 29% { opacity: 0; transform: translateY(-46px); } 30% { opacity: 1; transform: translateY(-46px); } 33%, 100% { opacity: 1; transform: translateY(0); } }
   .prodline .a4 .drop { animation: pkd4 6s ease-in infinite; }
   @keyframes pkd4 { 0%, 37% { opacity: 0; transform: translateY(-46px); } 38% { opacity: 1; transform: translateY(-46px); } 41%, 100% { opacity: 1; transform: translateY(0); } }
+  /* Delivery scene (7s): the truck comes to the warehouse, a box is loaded, it drives to the pharmacy,
+     the box goes in, the cross lights up and the truck leaves to the right. */
+  .prodline .truck { animation: dvtruck 7s ease-in-out infinite; }
+  .prodline .tt { font: 800 9px Inter, system-ui, sans-serif; fill: #281274; letter-spacing: .4px; }
+  .prodline .wh .wr, .prodline .wh path { transform-box: fill-box; transform-origin: center; animation: dvwheel .5s linear infinite; }
+  .prodline .ldb { opacity: 0; animation: dvload 7s ease-in-out infinite; }
+  .prodline .unb { opacity: 0; animation: dvunload 7s ease-in-out infinite; }
+  .prodline .cross { transform-box: fill-box; transform-origin: center; animation: dvcross 7s ease-in-out infinite; }
+  .prodline .road { stroke: #e2e8f0; stroke-width: 2; stroke-dasharray: 10 8; }
+  @keyframes dvtruck { 0% { transform: translateX(-80px); opacity: 1; } 15%, 28% { transform: translateX(78px); } 52%, 70% { transform: translateX(132px); }
+    90% { transform: translateX(320px); opacity: 1; } 91%, 99% { transform: translateX(320px); opacity: 0; } 99.5% { transform: translateX(-80px); opacity: 0; } 100% { transform: translateX(-80px); opacity: 1; } }
+  @keyframes dvload { 0%, 15% { opacity: 0; transform: translateX(-30px); } 17% { opacity: 1; transform: translateX(-30px); } 26% { opacity: 1; transform: translateX(8px); } 28%, 100% { opacity: 0; transform: translateX(8px); } }
+  @keyframes dvunload { 0%, 54% { opacity: 0; transform: translateX(196px); } 56% { opacity: 1; transform: translateX(196px); } 66% { opacity: 1; transform: translateX(248px); } 69%, 100% { opacity: 0; transform: translateX(250px); } }
+  @keyframes dvcross { 0%, 64% { transform: scale(1); filter: none; } 70% { transform: scale(1.25); filter: drop-shadow(0 0 6px #22c55e); } 80%, 100% { transform: scale(1); filter: none; } }
+  @keyframes dvwheel { to { transform: rotate(360deg); } }
   @media (prefers-reduced-motion: reduce) { .prodline * { animation: none !important; } }
 
   .blob { position: absolute; width: 46vw; height: 46vw; max-width: 720px; max-height: 720px; border-radius: 50%; filter: blur(70px); opacity: .28; animation: blob 26s ease-in-out infinite alternate; }
@@ -550,7 +565,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2105</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2115</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -589,6 +604,7 @@
     <a class="lnk" href="https://my.soliq.uz/" target="_blank" rel="noopener"><b>my.soliq.uz</b><span>Солиқ тўловчининг шахсий кабинети</span></a>
   </div>
   <div class="sc tip" data-cut="3"><div class="sh">💡 Маслаҳат</div><div id="tip"></div></div>
+  <div class="sc prodline" data-cut="0.5" aria-hidden="true"><svg viewBox="0 56 300 110" aria-hidden="true"><path d="M4 88l38-22 38 22z" fill="#281274"/><rect x="8" y="88" width="68" height="62" fill="#cbd5e1" stroke="#7c8db5" stroke-width="1.2"/><rect x="40" y="108" width="30" height="42" fill="#64748b"/><line x1="40" y1="112" x2="70" y2="112" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="119" x2="70" y2="119" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="126" x2="70" y2="126" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="133" x2="70" y2="133" stroke="#94a3b8" stroke-width="1.2"/><line x1="40" y1="140" x2="70" y2="140" stroke="#94a3b8" stroke-width="1.2"/><rect x="12" y="132" width="14" height="12" fill="#c9a46a" stroke="#9c7a43"/><rect x="26" y="132" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="18" y="120" width="14" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="16" y="94" width="20" height="10" rx="2" fill="#fff" stroke="#7c8db5"/><path d="M24 96v6M21 99h6" stroke="#0a8ee0" stroke-width="2"/><rect x="214" y="96" width="82" height="54" fill="#fff" stroke="#7c8db5" stroke-width="1.2"/><path d="M208 96h94l-6-12h-82z" fill="#0b8f7a"/><rect x="246" y="116" width="22" height="34" fill="#bae6fd" stroke="#7c8db5"/><rect x="220" y="110" width="20" height="18" fill="#e0f2fe" stroke="#7c8db5"/><rect x="274" y="110" width="16" height="18" fill="#e0f2fe" stroke="#7c8db5"/><g class="cross"><circle cx="255" cy="74" r="11" fill="#fff" stroke="#0b8f7a" stroke-width="2"/><path d="M255 67v14M248 74h14" stroke="#16a34a" stroke-width="4"/></g><rect x="0" y="150" width="300" height="14" fill="#475569"/><line class="road" x1="0" y1="157" x2="300" y2="157"/><rect class="unb" x="0" y="134" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><g class="truck"><rect class="ldb" x="0" y="124" width="12" height="12" fill="#d4ae72" stroke="#9c7a43"/><rect x="0" y="116" width="52" height="30" rx="3" fill="#fff" stroke="#281274" stroke-width="1.6"/><text x="26" y="134" text-anchor="middle" class="tt">BAYAN</text><path d="M52 126h12l8 9v11H52z" fill="#281274"/><rect x="56" y="129" width="8" height="6" rx="1" fill="#bae6fd"/><g class="wh" transform="translate(14 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g><g class="wh" transform="translate(60 146)"><circle r="6" fill="#1e293b"/><path d="M-4 0h8M0-4v8" stroke="#94a3b8" stroke-width="1.5"/></g></g></svg><span>Омбордан дорихоналарга етказиб бериш</span></div>
 </aside>
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
@@ -825,6 +841,7 @@ const I18N = {
   'Блокдан чиқариш': ['Разблокировать', 'Unblock'],
   'Ишлаб чиқариш: ампулага дори қуйиш': ['Производство: розлив препарата в ампулы', 'Production: filling ampoules'],
   'Ишлаб чиқариш: блистер ва қутига қадоқлаш': ['Производство: упаковка в блистер и коробку', 'Production: packing into blisters and boxes'],
+  'Омбордан дорихоналарга етказиб бериш': ['Доставка со склада в аптеки', 'Delivery from the warehouse to pharmacies'],
   'Тест: ёқиқ': ['Тест: вкл', 'Test: on'],
   'Тест: ўчиқ': ['Тест: выкл', 'Test: off'],
   'Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш': ['Включить или выключить надпись «тестовый режим» вверху сайта для всех', 'Turn the «test mode» notice at the top of the site on or off for everyone'],
