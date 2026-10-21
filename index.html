@@ -308,6 +308,25 @@ const reEsc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const hasTok = (text, tok) => new RegExp('(^|[^\\d.])' + reEsc(tok) + '(?![а-яёa-z])', 'i').test(text);
 const UNITS = 'мкг|мг|г|мл|ме|ед|%';
 
+// Is k inside text, allowing one spelling slip? Two would let the INN "Мелоксикам" pass for "Мелоксилат".
+function lev(a, b) {
+  let prev = [...Array(b.length + 1).keys()];
+  for (let i = 1; i <= a.length; i++) {
+    const cur = [i];
+    for (let j = 1; j <= b.length; j++) cur[j] = Math.min(prev[j] + 1, cur[j - 1] + 1, prev[j - 1] + (a[i - 1] !== b[j - 1]));
+    prev = cur;
+  }
+  return prev[b.length];
+}
+function nearIn(text, k) {
+  if (!k) return false;
+  if (text.includes(k)) return true;
+  if (k.length < 5) return false;
+  const max = 1;
+  for (let n = k.length - max; n <= k.length + max; n++)
+    for (let i = 0; i + n <= text.length; i++) if (lev(text.slice(i, i + n), k) <= max) return true;
+  return false;
+}
 function compare(own, it) {
   // The catalog is the reference. Only clear contradictions are reported (e.g. №1 where the catalog says 5 ampoules);
   // something tasnif simply doesn't mention is not an error.
@@ -320,9 +339,9 @@ function compare(own, it) {
   const keyT = nameKey(T);
   const cands = [brand, name].filter(x => nameKey(x).length >= 3);
   if (cands.length) {
-    const ok = cands.some(c => keyT.includes(nameKey(c)) || keyT.includes(nameKey(String(c).split(/[\s(]/)[0])));
+    const ok = cands.some(c => nearIn(keyT, nameKey(c)) || nearIn(keyT, nameKey(String(c).split(/[\s(]/)[0])));
     out.push(ok ? { ok, text: `Номи: ${brand || name}` }
-      : { ok, text: `Номи: каталог бўйича «${brand || name}» бўлиши керак, tasnif номида бу ном йўқ` });
+      : { ok, text: `Номи: каталог бўйича «${brand || name}» бўлиши керак, tasnif номи: «${tName}»` });
   }
   // Dose: compare only when tasnif names a dose in the same unit.
   const d = normT(desc);
