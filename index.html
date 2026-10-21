@@ -309,6 +309,7 @@ const hasTok = (text, tok) => new RegExp('(^|[^\\d.])' + reEsc(tok) + '(?![а-я
 const UNITS = 'мкг|мг|г|мл|ме|ед|%';
 
 function compare(own, it) {
+  // The catalog is the reference: every check says what tasnif should show according to it.
   if (!own || !it) return [];
   const [, name, brand, desc, pack] = own;
   const tName = it.mxikName || it.name || '';
@@ -319,31 +320,39 @@ function compare(own, it) {
   const cands = [brand, name].filter(x => nameKey(x).length >= 3);
   if (cands.length) {
     const ok = cands.some(c => keyT.includes(nameKey(c)) || keyT.includes(nameKey(String(c).split(/[\s(]/)[0])));
-    out.push(ok ? { ok, text: `Номи мос: ${brand || name}` }
-      : { ok, text: `Номи мос эмас: каталогда «${brand || name}», tasnif'да бу ном йўқ` });
+    out.push(ok ? { ok, text: `Номи каталогга мос: ${brand || name}` }
+      : { ok, text: `Номи: каталог бўйича «${brand || name}» бўлиши керак, tasnif номида йўқ` });
   }
-  // Dose: every number+unit in our description should be in the tasnif name.
-  const doses = [...new Set([...normT(desc).matchAll(new RegExp(`(\\d+(?:\\.\\d+)?)(${UNITS})(?![а-яёa-z])`, 'gi'))].map(m => m[1] + m[2]))];
-  const missing = doses.filter(d => !hasTok(T, d));
+  // Dosage form from the catalog description.
+  const d = normT(desc);
+  const forms = [['концентрат', 'концентрат'], ['инфуз', 'инфузия'], ['инъекц', 'инъекция']].filter(([k]) => d.includes(k));
+  if (forms.length) {
+    const miss = forms.filter(([k]) => !T.includes(k)).map(([, w]) => w);
+    out.push(miss.length
+      ? { ok: false, text: `Дори шакли: каталог бўйича «${desc}», tasnif номида «${miss.join(', ')}» йўқ` }
+      : { ok: true, text: `Дори шакли каталогга мос: ${forms.map(([, w]) => w).join(', ')}` });
+  }
+  // Dose: every number+unit in the catalog description should be in the tasnif name.
+  const doses = [...new Set([...d.matchAll(new RegExp(`(\\d+(?:\\.\\d+)?)(${UNITS})(?![а-яёa-z])`, 'gi'))].map(m => m[1] + m[2]))];
+  const missing = doses.filter(x => !hasTok(T, x));
   if (doses.length) out.push(missing.length
-    ? { ok: false, text: `Доза фарқ: каталогда ${doses.join(', ')}, tasnif'да ${missing.join(', ')} йўқ` }
-    : { ok: true, text: `Доза мос: ${doses.join(', ')}` });
-  // Pack count: "5 стеклянных ампул" vs "№5".
+    ? { ok: false, text: `Доза: каталог бўйича ${doses.join(', ')} бўлиши керак, tasnif'да ${missing.join(', ')} йўқ` }
+    : { ok: true, text: `Доза каталогга мос: ${doses.join(', ')}` });
+  // Pack count: "5 стеклянных ампул" or "ампулы 5 шт" vs "№5".
   const pk = normT(pack);
-  const cm = pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор)/);
+  const cm = pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(?:ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор|комплект)/)
+    || pk.match(/(?:ампул[а-я]*|флакон[а-я]*)\s+(?:[\d.]+(?:мл|мг)\s+)?(\d+)шт/);
   const tm = T.match(/№\s*(\d+)/);
   if (cm && tm) out.push(+cm[1] === +tm[1]
-    ? { ok: true, text: `Қадоқ сони мос: ${cm[1]} та` }
-    : { ok: false, text: `Қадоқ сони фарқ: каталогда ${cm[1]} та, tasnif'да №${tm[1]}` });
+    ? { ok: true, text: `Қадоқ сони каталогга мос: №${cm[1]}` }
+    : { ok: false, text: `Қадоқ сони: каталог бўйича №${cm[1]} бўлиши керак, tasnif'да №${tm[1]}` });
+  else if (cm) out.push({ ok: false, text: `Қадоқ сони: каталог бўйича №${cm[1]} бўлиши керак, tasnif номида кўрсатилмаган` });
   // Volume of one unit: "ампул 5 мл".
   const vm = [...pk.matchAll(/(\d+(?:\.\d+)?)мл/g)].pop();
-  if (vm && /мл/.test(T)) out.push(hasTok(T, vm[1] + 'мл')
-    ? { ok: true, text: `Ҳажми мос: ${vm[1]} мл` }
-    : { ok: false, text: `Ҳажми фарқ: каталогда ${vm[1]} мл, tasnif номида йўқ` });
-  // Manufacturer.
-  out.push(/bayan|баян/i.test(T)
-    ? { ok: true, text: 'Ишлаб чиқарувчи: BAYAN MEDICAL' }
-    : { ok: false, text: "tasnif номида ишлаб чиқарувчи BAYAN MEDICAL кўрсатилмаган" });
+  // Skip the "/5 мл" part of a dose like "100 мг/5 мл" so it isn't taken for the ampoule volume.
+  if (vm) out.push(hasTok(T.replace(/\/\s*[\d.]+мл/g, ''), vm[1] + 'мл')
+    ? { ok: true, text: `Ҳажми каталогга мос: ${vm[1]} мл` }
+    : { ok: false, text: `Ҳажми: каталог бўйича ${vm[1]} мл бўлиши керак, tasnif номида йўқ` });
   return out;
 }
 const issuesOf = (own, items) => {
@@ -566,7 +575,7 @@ checkBtn.addEventListener('click', async () => {
   const tick = () => {
     const all = [...results.values()];
     const diff = [...results].filter(([g, r]) => r.state === 'yes' && issuesOf(ownOf(g), r.items).length).length;
-    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · фарқ бор: <b>${diff}</b>` +
+    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${diff ? `<a href="#" class="showdiff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
       (all.some(r => r.state === 'err') ? ` · хато: <b>${all.filter(r => r.state === 'err').length}</b>` : '');
   };
   tick();
@@ -580,6 +589,15 @@ checkBtn.addEventListener('click', async () => {
   await Promise.all([worker(), worker(), worker()]);
   running = false; checkBtn.textContent = 'Барчасини текшириш';
   prog.innerHTML += todo.length ? ' · тўхтатилди' : ' · тайёр ✓';
+  // Finished with discrepancies: show only those rows so they are reviewed first.
+  if (!todo.length && filtered().some(r => { const x = results.get(r[0]); return x?.state === 'yes' && issuesOf(r, x.items).length; })) {
+    document.getElementById('lst').value = 'diff'; renderList();
+  }
+});
+prog.addEventListener('click', e => {
+  if (!e.target.closest('.showdiff')) return;
+  e.preventDefault();
+  document.getElementById('lst').value = 'diff'; renderList();
 });
 
 document.getElementById('csv').addEventListener('click', async () => {
