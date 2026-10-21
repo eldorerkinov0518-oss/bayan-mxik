@@ -53,6 +53,22 @@
   .floaters i { position: absolute; bottom: -60px; color: #fff; opacity: 0; animation: drift linear infinite; }
   @keyframes drift { 0% { transform: translateY(0) rotate(0); opacity: 0; } 10% { opacity: var(--o); } 90% { opacity: var(--o); } 100% { transform: translateY(-380px) rotate(var(--r)); opacity: 0; } }
   .hero-in { position: relative; z-index: 1; }
+  /* Spinning 3D syringe and ampoule beside the title: each is a stack of SVG slices along Z, so it keeps its thickness while turning. */
+  .hero3d { display: none; position: absolute; right: 0; top: -2px; width: 250px; height: 150px; pointer-events: none; perspective: 700px; }
+  @media (min-width: 900px) { .hero3d { display: block; } }
+  .hero3d .stage { position: absolute; transform-style: preserve-3d; }
+  .s-syr { left: 0; top: 18px; width: 170px; height: 60px; transform: rotateZ(-28deg); animation: bob 5s ease-in-out infinite; }
+  .s-amp { right: 6px; top: 6px; width: 48px; height: 128px; animation: bob 4.2s ease-in-out -1.5s infinite; }
+  .spin { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: spinY 7s linear infinite; }
+  .s-amp .spin { animation-duration: 5.5s; animation-direction: reverse; }
+  .spin svg { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: visible; }
+  .spin svg.mid { filter: brightness(.55) saturate(.8); }
+  @keyframes spinY { to { transform: rotateY(360deg); } }
+  @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -8px; } }
+  .hero3d .glow { position: absolute; left: 30px; right: 10px; bottom: -6px; height: 22px; border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(92, 200, 255, .45), transparent); filter: blur(4px); animation: glowp 5s ease-in-out infinite; }
+  @keyframes glowp { 50% { opacity: .5; transform: scaleX(.85); } }
+  @media (prefers-reduced-motion: reduce) { .spin, .hero3d .stage, .hero3d .glow { animation: none; } }
   .motto { display: inline-flex; align-items: center; gap: 12px; margin-top: 8px; padding: 6px 18px 6px 12px; border-radius: 14px;
     background: linear-gradient(90deg, rgba(255,255,255,.16), rgba(10,142,224,.22)); border: 1px solid rgba(255,255,255,.25);
     backdrop-filter: blur(4px); animation: mottoIn .9s ease-out both; }
@@ -279,6 +295,11 @@
   <div class="floaters" id="floaters" aria-hidden="true"></div>
   <div class="hero-in">
     <h1 style="margin-top:6px">BAYAN MEDICAL МХИК кодлари базаси</h1>
+    <div class="hero3d" aria-hidden="true">
+      <div class="stage s-syr"><div class="spin" id="syr3d"></div></div>
+      <div class="stage s-amp"><div class="spin" id="amp3d"></div></div>
+      <i class="glow"></i>
+    </div>
     <div class="motto"><span class="mq">❝</span><div><small>Кун шиори</small><b id="motto"></b></div></div>
   </div>
 </header>
@@ -314,7 +335,7 @@
     <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>ИКПУ</th></tr></thead><tbody id="lt"></tbody></table></div>
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1345</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-1350</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1100,6 +1121,40 @@ document.getElementById('recent').addEventListener('click', e => {
   toTop();
 });
 drawRecent();
+
+// 3D syringe and ampoule: draw each shape several times, stacked along Z, for thickness.
+{
+  const SYR = `<svg viewBox="0 0 340 120"><defs>
+    <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".95"/><stop offset=".35" stop-color="#dff3ff" stop-opacity=".55"/><stop offset="1" stop-color="#9fd4f5" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="lq" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fd7ff"/><stop offset="1" stop-color="#0a8ee0"/></linearGradient>
+    <linearGradient id="mt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f4f7fb"/><stop offset=".5" stop-color="#9aa6b8"/><stop offset="1" stop-color="#e6ebf2"/></linearGradient>
+    <linearGradient id="pl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5b46c9"/><stop offset="1" stop-color="#1e0d5c"/></linearGradient></defs>
+    <rect x="2" y="44" width="16" height="32" rx="4" fill="url(#pl)"/><rect x="16" y="56" width="62" height="8" rx="3" fill="url(#pl)"/>
+    <rect x="74" y="26" width="10" height="68" rx="4" fill="url(#pl)"/>
+    <rect x="84" y="38" width="170" height="44" rx="8" fill="url(#gl)" stroke="#fff" stroke-opacity=".9" stroke-width="2"/>
+    <rect x="96" y="42" width="12" height="36" rx="3" fill="#281274"/>
+    <rect x="108" y="44" width="144" height="32" rx="5" fill="url(#lq)" opacity=".9"/>
+    <path d="M120 38v10M140 38v6M160 38v10M180 38v6M200 38v10M220 38v6M240 38v10" stroke="#281274" stroke-width="2"/>
+    <rect x="90" y="46" width="160" height="5" rx="2.5" fill="#fff" opacity=".7"/>
+    <path d="M254 48h14l8 8v8l-8 8h-14z" fill="url(#mt)"/>
+    <rect x="276" y="57.5" width="62" height="5" rx="2.5" fill="url(#mt)"/></svg>`;
+  const AMP3 = `<svg viewBox="0 0 60 160"><defs>
+    <linearGradient id="ag" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#bfe6ff" stop-opacity=".75"/><stop offset=".3" stop-color="#fff" stop-opacity=".95"/><stop offset="1" stop-color="#8ccaf0" stop-opacity=".7"/></linearGradient>
+    <linearGradient id="al" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#2aa8f0"/><stop offset=".5" stop-color="#7fd7ff"/><stop offset="1" stop-color="#0a6fc0"/></linearGradient></defs>
+    <path d="M30 4a10 10 0 0 1 10 10c0 6-4 8-5 13-.8 3.2 2 5.6 2 9 0 2.8-2.8 5.2-2.8 8.4 0 3.2 2.8 5 9.2 8.8A16 16 0 0 1 50 66v78a12 12 0 0 1-12 12H22a12 12 0 0 1-12-12V66a16 16 0 0 1 6.6-12.8c6.4-3.8 9.2-5.6 9.2-8.8 0-3.2-2.8-5.6-2.8-8.4 0-3.4 2.8-5.8 2-9C24 22 20 20 20 14A10 10 0 0 1 30 4z" fill="url(#ag)" stroke="#fff" stroke-width="2"/>
+    <path d="M13 92h34v52a9 9 0 0 1-9 9H22a9 9 0 0 1-9-9z" fill="url(#al)"/>
+    <rect x="22" y="36" width="16" height="5" rx="2.5" fill="#e5484d"/>
+    <rect x="13" y="104" width="34" height="18" fill="#fff" opacity=".9"/><path d="M17 110h26M17 116h18" stroke="#281274" stroke-width="2.4"/>
+    <path d="M18 70v62" stroke="#fff" stroke-width="3.5" stroke-linecap="round" opacity=".85"/></svg>`;
+  // Gradient ids must be unique per copy.
+  const slices = (svg, n, gap) => Array.from({ length: n }, (_, i) => {
+    const z = (i - (n - 1) / 2) * gap, edge = i === 0 || i === n - 1;
+    return svg.replace(/id="(\w+)"/g, `id="$1${i}"`).replace(/url\(#(\w+)\)/g, `url(#$1${i})`)
+      .replace('<svg', `<svg class="${edge ? '' : 'mid'}" style="transform:translateZ(${z.toFixed(1)}px)"`);
+  }).join('');
+  document.getElementById('syr3d').innerHTML = slices(SYR, 7, 1.6);
+  document.getElementById('amp3d').innerHTML = slices(AMP3, 9, 2);
+}
 
 // Slogan of the day: about medicine making, quality and health; changes at Tashkent midnight.
 {
