@@ -327,6 +327,14 @@ function nearIn(text, k) {
     for (let i = 0; i + n <= text.length; i++) if (lev(text.slice(i, i + n), k) <= max) return true;
   return false;
 }
+// Differences someone confirmed as correct: GTIN → check names ("Номи", "Доза", ...).
+// The built-in list applies on every computer; the button adds to this browser's list.
+const ACCEPT_BASE = { '4780090866668': ['Номи'] };
+const ACCEPT_STORE = 'bayan-accepted';
+let acceptLocal = {};
+try { acceptLocal = JSON.parse(localStorage.getItem(ACCEPT_STORE)) || {}; } catch {}
+const isAccepted = (g, k) => (ACCEPT_BASE[g] || []).includes(k) || (acceptLocal[g] || []).includes(k);
+const checkName = x => x.text.split(':')[0];
 function compare(own, it) {
   // The catalog is the reference. Only clear contradictions are reported (e.g. №1 where the catalog says 5 ampoules);
   // something tasnif simply doesn't mention is not an error.
@@ -372,7 +380,7 @@ function compare(own, it) {
   if (vm && tVol.length) out.push(tVol.includes(+vm[1])
     ? { ok: true, text: `Ҳажми: ${vm[1]} мл` }
     : { ok: false, text: `Ҳажми: каталог бўйича ${vm[1]} мл бўлиши керак, tasnif'да ${tVol.join(', ')} мл` });
-  return out;
+  return out.map(x => !x.ok && isAccepted(own[0], checkName(x)) ? { ok: true, accepted: true, text: x.text } : x);
 }
 const issuesOf = (own, items) => {
   if (!own || !items?.length) return [];
@@ -382,11 +390,21 @@ const issuesOf = (own, items) => {
 function compareBlock(own, it) {
   const res = compare(own, it);
   if (!res.length) return '';
-  const bad = res.filter(x => !x.ok);
+  const bad = res.filter(x => !x.ok), acc = res.filter(x => x.accepted);
   return `<div class="own cmp ${bad.length ? 'warn' : 'good'}"><div class="label">Каталог бўйича текширув</div>
-    <div class="t">${bad.length ? `⚠ ${bad.length} та жиддий фарқ` : `✓ Каталогга мос (${res.map(x => x.text.split(':')[0].toLowerCase()).join(', ')})`}</div>
-    ${bad.length ? `<ul>${bad.map(x => `<li class="bad">⚠ ${esc(x.text)}</li>`).join('')}</ul>` : ''}</div>`;
+    <div class="t">${bad.length ? `⚠ ${bad.length} та жиддий фарқ` : `✓ Каталогга мос (${res.map(x => checkName(x).toLowerCase()).join(', ')})`}</div>
+    ${bad.length || acc.length ? `<ul>${bad.map(x => `<li class="bad">⚠ ${esc(x.text)}
+      <button class="copy acc" data-g="${esc(own[0])}" data-k="${esc(checkName(x))}">Тўғри деб қабул қилиш</button></li>`).join('')}
+      ${acc.map(x => `<li class="ok">✓ ${esc(checkName(x))}: тўғри деб қабул қилинган</li>`).join('')}</ul>` : ''}</div>`;
 }
+document.addEventListener('click', e => {
+  const b = e.target.closest('.acc');
+  if (!b) return;
+  (acceptLocal[b.dataset.g] ||= []).push(b.dataset.k);
+  try { localStorage.setItem(ACCEPT_STORE, JSON.stringify(acceptLocal)); } catch {}
+  document.getElementById('f').requestSubmit();
+  renderList();
+});
 
 function ownBlock(r) {
   if (!r) return '';
