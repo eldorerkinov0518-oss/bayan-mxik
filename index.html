@@ -67,6 +67,40 @@
   .brand span { font-size: 13px; opacity: .85; }
   .hero h1 { margin: 34px 0 6px; font-size: 30px; line-height: 1.2; letter-spacing: -.5px; font-weight: 800; }
   .hero p { margin: 0; opacity: .9; }
+  .side { display: none; }
+  @media (min-width: 1400px) {
+    .side { display: grid; gap: 14px; align-content: start; position: fixed; top: 280px; z-index: 2; width: min(300px, calc(50vw - 478px));
+      max-height: calc(100vh - 336px); overflow-y: auto; scrollbar-width: thin; }
+    .side.l { right: calc(50% + 454px); } .side.r { left: calc(50% + 454px); }
+  }
+  .sc { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 16px; }
+  .sh { font: 800 12px Inter, system-ui, sans-serif; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 12px; }
+  .ring { position: relative; width: 132px; height: 132px; margin: 0 auto 14px; }
+  .ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 12; } .ring .rb { stroke: var(--soft); }
+  .ring .rf { stroke: #0a8ee0; stroke-linecap: round; stroke-dasharray: 314.16; stroke-dashoffset: 314.16; transition: stroke-dashoffset .4s; }
+  .ring > div { position: absolute; inset: 0; display: grid; place-content: center; text-align: center; }
+  .ring b { font-size: 28px; font-weight: 800; color: #281274; } .ring span { font-size: 11px; color: var(--muted); }
+  .stats button { display: flex; width: 100%; align-items: center; gap: 10px; padding: 8px 10px; margin-bottom: 4px; border: 0; border-radius: 10px;
+    background: var(--soft); color: var(--text); font: 600 13px Inter, system-ui, sans-serif; cursor: pointer; text-align: left; }
+  .stats button:hover { outline: 2px solid #0a8ee0; }
+  .stats button i { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .stats button b { margin-left: auto; font-size: 15px; font-variant-numeric: tabular-nums; }
+  .last { margin-top: 8px; font-size: 12px; color: var(--muted); text-align: center; }
+  .fr { margin-bottom: 10px; font-size: 13px; } .fr div { display: flex; justify-content: space-between; margin-bottom: 4px; }
+  .fr s { display: block; height: 8px; border-radius: 4px; background: var(--soft); overflow: hidden; text-decoration: none; }
+  .fr s i { display: block; height: 100%; background: linear-gradient(90deg, #281274, #0a8ee0); border-radius: 4px; }
+  .co { text-align: center; border-top: 4px solid #0a8ee0; }
+  .co img { width: 150px; max-width: 100%; margin: 4px auto 8px; display: block; border-radius: 6px; }
+  .cot { font-weight: 800; color: #281274; font-size: 15px; } .cos { font-size: 12px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+  #recent button { display: block; width: 100%; padding: 7px 10px; margin-bottom: 4px; border: 0; border-radius: 10px; background: var(--soft);
+    color: var(--text); text-align: left; cursor: pointer; font: 600 13px "JetBrains Mono", ui-monospace, Consolas, monospace; }
+  #recent button small { display: block; font: 500 11px Inter, system-ui, sans-serif; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #recent button:hover, .lnk:hover { outline: 2px solid #0a8ee0; }
+  .lnk { display: block; padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; background: var(--soft); color: var(--text); text-decoration: none; }
+  .lnk b { display: block; font-size: 13px; color: #0a8ee0; } .lnk span { font-size: 11px; color: var(--muted); }
+  .tip #tip { font-size: 13px; line-height: 1.5; }
+  .empty { font-size: 12px; color: var(--muted); }
   main { position: relative; z-index: 1; padding: 0 16px 72px; margin-top: -64px; }
   .search { background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px; }
   form { display: flex; gap: 10px; }
@@ -209,6 +243,37 @@
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   <div class="credit">Тузувчи: <b>Элдор Эркинов</b></div>
 </main>
+<aside class="side l" aria-label="Каталог ҳолати">
+  <div class="sc">
+    <div class="sh">Каталог ҳолати</div>
+    <div class="ring"><svg viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" class="rb"/><circle cx="60" cy="60" r="50" class="rf" id="ringf"/></svg>
+      <div><b id="ringp">0%</b><span>текширилди</span></div></div>
+    <div class="stats" id="stats"></div>
+    <div class="last" id="lastcheck"></div>
+  </div>
+  <div class="sc">
+    <div class="sh">Дори шакли бўйича</div>
+    <div id="forms"></div>
+  </div>
+</aside>
+<aside class="side r" aria-label="BAYAN MEDICAL">
+  <div class="sc co">
+    <img id="colog" alt="BAYAN MEDICAL">
+    <div class="cot">МЧЖ «BAYAN MEDICAL»</div>
+    <div class="cos" id="cosub"></div>
+  </div>
+  <div class="sc">
+    <div class="sh">Охирги излашлар</div>
+    <div id="recent"></div>
+  </div>
+  <div class="sc">
+    <div class="sh">Фойдали ҳаволалар</div>
+    <a class="lnk" href="https://tasnif.soliq.uz/" target="_blank" rel="noopener"><b>tasnif.soliq.uz</b><span>ИКПУ (МХИК) классификатори</span></a>
+    <a class="lnk" href="https://xtrace.aslbelgisi.uz/" target="_blank" rel="noopener"><b>Асл белгиси</b><span>Маркировка кабинети</span></a>
+    <a class="lnk" href="https://my.soliq.uz/" target="_blank" rel="noopener"><b>my.soliq.uz</b><span>Солиқ тўловчининг шахсий кабинети</span></a>
+  </div>
+  <div class="sc tip"><div class="sh">💡 Маслаҳат</div><div id="tip"></div></div>
+</aside>
 <script>/*! ExcelJS 4.4.0 | MIT */
 /*! ExcelJS 19-10-2023 */
 
@@ -534,6 +599,7 @@ document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
   const code = q.value.replace(/\s+/g, '');
   const isIkpu = code.length === 17;
+  if (isIkpu || [8, 12, 13, 14].includes(code.length)) addRecent(code);
   if (!isIkpu && ![8, 12, 13, 14].includes(code.length)) {
     out.innerHTML = status('warn', '!', 'Фақат штрих код (8, 12, 13 ёки 14 рақам) ёки ИКПУ коди (17 рақам) киритинг.', `Сиз ${code.length} та рақам киритдингиз.`);
     return;
@@ -587,6 +653,7 @@ function setResult(code, items, state) {
   if (!r) return;
   results.set(r[0], { state: state || (items.length ? 'yes' : 'no'), items: items || [] });
   saveResults();
+  updateSide();
   const cell = document.getElementById('s' + r[0]);
   if (cell) cell.innerHTML = pill(r[0]);
 }
@@ -611,6 +678,7 @@ function filtered() {
 function renderList() {
   const rows = filtered();
   document.getElementById('lcount').textContent = `(${rows.length} та)`;
+  updateSide();
   lt.innerHTML = rows.map(([g, name, brand, desc, pack]) => `<tr class="r" data-g="${g}">
     <td class="mono">${g}</td><td><b>${esc(name || brand)}</b><small>${esc(desc)}</small></td>
     <td><small style="color:var(--text)">${esc(pack)}</small></td><td id="s${g}">${pill(g)}</td></tr>`).join('');
@@ -674,6 +742,7 @@ checkBtn.addEventListener('click', async () => {
   await Promise.all([worker(), worker(), worker()]);
   running = false; checkBtn.textContent = 'Барчасини текшириш';
   prog.innerHTML += todo.length ? ' · тўхтатилди' : ' · тайёр ✓';
+  if (!todo.length) { const n = nowTk(); setLS(LAST_CHECK, `${String(n.d).padStart(2, '0')}.${String(n.m + 1).padStart(2, '0')}.${n.y} ${n.time.slice(0, 5)}`); updateSide(); }
   // Finished with discrepancies: show only those rows so they are reviewed first.
   if (!todo.length) {
     const has = fn => filtered().some(r => { const x = results.get(r[0]); return x?.state === 'yes' && fn(r, x.items).length; });
@@ -861,6 +930,79 @@ calpop.addEventListener('click', e => {
 });
 document.addEventListener('click', () => { calpop.hidden = true; });
 tickClock(); setInterval(tickClock, 1000);
+
+// Side panels on wide screens: catalog status (left), company card, recent searches, links and tips (right).
+const LAST_CHECK = 'bayan-last-check', RECENT = 'bayan-recent';
+const getLS = (k, d) => { try { return JSON.parse(localStorage.getItem(k)) ?? d; } catch { return d; } };
+const setLS = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} };
+let sideTimer;
+function updateSide() {
+  clearTimeout(sideTimer);
+  sideTimer = setTimeout(() => {
+    const c = { yes: 0, no: 0, main: 0, diff: 0, wait: 0 };
+    for (const r of CATALOG) {
+      const x = results.get(r[0]);
+      if (!x || x.state === 'err') { c.wait++; continue; }
+      c[x.state]++;
+      if (x.state === 'yes') { const iss = issuesOf(r, x.items); if (iss.some(isMain)) c.main++; else if (iss.length) c.diff++; }
+    }
+    const done = CATALOG.length - c.wait, pct = Math.round(done / CATALOG.length * 100);
+    document.getElementById('ringp').textContent = pct + '%';
+    document.getElementById('ringf').style.strokeDashoffset = 314.16 * (1 - done / CATALOG.length);
+    const row = (f, color, label, n) => `<button type="button" data-f="${f}"><i style="background:${color}"></i>${label}<b>${n}</b></button>`;
+    document.getElementById('stats').innerHTML = row('', '#281274', 'Жами маҳсулот', CATALOG.length) + row('yes', '#0b7a55', 'ИКПУ бор', c.yes)
+      + row('no', '#c0362c', 'ИКПУ йўқ', c.no) + row('main', '#e5484d', '❗ Асосий хато', c.main) + row('diff', '#d08a00', '⚠ Фарқ бор (ҳаммаси)', c.main + c.diff)
+      + row('wait', '#9aa6b8', 'Текширилмаган', c.wait);
+    const lc = getLS(LAST_CHECK, null);
+    document.getElementById('lastcheck').textContent = lc ? `Охирги тўлиқ текширув: ${lc}` : '«Барчасини текшириш» ҳали бажарилмаган';
+  }, 300);
+}
+document.getElementById('stats').addEventListener('click', e => {
+  const b = e.target.closest('[data-f]');
+  if (!b) return;
+  document.getElementById('lst').value = b.dataset.f; renderList();
+  document.querySelector('.list').scrollIntoView({ behavior: 'smooth' });
+});
+{
+  // Dosage forms, from the catalog descriptions.
+  const groups = [['Инъекция учун эритма', r => /инъекц/i.test(r[3]) && !/концентрат|концентрац|вода/i.test(r[3])],
+    ['Инфузия/инъекция учун концентрат', r => /концентрат|концентрац/i.test(r[3])], ['Инъекция учун сув', r => /вода/i.test(r[3])]];
+  const counted = groups.map(([l, f]) => [l, CATALOG.filter(f).length]);
+  counted.push(['Бошқа', CATALOG.length - counted.reduce((a, [, n]) => a + n, 0)]);
+  document.getElementById('forms').innerHTML = counted.filter(([, n]) => n).map(([l, n]) =>
+    `<div class="fr"><div><span>${l}</span><b>${n}</b></div><s><i style="width:${(n / CATALOG.length * 100).toFixed(1)}%"></i></s></div>`).join('');
+  document.getElementById('colog').src = document.querySelector('.topbar img').src;
+  const brands = new Set(CATALOG.map(r => r[2] || r[1])).size;
+  document.getElementById('cosub').innerHTML = `Инъекцион дори воситалари<br><b>${CATALOG.length}</b> та штрих код · <b>${brands}</b> та савдо номи`;
+  const TIPS = ['Асл белгисидан олинган 14 хонали, 0 билан бошланадиган штрих кодни ҳам киритсангиз бўлади.',
+    '«❗ Асосий хато» фильтри савдо номи ёки қадоқ сони (№) нотўғри бўлган маҳсулотларни кўрсатади.',
+    'Фарқ аслида тўғри бўлса, «Тўғри деб қабул қилиш» тугмасини босинг.',
+    'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.',
+    '17 хонали ИКПУ кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
+    'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.'];
+  let ti = Math.floor(Math.random() * TIPS.length);
+  const showTip = () => { document.getElementById('tip').textContent = TIPS[ti++ % TIPS.length]; };
+  showTip(); setInterval(showTip, 15000);
+}
+function drawRecent() {
+  const list = getLS(RECENT, []);
+  document.getElementById('recent').innerHTML = list.length ? list.map(r => `<button type="button" data-c="${esc(r.c)}">${esc(r.c)}<small>${esc(r.t)}</small></button>`).join('')
+    : '<div class="empty">Ҳали излаш бўлмади. Излаган кодларингиз шу ерда кўринади.</div>';
+}
+function addRecent(code) {
+  const own = code.length === 17 ? null : ownOf(code);
+  const list = getLS(RECENT, []).filter(r => r.c !== code);
+  list.unshift({ c: code, t: own ? (own[1] || own[2]) : code.length === 17 ? 'ИКПУ коди' : 'Штрих код' });
+  setLS(RECENT, list.slice(0, 8)); drawRecent();
+}
+document.getElementById('recent').addEventListener('click', e => {
+  const b = e.target.closest('[data-c]');
+  if (!b) return;
+  q.value = b.dataset.c; q.dispatchEvent(new Event('input'));
+  document.getElementById('f').requestSubmit();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
+drawRecent();
 
 renderList();
 </script>
