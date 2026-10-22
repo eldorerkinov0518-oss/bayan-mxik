@@ -833,6 +833,19 @@
   .own { margin-top: 16px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px 22px;
     border-left: 6px solid var(--brand2); }
   .own .t { font-size: 18px; font-weight: 700; margin: 4px 0 8px; }
+  .own .app { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
+  .own .app summary { display: inline-flex; margin: 10px 12px; padding: 9px 16px; border-radius: 11px; background: linear-gradient(135deg, var(--b1), var(--b2)); color: #fff; font-weight: 800; cursor: pointer; list-style: none; box-shadow: 0 6px 16px rgba(40, 18, 116, .25); }
+  .own .app summary::-webkit-details-marker { display: none; }
+  .own .app .apph { margin: 0 14px 8px; font-weight: 700; color: var(--b1); }
+  .own .appf { display: grid; gap: 6px; padding: 0 14px; }
+  .own .appf div { display: grid; grid-template-columns: 150px 1fr auto; gap: 10px; align-items: center; padding: 7px 10px; border-radius: 10px; background: var(--card); }
+  .own .appf span { color: var(--muted); font-size: 12.5px; } .own .appf b { font-weight: 600; word-break: break-word; } .own .appf i { color: #b45309; font-size: 13px; }
+  .own .cp { border: 1px solid var(--line); background: var(--card); color: var(--b1); border-radius: 8px; padding: 5px 10px; font: 700 12px var(--font), sans-serif; cursor: pointer; }
+  .own .cp.ok { background: #dcfce7; color: #15803d; border-color: #86efac; }
+  .own .appb { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 14px 4px; }
+  .own .appb a { font-weight: 700; color: var(--b2); }
+  .own .app small { display: block; padding: 0 14px 12px; color: var(--muted); }
+  @media (max-width: 560px) { .own .appf div { grid-template-columns: 1fr auto; } .own .appf span { grid-column: 1 / -1; } }
   .cmp ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
   .cmp li.ok { color: var(--ok); } .cmp li.bad { color: var(--warn); font-weight: 600; } .cmp li.bad.main { color: var(--bad); font-size: 15px; }
   .cmp.warn { border-left-color: var(--warn); } .cmp.warn:has(li.main) { border-left-color: var(--bad); background: var(--badbg); } .cmp.good { border-left-color: var(--ok); }
@@ -948,7 +961,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2050</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2100</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1098,6 +1111,11 @@ const I18N = {
   '⬇ PNG юклаб олиш': ['⬇ Скачать PNG', '⬇ Download PNG'],
   'Маҳсулот': ['Продукт', 'Product'],
   'Қадоқ': ['Упаковка', 'Package'],
+  '📝 Ариза тайёрлаш': ['📝 Подготовить заявку', '📝 Prepare an application'], 'МХИК аризаси учун маълумот:': ['Данные для заявки на ИКПУ:', 'Data for the PSCIC application:'], 'Препарат номи': ['Наименование препарата', 'Product name'],
+  'Ўлчов бирлиги': ['Ед. изм.', 'Unit'], 'Нусха': ['Копировать', 'Copy'], 'Тавсифи (РУ)': ['Описание (РУ)', 'Description (reg. cert.)'],
+  'Рўйхатдан ўтиш гувоҳномаси (DV/M …) каталогда йўқ': ['Регистрационного удостоверения (DV/M …) нет в каталоге', 'The registration certificate (DV/M …) is not in the catalog'],
+  '📋 Ҳаммасини нусхалаш': ['📋 Копировать всё', '📋 Copy all'], 'tasnif.soliq.uz кабинетини очиш ↗': ['Открыть кабинет tasnif.soliq.uz ↗', 'Open the tasnif.soliq.uz cabinet ↗'],
+  'Ариза tasnif кабинетида E-IMZO калити билан юборилади.': ['Заявка подаётся в кабинете tasnif с ключом E-IMZO.', 'The application is filed in the tasnif cabinet with an E-IMZO key.'],
   'МХИК коди': ['Код ИКПУ', 'PSCIC code'],
   'МХИК': ['ИКПУ', 'PSCIC'],
   'Маълумотлар манбаи: tasnif.soliq.uz': ['Источник данных: tasnif.soliq.uz', 'Data source: tasnif.soliq.uz'],
@@ -1627,13 +1645,38 @@ document.addEventListener('click', async e => {
   acceptRedraw();
 });
 
-function ownBlock(r) {
+// appFor: the barcode when tasnif has no MXIK for it yet; the card then offers «Ариза тайёрлаш».
+function ownBlock(r, appFor) {
   if (!r) return '';
   const [gtin, name, brand, desc, pack] = r;
   return `<div class="own"><div class="label">BAYAN MEDICAL каталогида</div>
     <div class="t">${esc(name || brand || desc)}${brand && brand !== name ? ` <span style="color:var(--muted);font-weight:500">(${esc(brand)})</span>` : ''}</div>
-    <dl>${row('Штрих код', gtin)}${row('Тавсифи', desc)}${row('Қадоқ', pack)}</dl>${maketHtml(gtin)}</div>`;
+    <dl>${row('Штрих код', gtin)}${row('Тавсифи', desc)}${row('Қадоқ', pack)}</dl>${appFor ? appHtml(r) : ''}${maketHtml(gtin)}</div>`;
 }
+
+// Data asked for in a tasnif.soliq.uz MXIK application, laid out like the company's own sheet, each with a copy button.
+// The application itself is filed in the tasnif cabinet with E-IMZO; this page never touches the key.
+const TNVED = '3004900002';
+function appName([, name, brand, desc, pack]) {
+  const b = brand || name || '', vol = [...normT(pack).matchAll(/(\d+(?:\.\d+)?)мл/g)].pop()?.[1], n = packMatch(pack)?.[1];
+  const d = (desc || '').replace(/^./, c => c.toLowerCase());
+  return [b.charAt(0).toUpperCase() + b.slice(1).toLowerCase(), d, vol && !normT(desc).includes(`${vol}мл`) ? `${vol} мл` : '', n ? `№${n}` : ''].filter(Boolean).join(' ');
+}
+function appHtml(r) {
+  const f = [['Препарат номи', appName(r) || '—'], ['Код ТНВЭД', TNVED], ['GTIN / Штрих код', r[0]], ['Ўлчов бирлиги', 'Упаковка']];
+  return `<details class="app"><summary>📝 Ариза тайёрлаш</summary><p class="apph">МХИК аризаси учун маълумот:</p>
+    <div class="appf">${f.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b><button type="button" class="cp" data-cp="${esc(v)}">Нусха</button></div>`).join('')}
+    <div><span>Тавсифи (РУ)</span><i>Рўйхатдан ўтиш гувоҳномаси (DV/M …) каталогда йўқ</i></div></div>
+    <div class="appb"><button type="button" class="cp" data-cp="${esc(f.map(([k, v]) => `${tr(k)}: ${v}`).join('\n'))}">📋 Ҳаммасини нусхалаш</button>
+    <a href="https://tasnif.soliq.uz/" target="_blank" rel="noopener">tasnif.soliq.uz кабинетини очиш ↗</a></div>
+    <small>Ариза tasnif кабинетида E-IMZO калити билан юборилади.</small></details>`;
+}
+document.addEventListener('click', async e => {
+  const b = e.target.closest('.cp[data-cp]'); if (!b) return;
+  const t = b.dataset.cp;
+  try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement('textarea'); a.value = t; document.body.append(a); a.select(); document.execCommand('copy'); a.remove(); }
+  const old = b.textContent; b.textContent = '✓'; b.classList.add('ok'); setTimeout(() => { b.textContent = old; b.classList.remove('ok'); }, 1200);
+});
 
 // Packaging mock-ups (макет): image files kept in the repo under makets/, listed per barcode in makets/index.json,
 // e.g. {"4780090865159": ["4780090865159-1.jpg", "4780090865159-2.jpg"]}. The desktop copy loads them from the website.
@@ -1842,7 +1885,7 @@ document.getElementById('f').addEventListener('submit', async e => {
     if (!items.length) {
       out.innerHTML = (isIkpu
         ? status('bad', '✕', `${esc(code)} МХИК коди базада топилмади.`)
-        : status('bad', '✕', own ? 'Бу маҳсулотга ҳали МХИК олинмаган.' : 'Бу штрих код учун МХИК топилмади.', esc(code))) + ownBlock(own);
+        : status('bad', '✕', own ? 'Бу маҳсулотга ҳали МХИК олинмаган.' : 'Бу штрих код учун МХИК топилмади.', esc(code))) + (isIkpu ? ownBlock(own) : ownBlock(own, code) || `<div class="own">${appHtml(['' + code, '', '', '', ''])}</div>`);
       return;
     }
     const cards = await Promise.all(items.map(i => getCard(i.mxikCode)));
