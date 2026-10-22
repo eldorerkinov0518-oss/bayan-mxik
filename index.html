@@ -967,7 +967,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2200</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2210</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2030,6 +2030,11 @@ function setResult(code, items, state) {
   const cell = document.getElementById('s' + r[0]);
   if (cell) cell.innerHTML = pill(r[0]);
 }
+// Search key that ignores script, case and punctuation, and the usual Latin/Cyrillic spelling swaps (ц/s, х/h, й/i, в/b).
+const findKey = t => String(t || '').toLowerCase().replace(/ё/g, 'е').replace(/[а-яўқғҳ]/g, c => c === 'х' || c === 'ҳ' ? 'h' : CYR[c] ?? c)
+  .replace(/ts/g, 's').replace(/kh|x/g, 'h').replace(/[cq]/g, 'k').replace(/w|v/g, 'b').replace(/yu/g, 'u').replace(/y/g, 'i').replace(/[^a-z0-9]/g, '');
+const findKeys = new Map();
+const findKeyOf = (r, text) => { let k = findKeys.get(text); if (k === undefined) { k = findKey(text); findKeys.set(text, k); } return k; };
 function filtered() {
   const f = lf.value.trim().toLowerCase(), st = document.getElementById('lst').value;
   const byState = r => {
@@ -2042,10 +2047,16 @@ function filtered() {
   };
   if (!f) return CATALOG.filter(byState);
   // Match product fields and, once checked, the IKPU code and name too.
+  // Names also match across scripts and spellings: «analgin» finds Анальгин, «цитинум» finds Sitinum.
+  const words = f.split(/\s+/).map(findKey).filter(Boolean);
   return CATALOG.filter(byState).filter(r => {
     const its = results.get(r[0])?.items || [];
     const ikpu = its.map(i => `${i.mxikCode} ${i.mxikName || i.name || ''}`).join(' ');
-    return `${r.join(' ')} ${ikpu}`.toLowerCase().includes(f);
+    const text = `${r.join(' ')} ${ikpu}`;
+    if (text.toLowerCase().includes(f)) return true;
+    if (!words.length) return false;
+    const key = findKeyOf(r, text);
+    return words.every(w => key.includes(w));
   });
 }
 function renderList() {
