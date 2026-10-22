@@ -762,18 +762,18 @@
     <form id="f">
       <div class="field">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" maxlength="60" autocomplete="off" placeholder="Номи, штрих код ёки ИКПУ коди" autofocus>
+        <input id="q" maxlength="60" autocomplete="off" placeholder="Номи, штрих код ёки МХИК коди" autofocus>
         <button type="button" class="qx" id="qx" title="Тозалаш" hidden>✕</button>
       </div>
       <button class="go" id="btn" type="submit">Излаш</button>
     </form>
     <div class="hint">
-      <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">ИКПУ: 17</span><button type="button" class="chip infob" id="infob" aria-expanded="false">ℹ Кодлар ҳақида</button></div>
+      <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">МХИК: 17</span><button type="button" class="chip infob" id="infob" aria-expanded="false">ℹ Кодлар ҳақида</button></div>
       <span id="cnt">0 рақам</span>
     </div>
     <div class="codeinfo" id="codeinfo" hidden>
       <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
-      <div class="ci"><b>🧾 МХИК (ИКПУ) коди</b><p>МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.</p><p>Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.</p><small>Мисол: 03004172006063001</small></div>
+      <div class="ci"><b>🧾 МХИК коди</b><p>МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.</p><p>Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.</p><small>Мисол: 03004172006063001</small></div>
       <div class="ci"><b>▦ Маркировка коди</b><p>Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).</p><p>Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.</p><small>Ҳар бир қутида бошқача бўлади</small></div>
     </div>
   </section>
@@ -782,20 +782,20 @@
     <h2>BAYAN MEDICAL маҳсулотлари <span id="lcount"></span></h2>
     <div class="tools">
       <select id="lst" class="copy" title="Ҳолат бўйича">
-        <option value="">Ҳаммаси</option><option value="yes">ИКПУ бор</option><option value="no">ИКПУ йўқ</option>
+        <option value="">Ҳаммаси</option><option value="yes">МХИК бор</option><option value="no">МХИК йўқ</option>
         <option value="main">❗ Асосий хато</option><option value="diff">Фарқ бор (ҳаммаси)</option><option value="wait">Текширилмаган</option>
       </select>
-      <button class="go" id="checkAll" type="button" title="Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, ИКПУ тузатилгандан кейин).">↻ Янгилаш</button>
+      <button class="go" id="checkAll" type="button" title="Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).">↻ Янгилаш</button>
       <button class="copy" id="csv" type="button" title="Excel'га юклаш">Excel</button>
       <button class="copy" id="pdf" type="button">PDF</button>
       <button class="copy" id="txt" type="button">TXT</button>
     </div>
     <div class="prog" id="prog">Маҳсулотлар tasnif.soliq.uz да текширилмоқда…</div>
-    <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>ИКПУ</th></tr></thead><tbody id="lt"></tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>МХИК</th></tr></thead><tbody id="lt"></tbody></table></div>
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1605</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1615</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -828,9 +828,9 @@
   <div class="sc">
     <div class="sh">Фойдали ҳаволалар</div>
     <div class="lnks">
-    <a class="lnk" href="https://tasnif.soliq.uz/" target="_blank" rel="noopener"><b>tasnif.soliq.uz</b><span>ИКПУ (МХИК) классификатори</span></a>
+    <a class="lnk" href="https://tasnif.soliq.uz/" target="_blank" rel="noopener"><b>tasnif.soliq.uz</b><span>МХИК классификатори</span></a>
     <a class="lnk" href="https://xtrace.aslbelgisi.uz/" target="_blank" rel="noopener"><b>Асл белгиси</b><span>Маркировка кабинети</span></a>
-    <a class="lnk tglnk" href="#" target="_blank" rel="noopener"><b>📲 Telegram бот</b><span>Штрих код ёки ИКПУ юборинг, бот жавоб беради</span></a>
+    <a class="lnk tglnk" href="#" target="_blank" rel="noopener"><b>📲 Telegram бот</b><span>Штрих код ёки МХИК юборинг, бот жавоб беради</span></a>
     <a class="lnk" href="https://didox.uz/" target="_blank" rel="noopener"><b>Didox</b><span>Электрон ҳужжат айланиши (ЭСФ, шартнома)</span></a>
     <a class="lnk" href="https://my.soliq.uz/" target="_blank" rel="noopener"><b>my.soliq.uz</b><span>Солиқ тўловчининг шахсий кабинети</span></a>
     </div>
@@ -913,25 +913,24 @@ const I18N = {
   'Таклифларингизни «Чат ва изоҳлар» орқали юборинг': ['Присылайте предложения через «Чат и отзывы»', 'Send your suggestions via «Chat & feedback»'],
   '📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин': ['📲 Штрих-код можно проверить и через наш Telegram-бот', '📲 You can also check a barcode with our Telegram bot'],
   'МЧЖ «BAYAN MEDICAL»': ['ООО «BAYAN MEDICAL»', 'BAYAN MEDICAL LLC'],
-  'BAYAN MEDICAL МХИК кодлари базаси': ['База кодов МХИК BAYAN MEDICAL', 'BAYAN MEDICAL IKPU code database'],
-  'BAYAN MEDICAL — МХИК кодлари базаси': ['BAYAN MEDICAL — база кодов МХИК', 'BAYAN MEDICAL — IKPU code database'],
-  'BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси': ['BAYAN MEDICAL — база кодов МХИК (ИКПУ)', 'BAYAN MEDICAL — MXIK (IKPU) code database'],
+  'BAYAN MEDICAL МХИК кодлари базаси': ['База кодов ИКПУ BAYAN MEDICAL', 'BAYAN MEDICAL PSCIC code database'],
+  'BAYAN MEDICAL — МХИК кодлари базаси': ['BAYAN MEDICAL — база кодов ИКПУ', 'BAYAN MEDICAL — PSCIC code database'],
   'Кун шиори': ['Девиз дня', 'Motto of the day'],
-  'Номи, штрих код ёки ИКПУ коди': ['Название, штрих-код или код ИКПУ', 'Name, barcode or IKPU code'],
+  'Номи, штрих код ёки МХИК коди': ['Название, штрих-код или код ИКПУ', 'Name, barcode or PSCIC code'],
   'Тозалаш': ['Очистить', 'Clear'],
   'Излаш': ['Найти', 'Search'],
   'BAYAN MEDICAL маҳсулотлари': ['Продукция BAYAN MEDICAL', 'BAYAN MEDICAL products'],
   'Ҳолат бўйича': ['По статусу', 'By status'],
   'Ҳаммаси': ['Все', 'All'],
-  'ИКПУ бор': ['ИКПУ есть', 'Has IKPU'],
-  'ИКПУ йўқ': ['ИКПУ нет', 'No IKPU'],
+  'МХИК бор': ['ИКПУ есть', 'Has PSCIC'],
+  'МХИК йўқ': ['ИКПУ нет', 'No PSCIC'],
   'Асосий хато': ['Основная ошибка', 'Major error'],
   'асосий хато': ['основные ошибки', 'major errors'],
   'Фарқ бор (ҳаммаси)': ['Есть расхождения (все)', 'Has differences (all)'],
   'Текширилмаган': ['Не проверено', 'Not checked'],
-  'Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, ИКПУ тузатилгандан кейин).':
+  'Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).':
     ['Результаты проверяются автоматически. Эта кнопка сразу заново загружает самые свежие данные с tasnif.soliq.uz (например, после исправления ИКПУ).',
-     'Results are checked automatically. This button fetches the latest data from tasnif.soliq.uz right now (for example, after an IKPU is corrected).'],
+     'Results are checked automatically. This button fetches the latest data from tasnif.soliq.uz right now (for example, after a PSCIC is corrected).'],
   'Янгилаш': ['Обновить', 'Refresh'],
   "Excel'га юклаш": ['Скачать в Excel', 'Download as Excel'],
   'Тўхтатиш': ['Остановить', 'Stop'],
@@ -939,8 +938,8 @@ const I18N = {
   'Штрих код': ['Штрих-код', 'Barcode'],
   'Маҳсулот': ['Продукт', 'Product'],
   'Қадоқ': ['Упаковка', 'Package'],
-  'ИКПУ коди': ['Код ИКПУ', 'IKPU code'],
-  'ИКПУ': ['ИКПУ', 'IKPU'],
+  'МХИК коди': ['Код ИКПУ', 'PSCIC code'],
+  'МХИК': ['ИКПУ', 'PSCIC'],
   'Маълумотлар манбаи: tasnif.soliq.uz': ['Источник данных: tasnif.soliq.uz', 'Data source: tasnif.soliq.uz'],
   'Тузувчи': ['Разработчик', 'Developer'],
   'Элдор Эркинов': ['Элдор Эркинов', 'Eldor Erkinov'],
@@ -965,8 +964,8 @@ const I18N = {
   'Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.': ['Линейный код на упаковке из 8, 12, 13 или 14 цифр.', 'The striped code on the box, 8, 12, 13 or 14 digits long.'],
   'Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.': ['Определяет товар и производителя во всём мире. Одинаков на всех упаковках одного товара.', 'Identifies the product and its maker worldwide. It is the same on every box of the same product.'],
   'Мисол: 4780090866873': ['Пример: 4780090866873', 'Example: 4780090866873'],
-  '🧾 МХИК (ИКПУ) коди': ['🧾 Код ИКПУ (MXIK)', '🧾 IKPU (MXIK) code'],
-  'МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.': ['МХИК (по-русски ИКПУ, по-английски PSCIC) — идентификационный код продукции и услуг, 17 цифр.', 'MXIK, in English PSCIC (Product and Service Classification Identification Code), in Russian IKPU: the 17-digit identification code of goods and services.'],
+  '🧾 МХИК коди': ['🧾 Код ИКПУ', '🧾 PSCIC code'],
+  'МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.': ['ИКПУ (идентификационный код продукции и услуг) — код из 17 цифр; по-узбекски МХИК, по-английски PSCIC.', 'PSCIC (Product and Service Classification Identification Code) is the 17-digit identification code of goods and services; in Uzbek it is MXIK, in Russian IKPU.'],
   'Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.': ['Присваивается в классификаторе tasnif.soliq.uz Налогового комитета. Используется в электронных счетах-фактурах, кассовых чеках и маркировке.', 'Assigned in the Tax Committee classifier tasnif.soliq.uz. Used in e-invoices, cash register receipts and marking.'],
   'Мисол: 03004172006063001': ['Пример: 03004172006063001', 'Example: 03004172006063001'],
   '▦ Маркировка коди': ['▦ Код маркировки', '▦ Marking code'],
@@ -974,11 +973,11 @@ const I18N = {
   'Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.': ['Содержит штрих-код, уникальный серийный номер и код проверки. Позволяет отследить каждую упаковку от производства до продажи, для лекарств обязателен.', 'It holds the barcode, a unique serial number and a check code. It lets each box be traced from production to sale and is mandatory for medicines.'],
   'Ҳар бир қутида бошқача бўлади': ['На каждой упаковке свой', 'Different on every box'],
   'Фойдали ҳаволалар': ['Полезные ссылки', 'Useful links'],
-  'ИКПУ (МХИК) классификатори': ['Классификатор ИКПУ (МХИК)', 'IKPU (MXIK) classifier'],
+  'МХИК классификатори': ['Классификатор ИКПУ', 'PSCIC classifier'],
   'Асл белгиси': ['Асл белгиси', 'Asl Belgisi'],
   'Маркировка кабинети': ['Кабинет маркировки', 'Product marking portal'],
   'Telegram бот': ['Telegram-бот', 'Telegram bot'],
-  'Штрих код ёки ИКПУ юборинг, бот жавоб беради': ['Отправьте штрих-код или ИКПУ, бот ответит', 'Send a barcode or IKPU and the bot replies'],
+  'Штрих код ёки МХИК юборинг, бот жавоб беради': ['Отправьте штрих-код или ИКПУ, бот ответит', 'Send a barcode or PSCIC and the bot replies'],
   'Электрон ҳужжат айланиши (ЭСФ, шартнома)': ['Электронный документооборот (ЭСФ, договоры)', 'Electronic documents (e-invoices, contracts)'],
   'Солиқ тўловчининг шахсий кабинети': ['Личный кабинет налогоплательщика', 'Taxpayer personal account'],
   'Маслаҳат': ['Совет', 'Tip'],
@@ -1046,14 +1045,14 @@ const I18N = {
   'Код': ['Код', 'Code'],
   'Миқдори': ['Количество', 'Quantity'],
   'Рўйхатда бундай маҳсулот топилмади.': ['В списке такого продукта нет.', 'No such product in the list.'],
-  "tasnif'дан текшириш учун штрих код ёки ИКПУ кодини киритинг.": ['Для проверки в tasnif введите штрих-код или код ИКПУ.', 'To check on tasnif, enter a barcode or IKPU code.'],
-  'Фақат штрих код (8, 12, 13 ёки 14 рақам) ёки ИКПУ коди (17 рақам) киритинг.': ['Введите только штрих-код (8, 12, 13 или 14 цифр) или код ИКПУ (17 цифр).', 'Enter only a barcode (8, 12, 13 or 14 digits) or an IKPU code (17 digits).'],
-  'Бу маҳсулотга ҳали ИКПУ олинмаган.': ['Для этого продукта ИКПУ ещё не получен.', 'No IKPU has been obtained for this product yet.'],
-  'Бу штрих код учун ИКПУ топилмади.': ['Для этого штрих-кода ИКПУ не найден.', 'No IKPU found for this barcode.'],
+  "tasnif'дан текшириш учун штрих код ёки МХИК кодини киритинг.": ['Для проверки в tasnif введите штрих-код или код ИКПУ.', 'To check on tasnif, enter a barcode or PSCIC code.'],
+  'Фақат штрих код (8, 12, 13 ёки 14 рақам) ёки МХИК коди (17 рақам) киритинг.': ['Введите только штрих-код (8, 12, 13 или 14 цифр) или код ИКПУ (17 цифр).', 'Enter only a barcode (8, 12, 13 or 14 digits) or an PSCIC code (17 digits).'],
+  'Бу маҳсулотга ҳали МХИК олинмаган.': ['Для этого продукта ИКПУ ещё не получен.', 'No PSCIC has been obtained for this product yet.'],
+  'Бу штрих код учун МХИК топилмади.': ['Для этого штрих-кода ИКПУ не найден.', 'No PSCIC found for this barcode.'],
   'tasnif.soliq.uz билан боғланиб бўлмади.': ['Не удалось связаться с tasnif.soliq.uz.', 'Could not connect to tasnif.soliq.uz.'],
   'Интернетни текширинг.': ['Проверьте интернет.', 'Check your internet connection.'],
-  'ИКПУ коди tasnif.soliq.uz да изланмоқда…': ['Код ИКПУ ищется на tasnif.soliq.uz…', 'Searching the IKPU code on tasnif.soliq.uz…'],
-  'Бу ИКПУ коди tasnif.soliq.uz базасида топилмади.': ['Этот код ИКПУ не найден в базе tasnif.soliq.uz.', 'This IKPU code was not found on tasnif.soliq.uz.'],
+  'МХИК коди tasnif.soliq.uz да изланмоқда…': ['Код ИКПУ ищется на tasnif.soliq.uz…', 'Searching the PSCIC code on tasnif.soliq.uz…'],
+  'Бу МХИК коди tasnif.soliq.uz базасида топилмади.': ['Этот код ИКПУ не найден в базе tasnif.soliq.uz.', 'This PSCIC code was not found on tasnif.soliq.uz.'],
   'кўриш': ['показать', 'show'],
   'каталогдан фарқ': ['расхождения с каталогом', 'differences from catalog'],
   'Умумий натижа': ['Общий итог', 'Overall result'],
@@ -1076,7 +1075,7 @@ const I18N = {
   'Бекор қилиш': ['Отменить', 'Undo'],
   'Сақлаб бўлмади. Админ сифатида қайта киринг.': ['Не удалось сохранить. Войдите снова как администратор.', 'Could not save. Sign in again as admin.'],
   'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.': ['Список можно скачать в Excel, PDF или TXT. Скачиваются только продукты из фильтра.', 'You can download the list as Excel, PDF or TXT. Only the filtered products are included.'],
-  '17 хонали ИКПУ кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.': ['Введите 17-значный код ИКПУ в поиск, и страница найдёт, к каким штрих-кодам он относится.', 'Type a 17-digit IKPU code into the search to find which barcodes it belongs to.'],
+  '17 хонали МХИК кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.': ['Введите 17-значный код ИКПУ в поиск, и страница найдёт, к каким штрих-кодам он относится.', 'Type a 17-digit PSCIC code into the search to find which barcodes it belongs to.'],
   'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.': ['Telegram-бот делает ту же проверку: отправьте ему штрих-код.', 'The Telegram bot does the same check: send it a barcode.'],
   'Ҳали излаш бўлмади. Излаган кодларингиз шу ерда кўринади.': ['Поисков ещё не было. Здесь появятся коды, которые вы искали.', 'No searches yet. Codes you search for will appear here.'],
   'Сифат — ҳар бир ампулада.': ['Качество в каждой ампуле.', 'Quality in every ampoule.'],
@@ -1126,8 +1125,8 @@ const I18N = {
   'Сана': ['Дата', 'Date'], 'Жами': ['Всего', 'Total'], 'Манба': ['Источник', 'Source'],
   'фарқ бор': ['с расхождениями', 'with differences'],
   'Савдо белгиси': ['Торговая марка', 'Trademark'],
-  'ИКПУ ҳолати': ['Статус ИКПУ', 'IKPU status'],
-  'ИКПУ номи': ['Название ИКПУ', 'IKPU name'],
+  'МХИК ҳолати': ['Статус ИКПУ', 'PSCIC status'],
+  'МХИК номи': ['Название ИКПУ', 'PSCIC name'],
   'Изоҳ (солиштириш)': ['Примечание (сравнение)', 'Note (comparison)'],
   'Изоҳ': ['Примечание', 'Note'],
   'Мос': ['Соответствует', 'Matches'],
@@ -1147,10 +1146,10 @@ const I18N_RE = [
   [/Рўйхатда (\d+) та маҳсулот топилди\./g, 'Найдено в списке: $1.', 'Found in the list: $1.'],
   [/Сиз (\d+) та рақам киритдингиз\./g, 'Вы ввели цифр: $1.', 'You entered $1 digits.'],
   [/(\d+) рақам/g, '$1 цифр', '$1 digits'],
-  [/^(\d+) ИКПУ коди базада топилмади\./g, 'Код ИКПУ $1 не найден в базе.', 'IKPU code $1 was not found.'],
-  [/ИКПУ мавжуд: (\d+) та натижа топилди\./g, 'ИКПУ найден, результатов: $1.', 'IKPU found: $1 result(s).'],
-  [/Бу ИКПУ мавжуд \((.*)\), лекин унга BAYAN MEDICAL рўйхатидаги штрих код боғланмаган\./g, 'Этот ИКПУ существует ($1), но к нему не привязан штрих-код из списка BAYAN MEDICAL.', 'This IKPU exists ($1), but no barcode from the BAYAN MEDICAL list is linked to it.'],
-  [/ИКПУ бўйича (\d+) та маҳсулот топилди\./g, 'По ИКПУ найдено продуктов: $1.', 'Products found by IKPU: $1.'],
+  [/^(\d+) МХИК коди базада топилмади\./g, 'Код ИКПУ $1 не найден в базе.', 'PSCIC code $1 was not found.'],
+  [/МХИК мавжуд: (\d+) та натижа топилди\./g, 'ИКПУ найден, результатов: $1.', 'PSCIC found: $1 result(s).'],
+  [/Бу МХИК мавжуд \((.*)\), лекин унга BAYAN MEDICAL рўйхатидаги штрих код боғланмаган\./g, 'Этот ИКПУ существует ($1), но к нему не привязан штрих-код из списка BAYAN MEDICAL.', 'This PSCIC exists ($1), but no barcode from the BAYAN MEDICAL list is linked to it.'],
+  [/МХИК бўйича (\d+) та маҳсулот топилди\./g, 'По ИКПУ найдено продуктов: $1.', 'Products found by PSCIC: $1.'],
   [/(\d+) фарқ/g, '$1 расх.', '$1 diff.'],
   [/(\d+) та хабар ўчирилсинми\?/g, 'Удалить сообщений: $1?', 'Delete $1 message(s)?'],
   [/«(.+)» блоклансинми\? У бошқа ёза олмайди\./g, 'Заблокировать «$1»? Писать больше не сможет.', 'Block «$1»? They will no longer be able to write.'],
@@ -1543,7 +1542,7 @@ function render(item, card) {
   const price = c.farm?.wholesalePriceBase ?? pick(c, /price|narx|cost|tsena/i);
   let html = `<article class="card">
     <div class="card-top">
-      <div class="label">ИКПУ коди</div>
+      <div class="label">МХИК коди</div>
       <div class="code-row">
         <span class="code">${esc(c.mxikCode)}</span>
         <button class="copy" type="button" data-copy="${esc(c.mxikCode)}">Нусха олиш</button>
@@ -1601,7 +1600,7 @@ document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
   if (!/^[\d\s]+$/.test(q.value.trim())) {
     const n = filtered().length;
-    out.innerHTML = q.value.trim() ? status(n ? 'ok' : 'warn', n ? '✓' : '!', n ? `Рўйхатда ${n} та маҳсулот топилди.` : 'Рўйхатда бундай маҳсулот топилмади.', 'tasnif\'дан текшириш учун штрих код ёки ИКПУ кодини киритинг.') : '';
+    out.innerHTML = q.value.trim() ? status(n ? 'ok' : 'warn', n ? '✓' : '!', n ? `Рўйхатда ${n} та маҳсулот топилди.` : 'Рўйхатда бундай маҳсулот топилмади.', 'tasnif\'дан текшириш учун штрих код ёки МХИК кодини киритинг.') : '';
     fitLayout?.();
     return;
   }
@@ -1609,7 +1608,7 @@ document.getElementById('f').addEventListener('submit', async e => {
   const isIkpu = code.length === 17;
   if (isIkpu || [8, 12, 13, 14].includes(code.length)) addRecent(code);
   if (!isIkpu && ![8, 12, 13, 14].includes(code.length)) {
-    out.innerHTML = status('warn', '!', 'Фақат штрих код (8, 12, 13 ёки 14 рақам) ёки ИКПУ коди (17 рақам) киритинг.', `Сиз ${code.length} та рақам киритдингиз.`);
+    out.innerHTML = status('warn', '!', 'Фақат штрих код (8, 12, 13 ёки 14 рақам) ёки МХИК коди (17 рақам) киритинг.', `Сиз ${code.length} та рақам киритдингиз.`);
     return;
   }
   btn.disabled = true;
@@ -1620,14 +1619,14 @@ document.getElementById('f').addEventListener('submit', async e => {
     if (!isIkpu) setResult(code, items);
     if (!items.length) {
       out.innerHTML = (isIkpu
-        ? status('bad', '✕', `${esc(code)} ИКПУ коди базада топилмади.`)
-        : status('bad', '✕', own ? 'Бу маҳсулотга ҳали ИКПУ олинмаган.' : 'Бу штрих код учун ИКПУ топилмади.', esc(code))) + ownBlock(own);
+        ? status('bad', '✕', `${esc(code)} МХИК коди базада топилмади.`)
+        : status('bad', '✕', own ? 'Бу маҳсулотга ҳали МХИК олинмаган.' : 'Бу штрих код учун МХИК топилмади.', esc(code))) + ownBlock(own);
       return;
     }
     const cards = await Promise.all(items.map(i => getCard(i.mxikCode)));
     // The catalog check runs on the Uzbek record; Russian and English readers see tasnif's Russian text.
     const shown = UI === 'uz' ? cards : await Promise.all(items.map((i, k) => getCard(i.mxikCode, 'ru').then(c => c || cards[k])));
-    out.innerHTML = status('ok', '✓', `ИКПУ мавжуд: ${items.length} та натижа топилди.`) + ownBlock(own) +
+    out.innerHTML = status('ok', '✓', `МХИК мавжуд: ${items.length} та натижа топилди.`) + ownBlock(own) +
       (own ? compareBlock(own, Object.assign({}, items[0], cards[0] || {})) : '') +
       items.map((it, i) => render(it, shown[i])).join('');
   } catch (err) {
@@ -1705,16 +1704,16 @@ lf.addEventListener('input', async () => {
   const f = lf.value.replace(/\D+/g, '');
   if (f.length !== 17 || filtered().length) return;
   const seq = ++lookupSeq;
-  prog.innerHTML = 'ИКПУ коди tasnif.soliq.uz да изланмоқда…';
+  prog.innerHTML = 'МХИК коди tasnif.soliq.uz да изланмоқда…';
   try {
     const items = await findByIkpu(f);
     if (seq !== lookupSeq) return;
     const codes = items.flatMap(i => String(i.internationalCode ?? '').split(/[^0-9]+/)).filter(Boolean);
     const mine = codes.map(ownOf).filter(Boolean);
     mine.forEach(r => setResult(r[0], items));
-    if (!items.length) prog.innerHTML = 'Бу ИКПУ коди tasnif.soliq.uz базасида топилмади.';
-    else if (!mine.length) prog.innerHTML = `Бу ИКПУ мавжуд (${esc(items[0].mxikName || items[0].name || '')}), лекин унга BAYAN MEDICAL рўйхатидаги штрих код боғланмаган.`;
-    else prog.innerHTML = `ИКПУ бўйича ${mine.length} та маҳсулот топилди.`;
+    if (!items.length) prog.innerHTML = 'Бу МХИК коди tasnif.soliq.uz базасида топилмади.';
+    else if (!mine.length) prog.innerHTML = `Бу МХИК мавжуд (${esc(items[0].mxikName || items[0].name || '')}), лекин унга BAYAN MEDICAL рўйхатидаги штрих код боғланмаган.`;
+    else prog.innerHTML = `МХИК бўйича ${mine.length} та маҳсулот топилди.`;
     renderList();
   } catch (err) {
     prog.innerHTML = 'tasnif.soliq.uz билан боғланиб бўлмади.';
@@ -1747,7 +1746,7 @@ async function runCheck(auto) {
     const all = [...results.values()];
     const diff = [...results].filter(([g, r]) => r.state === 'yes' && issuesOf(ownOf(g), r.items).length).length;
     const main = [...results].filter(([g, r]) => r.state === 'yes' && mainOf(ownOf(g), r.items).length).length;
-    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · ИКПУ бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${main ? `<a href="#" class="showdiff" data-f="main" style="color:var(--bad)">❗ асосий хато: <b>${main}</b> (кўриш)</a> · ` : ''}${diff ? `<a href="#" class="showdiff" data-f="diff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
+    prog.innerHTML = `Текширилди: <b>${done}</b> / ${total} · МХИК бор: <b>${all.filter(r => r.state === 'yes').length}</b> · йўқ: <b>${all.filter(r => r.state === 'no').length}</b> · ${main ? `<a href="#" class="showdiff" data-f="main" style="color:var(--bad)">❗ асосий хато: <b>${main}</b> (кўриш)</a> · ` : ''}${diff ? `<a href="#" class="showdiff" data-f="diff" style="color:var(--warn)">⚠ каталогдан фарқ: <b>${diff}</b> (кўриш)</a>` : 'каталогдан фарқ: <b>0</b>'}` +
       (all.some(r => r.state === 'err') ? ` · хато: <b>${all.filter(r => r.state === 'err').length}</b>` : '');
   };
   if (!todo.length) { tick(); prog.innerHTML = prog.innerHTML.replace(/^Текширилди: <b>0<\/b> \/ 0 · /, 'Умумий натижа · ') + ` · тайёр ✓${getLS(LAST_CHECK, '') ? ` <span style="color:var(--muted)">(янгиланган: ${esc(getLS(LAST_CHECK, ''))})</span>` : ''}`; return; }
@@ -1786,7 +1785,7 @@ document.getElementById('csv').addEventListener('click', async () => {
   const rows = filtered();
   const wb = new ExcelJS.Workbook();
   wb.creator = 'Элдор Эркинов';
-  const ws = wb.addWorksheet('ИКПУ', { views: [{ state: 'frozen', ySplit: 4 }],
+  const ws = wb.addWorksheet('МХИК', { views: [{ state: 'frozen', ySplit: 4 }],
     pageSetup: { orientation: 'landscape', fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
   const NAVY = 'FF281274', BLUE = 'FF0A8EE0';
   ws.columns = [
@@ -1796,14 +1795,14 @@ document.getElementById('csv').addEventListener('click', async () => {
   const all = rows.map(r => results.get(r[0]));
   const yes = all.filter(r => r?.state === 'yes').length, no = all.filter(r => r?.state === 'no').length;
   ws.mergeCells('A1:J1');
-  Object.assign(ws.getCell('A1'), { value: tr('BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси') });
+  Object.assign(ws.getCell('A1'), { value: tr('BAYAN MEDICAL — МХИК кодлари базаси') });
   ws.getCell('A1').font = { name: 'Calibri', size: 16, bold: true, color: { argb: NAVY } };
   ws.getRow(1).height = 26;
   ws.mergeCells('A2:J2');
-  ws.getCell('A2').value = tr(`Сана: ${new Date().toLocaleDateString('ru-RU')}   ·   Жами: ${rows.length}   ·   ИКПУ бор: ${yes}   ·   ИКПУ йўқ: ${no}   ·   Манба: tasnif.soliq.uz   ·   Тузувчи: Элдор Эркинов`);
+  ws.getCell('A2').value = tr(`Сана: ${new Date().toLocaleDateString('ru-RU')}   ·   Жами: ${rows.length}   ·   МХИК бор: ${yes}   ·   МХИК йўқ: ${no}   ·   Манба: tasnif.soliq.uz   ·   Тузувчи: Элдор Эркинов`);
   ws.getCell('A2').font = { size: 10, color: { argb: 'FF5B6B80' } };
   const head = ws.getRow(4);
-  head.values = ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'ИКПУ ҳолати', 'ИКПУ коди', 'ИКПУ номи', 'Изоҳ (солиштириш)'].map(tr);
+  head.values = ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'МХИК ҳолати', 'МХИК коди', 'МХИК номи', 'Изоҳ (солиштириш)'].map(tr);
   head.height = 30;
   head.eachCell(c => {
     c.font = { bold: true, color: { argb: 'FFFFFFFF' } };
@@ -1856,14 +1855,14 @@ function exportRows() {
     return { n: i + 1, g, name, brand, desc, pack, st, code: it?.mxikCode || '', iname: it?.mxikName || it?.name || '', note, bad: iss.length > 0 };
   });
 }
-const exportSummary = rows => `Сана: ${new Date().toLocaleDateString('ru-RU')} · Жами: ${rows.length} · ИКПУ бор: ${rows.filter(r => r.st === 'Бор').length} · ИКПУ йўқ: ${rows.filter(r => r.st === 'Йўқ').length} · фарқ бор: ${rows.filter(r => r.bad).length} · Манба: tasnif.soliq.uz · Тузувчи: Элдор Эркинов`;
+const exportSummary = rows => `Сана: ${new Date().toLocaleDateString('ru-RU')} · Жами: ${rows.length} · МХИК бор: ${rows.filter(r => r.st === 'Бор').length} · МХИК йўқ: ${rows.filter(r => r.st === 'Йўқ').length} · фарқ бор: ${rows.filter(r => r.bad).length} · Манба: tasnif.soliq.uz · Тузувчи: Элдор Эркинов`;
 const fileStem = () => `BAYAN-MEDICAL-IKPU-${new Date().toISOString().slice(0, 10)}`;
 
 document.getElementById('txt').addEventListener('click', () => {
   const rows = exportRows();
   const clean = v => String(v ?? '').replace(/\s*\n\s*/g, '; ').replace(/\t/g, ' ');
-  const lines = ['BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси', exportSummary(rows), '',
-    ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'ИКПУ ҳолати', 'ИКПУ коди', 'ИКПУ номи', 'Изоҳ (солиштириш)'].join('\t'),
+  const lines = ['BAYAN MEDICAL — МХИК кодлари базаси', exportSummary(rows), '',
+    ['№', 'Штрих код', 'Номи', 'Савдо белгиси', 'Тавсифи', 'Қадоқ', 'МХИК ҳолати', 'МХИК коди', 'МХИК номи', 'Изоҳ (солиштириш)'].join('\t'),
     ...rows.map(r => [r.n, r.g, r.name, r.brand, r.desc, r.pack, r.st, r.code, r.iname, r.note].map(clean).join('\t'))];
   const a = document.createElement('a');
   // BOM + CRLF so Notepad on Windows shows Cyrillic and line breaks correctly.
@@ -1890,8 +1889,8 @@ document.getElementById('pdf').addEventListener('click', () => {
     tbody tr:nth-child(even) td { background: #f5f8fc; } .c { font-family: Consolas, monospace; white-space: nowrap; }
     .yes { color: #0b7a55; font-weight: bold; } .no { color: #c0362c; font-weight: bold; } .bad { background: #fff4dc !important; color: #9a6200; } .want { color: #0b7a55; } .main { color: #c0362c; font-weight: bold; }
     * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  </style></head><body><h1>BAYAN MEDICAL — МХИК (ИКПУ) кодлари базаси</h1><div class="sum">${esc(exportSummary(rows))}</div>
-  <table><thead><tr><th>№</th><th>Штрих код</th><th>Номи</th><th>Тавсифи</th><th>Қадоқ</th><th>ИКПУ</th><th>ИКПУ коди</th><th>ИКПУ номи</th><th>Изоҳ</th></tr></thead><tbody>
+  </style></head><body><h1>BAYAN MEDICAL — МХИК кодлари базаси</h1><div class="sum">${esc(exportSummary(rows))}</div>
+  <table><thead><tr><th>№</th><th>Штрих код</th><th>Номи</th><th>Тавсифи</th><th>Қадоқ</th><th>МХИК</th><th>МХИК коди</th><th>МХИК номи</th><th>Изоҳ</th></tr></thead><tbody>
   ${rows.map(r => `<tr><td>${r.n}</td><td class="c">${esc(r.g)}</td><td>${esc(r.name)}${r.brand && r.brand !== r.name ? `<br>${esc(r.brand)}` : ''}</td>
     <td>${esc(r.desc)}</td><td>${esc(r.pack)}</td><td class="${r.st === 'Бор' ? 'yes' : r.st === 'Йўқ' ? 'no' : ''}">${esc(r.st)}</td>
     <td class="c">${esc(r.code)}</td><td>${esc(r.iname)}</td><td class="${r.bad ? 'bad' : ''}">${r.note.split('\n').map(l => l.startsWith('❗') ? `<span class="main">${hiNote(l)}</span>` : hiNote(l)).join('<br>')}</td></tr>`).join('')}
@@ -2011,8 +2010,8 @@ function updateSide() {
     document.getElementById('ringp').textContent = pct + '%';
     document.getElementById('ringf').style.strokeDashoffset = 314.16 * (1 - done / CATALOG.length);
     const row = (f, color, label, n) => `<button type="button" data-f="${f}"><i style="background:${color}"></i>${label}<b>${n}</b></button>`;
-    document.getElementById('stats').innerHTML = row('', '#281274', 'Жами маҳсулот', CATALOG.length) + row('yes', '#0b7a55', 'ИКПУ бор', c.yes)
-      + row('no', '#c0362c', 'ИКПУ йўқ', c.no) + row('main', '#e5484d', '❗ Асосий хато', c.main) + row('diff', '#d08a00', '⚠ Фарқ бор (ҳаммаси)', c.main + c.diff)
+    document.getElementById('stats').innerHTML = row('', '#281274', 'Жами маҳсулот', CATALOG.length) + row('yes', '#0b7a55', 'МХИК бор', c.yes)
+      + row('no', '#c0362c', 'МХИК йўқ', c.no) + row('main', '#e5484d', '❗ Асосий хато', c.main) + row('diff', '#d08a00', '⚠ Фарқ бор (ҳаммаси)', c.main + c.diff)
       + row('wait', '#9aa6b8', 'Текширилмаган', c.wait);
     const lc = getLS(LAST_CHECK, null);
     document.getElementById('lastcheck').textContent = lc ? `Охирги тўлиқ текширув: ${lc}` : 'Тўлиқ текширув ҳали тугамаган';
@@ -2039,21 +2038,21 @@ document.getElementById('stats').addEventListener('click', e => {
     '«❗ Асосий хато» фильтри савдо номи ёки қадоқ сони (№) нотўғри бўлган маҳсулотларни кўрсатади.',
     'Фарқ аслида тўғри бўлса, админ уни «Тўғри деб қабул қилиш» тугмаси билан тасдиқлайди.',
     'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.',
-    '17 хонали ИКПУ кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
+    '17 хонали МХИК кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
     'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.'];
   let ti = Math.floor(Math.random() * TIPS.length);
   const showTip = () => { document.getElementById('tip').textContent = TIPS[ti++ % TIPS.length]; };
   showTip(); setInterval(showTip, 15000);
 }
 function drawRecent() {
-  const list = getLS(RECENT, []);
+  const list = getLS(RECENT, []).map(r => r.t === 'ИКПУ коди' ? { ...r, t: 'МХИК коди' } : r);  // saved before the per-language rename
   document.getElementById('recent').innerHTML = list.length ? list.slice(0, 5).map(r => `<button type="button" data-c="${esc(r.c)}">${esc(r.c)}<small>${esc(r.t)}</small></button>`).join('')
     : '<div class="empty">Ҳали излаш бўлмади. Излаган кодларингиз шу ерда кўринади.</div>';
 }
 function addRecent(code) {
   const own = code.length === 17 ? null : ownOf(code);
   const list = getLS(RECENT, []).filter(r => r.c !== code);
-  list.unshift({ c: code, t: own ? (own[1] || own[2]) : code.length === 17 ? 'ИКПУ коди' : 'Штрих код' });
+  list.unshift({ c: code, t: own ? (own[1] || own[2]) : code.length === 17 ? 'МХИК коди' : 'Штрих код' });
   setLS(RECENT, list.slice(0, 8)); drawRecent(); fitSides();
 }
 document.getElementById('recent').addEventListener('click', e => {
@@ -2157,7 +2156,7 @@ addEventListener('load', fitLayout); document.fonts?.ready.then(fitLayout);
     num.textContent = r[0];
     const res = results.get(r[0]);
     nm.className = res?.state === 'yes' ? 'ok' : '';
-    nm.textContent = res?.state === 'yes' ? `✓ ИКПУ: ${res.items[0].mxikCode}` : (r[1] || r[2]);
+    nm.textContent = res?.state === 'yes' ? `✓ МХИК: ${res.items[0].mxikCode}` : (r[1] || r[2]);
   };
   show(); setInterval(show, 3200);
 
