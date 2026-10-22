@@ -78,23 +78,14 @@
   .chat { position: fixed; right: 16px; bottom: 104px; z-index: 31; width: min(390px, calc(100vw - 32px)); height: min(580px, calc(100vh - 150px));
     display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 24px 70px rgba(6, 60, 52, .35); border: 1px solid rgba(20, 184, 166, .25); }
   .chat[hidden] { display: none; }
-  /* macOS-like "genie": the window pours out of the chat button and is sucked back into it (--gx/--gy = the button, set from JS).
+  /* Simple open/close: fade in with a short rise from the chat button, fade out back down (--gx/--gy = the button, set from JS).
      Only transform and opacity change, so the GPU composites it without repainting the chat on every frame. */
   .chat.genie-in, .chat.genie-out { transform-origin: var(--gx, 85%) var(--gy, 115%); will-change: transform, opacity; backface-visibility: hidden; }
-  .chat.genie-in { animation: genie-in .48s cubic-bezier(.22, .9, .32, 1.06) both; }
-  .chat.genie-out { animation: genie-out .38s cubic-bezier(.55, 0, .75, .25) both; pointer-events: none; }
+  .chat.genie-in { animation: genie-in .22s cubic-bezier(.2, .8, .3, 1) both; }
+  .chat.genie-out { animation: genie-out .16s ease-in both; pointer-events: none; }
   .chat.genie-in *, .chat.genie-out * { backdrop-filter: none !important; }
-  @keyframes genie-in {
-    0% { opacity: 0; transform: scale(.06, .02) skewX(18deg); }
-    25% { opacity: 1; transform: scale(.22, .5) skewX(10deg); }
-    55% { transform: scale(.8, .97) skewX(-2deg); }
-    80% { transform: scale(1.015, 1.005); }
-    100% { opacity: 1; transform: none; } }
-  @keyframes genie-out {
-    0% { opacity: 1; transform: none; }
-    35% { transform: scale(.85, .97) skewX(-3deg); }
-    70% { opacity: 1; transform: scale(.25, .55) skewX(10deg); }
-    100% { opacity: 0; transform: scale(.05, .02) skewX(18deg); } }
+  @keyframes genie-in { from { opacity: 0; transform: translateY(14px) scale(.97); } to { opacity: 1; transform: none; } }
+  @keyframes genie-out { from { opacity: 1; transform: none; } to { opacity: 0; transform: translateY(14px) scale(.97); } }
   @media (prefers-reduced-motion: reduce) { .chat.genie-in, .chat.genie-out { animation: none; } }
   /* Everyone can resize the chat: drag the top-left corner, or ⤢ for a big window. The size is remembered in this browser. */
   .chatrsz { position: absolute; left: 0; top: 0; z-index: 7; width: 22px; height: 22px; cursor: nwse-resize; touch-action: none;
@@ -779,7 +770,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1510</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1520</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2597,12 +2588,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const done = () => { if (!box.classList.contains('genie-out')) return; box.classList.remove('genie-out'); box.hidden = true; unread(); poll(); };
     const end = e => { if (e.target !== box) return; box.removeEventListener('animationend', end); done(); };
     box.addEventListener('animationend', end);
-    setTimeout(done, 600);  // in case animations are off
+    setTimeout(done, 300);  // in case animations are off
   };
   btn.addEventListener('click', () => {
     if (!box.hidden) { closeChat(); return; }
     toasts.innerHTML = ''; draw(); openChat();
-    setTimeout(() => { load(); (nameIn.value ? textIn : nameIn).focus({ preventScroll: true }); }, 480);
+    setTimeout(() => { load(); (nameIn.value ? textIn : nameIn).focus({ preventScroll: true }); }, 220);
     unread(); poll();
   });
   // Chat size: drag the top-left corner (the window is pinned at the bottom-right), ⤢ toggles a big window.
