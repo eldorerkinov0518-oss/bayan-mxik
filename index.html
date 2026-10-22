@@ -592,7 +592,17 @@
   .calpop.wxo > .cal { display: none; }
   .calpop.wxo .fc { border: 0; padding: 0; }
   .calpop.wxo .fc div { padding: 6px 8px; font-size: 13.5px; }
-  #wnow, .week u { cursor: pointer; }
+  #wnow, .week span { cursor: pointer; }
+  .week span:not(.today):hover { opacity: 1; background: rgba(255,255,255,.14); }
+  .calpop.wxd { width: 260px; text-align: left; }
+  .calpop.wxd h4 { margin: 0 0 8px; font: 800 15px var(--font), sans-serif; color: var(--b1); }
+  .calpop.wxd .big { display: flex; align-items: center; gap: 12px; padding: 10px 12px; border-radius: 12px; background: linear-gradient(135deg, var(--b1), var(--b2)); color: #fff; }
+  .calpop.wxd .big s { text-decoration: none; font-size: 40px; line-height: 1; }
+  .calpop.wxd .big b { display: block; font: 800 26px var(--font), sans-serif; }
+  .calpop.wxd .big small { font-size: 12.5px; opacity: .9; }
+  .calpop.wxd dl { display: grid; grid-template-columns: 1fr auto; gap: 6px 10px; margin: 10px 2px 0; font: 600 13px var(--font), sans-serif; }
+  .calpop.wxd dt { color: #5b6b80; } .calpop.wxd dd { margin: 0; font-weight: 800; text-align: right; }
+  .calpop.wxd p { margin: 6px 0 0; color: #5b6b80; font-size: 13px; }
   .calpop .grid span u { display: block; font-size: 9px; line-height: 1; text-decoration: none; margin-top: 1px; }
   .calpop .grid span { padding: 4px 0; }
   .calpop .fc { border-left: 1px solid #e6ebf3; padding-left: 14px; }
@@ -607,7 +617,7 @@
   .calpop .fc small { color: #5b6b80; font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .calpop .fc b { white-space: nowrap; }
   .calpop .fc b em { font-style: normal; font-weight: 600; opacity: .65; margin-left: 4px; }
-  @media (max-width: 640px) { .calpop.wx, .calpop.wxo { position: fixed; top: 64px; left: 50%; right: auto; transform: translateX(-50%); max-height: calc(100vh - 80px); overflow: auto; } .calpop.wx { width: min(330px, 92vw); grid-template-columns: 1fr; } .calpop.wxo { width: min(330px, 92vw); } .calpop .fc { border-left: 0; padding-left: 0; border-top: 1px solid #e6ebf3; padding-top: 8px; } }
+  @media (max-width: 640px) { .calpop.wx, .calpop.wxo, .calpop.wxd { position: fixed; top: 64px; left: 50%; right: auto; transform: translateX(-50%); max-height: calc(100vh - 80px); overflow: auto; } .calpop.wx { width: min(330px, 92vw); grid-template-columns: 1fr; } .calpop.wxo { width: min(330px, 92vw); } .calpop .fc { border-left: 0; padding-left: 0; border-top: 1px solid #e6ebf3; padding-top: 8px; } }
   @media (max-width: 760px) { .week span:not(.today) { display: none; } .cmon { display: none; } }
   @media (max-width: 560px) { .clock { gap: 6px; padding: 5px 10px 5px 8px; } .clock b { font-size: 14px; } .topbar .tag { font-size: 11px; } }
   .langs { display: inline-flex; gap: 6px; padding: 4px 6px; margin-bottom: 4px; border-radius: 999px; background: #eef2f7; border: 1px solid #e2e8f0; }
@@ -919,7 +929,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1920</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1940</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2110,7 +2120,7 @@ const nowTk = () => {
 };
 const dayOf = (y, m, d) => new Date(Date.UTC(y, m, d));
 const monIdx = dt => (dt.getUTCDay() + 6) % 7; // Monday = 0
-let shownDay = '', calY, calM, wxOnly = false;
+let shownDay = '', calY, calM, wxOnly = false, wxDay = '';
 // Weather for the company's district in Tashkent from Open-Meteo (free, no key); kept in this browser so it shows at once next time.
 const WX = (() => { try { return JSON.parse(localStorage.getItem('bayan-wx')) || { daily: {} }; } catch { return { daily: {} }; } })();
 const WX_N = { uz: ['Очиқ', 'Қисман булутли', 'Булутли', 'Туман', 'Майда ёмғир', 'Ёмғир', 'Қор', 'Жала', 'Момақалдироқ', 'Ҳозир, Тошкент'],
@@ -2119,6 +2129,9 @@ const WX_N = { uz: ['Очиқ', 'Қисман булутли', 'Булутли',
 const wxKind = c => c === 0 ? 0 : c <= 2 ? 1 : c === 3 ? 2 : c <= 48 ? 3 : c <= 57 ? 4 : c <= 67 ? 5 : c <= 77 || c === 85 || c === 86 ? 6 : c <= 82 ? 7 : 8;
 const wxIcon = c => ['☀️', '🌤️', '☁️', '🌫️', '🌦️', '🌧️', '❄️', '🌦️', '⛈️'][wxKind(c)];
 const wxName = c => WX_N[wxKind(c)];
+const WX_D = { uz: ['Кундузи', 'Кечаси', 'Ёғин эҳтимоли', 'Шамол', 'км/соат', 'Қуёш чиқиши', 'Қуёш ботиши', 'Бу кун учун об-ҳаво маълумоти йўқ'],
+  ru: ['Днём', 'Ночью', 'Вероятность осадков', 'Ветер', 'км/ч', 'Восход', 'Закат', 'Нет данных о погоде на этот день'],
+  en: ['Day', 'Night', 'Chance of rain', 'Wind', 'km/h', 'Sunrise', 'Sunset', 'No weather data for this day'] }[UI];
 const WX_T = { uz: '10 кунлик об-ҳаво, Тошкент', ru: 'Погода на 10 дней, Ташкент', en: '10-day weather, Tashkent' }[UI];
 const drawWxNow = () => {
   const el = document.getElementById('wnow');
@@ -2128,11 +2141,12 @@ const drawWxNow = () => {
 };
 const loadWx = async () => {
   try {
-    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.36&longitude=69.29&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&timezone=Asia%2FTashkent&past_days=7&forecast_days=10');
+    const r = await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.36&longitude=69.29&current=temperature_2m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max,wind_speed_10m_max,sunrise,sunset&timezone=Asia%2FTashkent&past_days=7&forecast_days=10');
     if (!r.ok) return;
     const j = await r.json(), d = j.daily;
     WX.now = Math.round(j.current.temperature_2m); WX.code = j.current.weather_code; WX.daily = {};
-    d.time.forEach((t, i) => { if (d.weather_code[i] != null) WX.daily[t] = { c: d.weather_code[i], hi: Math.round(d.temperature_2m_max[i]), lo: Math.round(d.temperature_2m_min[i]) }; });
+    d.time.forEach((t, i) => { if (d.weather_code[i] != null) WX.daily[t] = { c: d.weather_code[i], hi: Math.round(d.temperature_2m_max[i]), lo: Math.round(d.temperature_2m_min[i]),
+      p: d.precipitation_probability_max?.[i], w: d.wind_speed_10m_max?.[i] == null ? null : Math.round(d.wind_speed_10m_max[i]), sr: d.sunrise?.[i]?.slice(11, 16), ss: d.sunset?.[i]?.slice(11, 16) }; });
     try { localStorage.setItem('bayan-wx', JSON.stringify(WX)); } catch {}
     drawWxNow(); shownDay = ''; tickClock();
   } catch {}
@@ -2148,7 +2162,7 @@ const tickClock = () => {
   document.getElementById('week').innerHTML = WD.map((w, i) => {
     const dt = dayOf(n.y, n.m, n.d - wi + i);
     const wx = WX.daily[dt.toISOString().slice(0, 10)];
-    return `<span class="${i === wi ? 'today' : ''}${i > 4 ? ' we' : ''}"${wx ? ` title="${DAYS[i]}: ${wxName(wx.c)}, ${wx.lo}° … ${wx.hi}°"` : ''}><i>${w}</i><em>${dt.getUTCDate()}</em>${wx ? `<u><s>${wxIcon(wx.c)}</s>${wx.hi}°</u>` : ''}</span>`;
+    return `<span data-day="${dt.toISOString().slice(0, 10)}" class="${i === wi ? 'today' : ''}${i > 4 ? ' we' : ''}"${wx ? ` title="${DAYS[i]}: ${wxName(wx.c)}, ${wx.lo}° … ${wx.hi}°"` : ''}><i>${w}</i><em>${dt.getUTCDate()}</em>${wx ? `<u><s>${wxIcon(wx.c)}</s>${wx.hi}°</u>` : ''}</span>`;
   }).join('');
   document.getElementById('clock').title = `${DAYS[wi]}, ${String(n.d).padStart(2, '0')}.${String(n.m + 1).padStart(2, '0')}.${n.y} · ${CAL_T[0]}`;
   if (!calpop.hidden) drawCal();
@@ -2169,7 +2183,15 @@ function drawTime(n) {
   }
   el.textContent = n.time;
 }
+function drawDay() {
+  const [y, m, d] = wxDay.split('-').map(Number), dt = dayOf(y, m - 1, d), wx = WX.daily[wxDay], wi = monIdx(dt), D = WX_D;
+  const sg = t => `${t > 0 ? '+' : ''}${t}°`;
+  calpop.className = 'calpop wxd';
+  calpop.innerHTML = `<h4>${DAYS[wi]}, ${d} ${UI === 'en' ? MONTHS[m - 1] : MONTHS[m - 1].toLowerCase()}</h4>` + (wx ? `<div class="big"><s>${wxIcon(wx.c)}</s><div><b>${sg(wx.hi)}</b><small>${wxName(wx.c)}</small></div></div>
+    <dl><dt>🌡️ ${D[0]} / ${D[1]}</dt><dd>${sg(wx.hi)} / ${sg(wx.lo)}</dd>${wx.p != null ? `<dt>💧 ${D[2]}</dt><dd>${wx.p}%</dd>` : ''}${wx.w != null ? `<dt>💨 ${D[3]}</dt><dd>${wx.w} ${D[4]}</dd>` : ''}${wx.sr ? `<dt>🌅 ${D[5]}</dt><dd>${wx.sr}</dd><dt>🌇 ${D[6]}</dt><dd>${wx.ss}</dd>` : ''}</dl>` : `<p>${D[7]}</p>`);
+}
 function drawCal() {
+  if (wxDay) return drawDay();
   const n = nowTk(), first = dayOf(calY, calM, 1), start = -monIdx(first);
   const cells = [];
   for (let i = 0; i < 42; i++) {
@@ -2178,15 +2200,15 @@ function drawCal() {
     const wx = WX.daily[dt.toISOString().slice(0, 10)];
     cells.push(`<span class="${dt.getUTCMonth() !== calM ? 'out' : ''}${i % 7 > 4 ? ' we' : ''}${isToday ? ' today' : ''}"${wx ? ` title="${wxName(wx.c)}, ${wx.lo}° … ${wx.hi}°"` : ''}>${dt.getUTCDate()}${wx ? `<u>${wxIcon(wx.c)}</u>` : ''}</span>`);
   }
-  // The next 10 days of weather beside the month, from today.
+  // A press on the weather shows only the next 10 days of weather; a press on the date shows only the month.
   const fc = [];
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < (wxOnly ? 10 : 0); i++) {
     const dt = dayOf(n.y, n.m, n.d + i), wx = WX.daily[dt.toISOString().slice(0, 10)];
     if (!wx) continue;
     const wi = monIdx(dt);
     fc.push(`<div class="${i ? '' : 'today'}${wi > 4 ? ' we' : ''}"><i>${WD[wi]} ${dt.getUTCDate()}</i><s>${wxIcon(wx.c)}</s><small>${wxName(wx.c)}</small><b>${wx.hi > 0 ? '+' : ''}${wx.hi}°<em>${wx.lo > 0 ? '+' : ''}${wx.lo}°</em></b></div>`);
   }
-  calpop.classList.toggle('wx', fc.length > 0 && !wxOnly);
+  calpop.className = 'calpop';
   calpop.classList.toggle('wxo', fc.length > 0 && wxOnly);
   calpop.innerHTML = `<div class="cal"><div class="hd"><button type="button" data-step="-1" aria-label="${CAL_T[1]}">‹</button>${MONTHS[calM]} ${calY}<button type="button" data-step="1" aria-label="${CAL_T[2]}">›</button></div>
     <div class="grid">${WD.map((w, i) => `<span class="h${i > 4 ? ' we' : ''}">${w}</span>`).join('')}${cells.join('')}</div>
@@ -2198,7 +2220,9 @@ document.getElementById('clock').addEventListener('click', e => {
   // A press on the weather (today's chip or a day's icon) opens the 10-day forecast; anywhere else opens the calendar with it.
   // A second press anywhere on the bar closes it.
   if (!calpop.hidden) { calpop.hidden = true; return; }
-  const n = nowTk(); calY = n.y; calM = n.m; wxOnly = !!e.target.closest('#wnow, .week u') && Object.keys(WX.daily).length > 0;
+  // The date opens the month, today's weather chip the 10-day forecast, a weekday that day's weather.
+  const n = nowTk(); calY = n.y; calM = n.m; wxOnly = !!e.target.closest('#wnow') && Object.keys(WX.daily).length > 0;
+  wxDay = e.target.closest('.week span')?.dataset.day || '';
   drawCal(); calpop.hidden = false;
 });
 calpop.addEventListener('click', e => {
