@@ -75,6 +75,17 @@
   .chat { position: fixed; right: 16px; bottom: 104px; z-index: 31; width: min(390px, calc(100vw - 32px)); height: min(580px, calc(100vh - 150px));
     display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 24px 70px rgba(6, 60, 52, .35); border: 1px solid rgba(20, 184, 166, .25); }
   .chat[hidden] { display: none; }
+  /* macOS-like "genie": the window pours out of the chat button and is sucked back into it (--gx/--gy = the button, set from JS). */
+  .chat.genie-in { animation: genie .5s cubic-bezier(.25, .8, .3, 1) both; transform-origin: var(--gx, 85%) var(--gy, 115%); }
+  .chat.genie-out { animation: genie .55s cubic-bezier(.45, .05, .55, .95) reverse both; transform-origin: var(--gx, 85%) var(--gy, 115%); pointer-events: none; }
+  @keyframes genie {
+    0% { opacity: 0; transform: translateY(30px) scale(.12, .04);
+      clip-path: polygon(calc(var(--gx, 85%) - 6%) 0, calc(var(--gx, 85%) + 6%) 0, calc(var(--gx, 85%) + 3%) 100%, calc(var(--gx, 85%) - 3%) 100%); }
+    30% { opacity: 1; transform: translateY(10px) scale(.45, .35);
+      clip-path: polygon(14% 0, 86% 0, calc(var(--gx, 85%) + 10%) 100%, calc(var(--gx, 85%) - 10%) 100%); }
+    65% { transform: scale(.95, .9); clip-path: polygon(0 0, 100% 0, calc(var(--gx, 85%) + 30%) 100%, calc(var(--gx, 85%) - 45%) 100%); }
+    100% { opacity: 1; transform: none; clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%); } }
+  @media (prefers-reduced-motion: reduce) { .chat.genie-in, .chat.genie-out { animation: none; } }
   /* Everyone can resize the chat: drag the top-left corner, or ⤢ for a big window. The size is remembered in this browser. */
   .chatrsz { position: absolute; left: 0; top: 0; z-index: 7; width: 22px; height: 22px; cursor: nwse-resize; touch-action: none;
     background: linear-gradient(135deg, rgba(255, 255, 255, .75) 0 2px, transparent 2px 5px, rgba(255, 255, 255, .55) 5px 7px, transparent 7px 10px, rgba(255, 255, 255, .35) 10px 12px, transparent 12px); border-top-left-radius: 22px; opacity: .6; }
@@ -732,7 +743,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1410</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1420</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2509,8 +2520,26 @@ document.querySelectorAll('.tglnk').forEach(a => {
     if (document.hidden) { unreadTitle += fresh.length; document.title = `(${unreadTitle}) Янги хабар · ${baseTitle}`; }
   };
   document.addEventListener('visibilitychange', () => { if (!document.hidden) { unreadTitle = 0; document.title = baseTitle; } });
+  // Opening and closing play the genie animation from/to the chat button.
+  const genieAim = () => {
+    const b = btn.getBoundingClientRect(), c = box.getBoundingClientRect();
+    box.style.setProperty('--gx', ((b.left + b.width / 2 - c.left) / c.width * 100).toFixed(1) + '%');
+    box.style.setProperty('--gy', ((b.top + b.height / 2 - c.top) / c.height * 100).toFixed(1) + '%');
+  };
+  const openChat = () => {
+    box.classList.remove('genie-out'); box.hidden = false; genieAim();
+    box.classList.add('genie-in'); box.addEventListener('animationend', () => box.classList.remove('genie-in'), { once: true });
+  };
+  const closeChat = () => {
+    if (box.hidden || box.classList.contains('genie-out')) return;
+    rxOpen = null; genieAim(); box.classList.remove('genie-in'); box.classList.add('genie-out');
+    const done = () => { if (!box.classList.contains('genie-out')) return; box.classList.remove('genie-out'); box.hidden = true; unread(); poll(); };
+    box.addEventListener('animationend', done, { once: true });
+    setTimeout(done, 800);  // in case animations are off
+  };
   btn.addEventListener('click', () => {
-    box.hidden = !box.hidden;
+    if (!box.hidden) { closeChat(); return; }
+    openChat();
     if (!box.hidden) { toasts.innerHTML = ''; draw(); load(); (nameIn.value ? textIn : nameIn).focus(); }
     unread(); poll();
   });
@@ -2536,11 +2565,11 @@ document.querySelectorAll('.tglnk').forEach(a => {
     else setSize(760, innerHeight - 140);
   });
   addEventListener('resize', () => { const sz = getLS('bayan-chat-size', null); if (Array.isArray(sz)) setSize(sz[0], sz[1], false); });
-  document.getElementById('chatx').addEventListener('click', () => { box.hidden = true; unread(); poll(); });
+  document.getElementById('chatx').addEventListener('click', closeChat);
   // A click anywhere outside the open chat (and outside its button and pop-ups) closes it, like ✕.
   document.addEventListener('pointerdown', e => {
     if (box.hidden || e.target.closest('#chat, #chatbtn, .toast, .zoom, .rxfx')) return;
-    box.hidden = true; rxOpen = null; unread(); poll();
+    closeChat();
   });
   form.addEventListener('submit', async e => {
     emoPick.hidden = true;
