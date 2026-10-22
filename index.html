@@ -636,7 +636,7 @@
   .stathead .ring { width: 70px; height: 70px; margin: 0; flex: none; }
   .stathead .ring b { font-size: 16px; } .stathead .ring span { font-size: 8.5px; }
   .stathead .last { margin: 0; text-align: left; font-size: 11.5px; line-height: 1.35; }
-  .side.l .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .side.l .stats { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px; }
   .side.l .stats button { margin: 0; padding: 5px 8px; gap: 6px; font-size: 11.5px; line-height: 1.2; text-align: left; }
   .side.l .stats button i { width: 8px; height: 8px; }
   .side.l .stats button b { font-size: 13px; }
@@ -646,9 +646,10 @@
   .side.r .addr { margin-top: 6px; padding: 6px 9px; }
   .side.r .addr small, .side.r .lnk span { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .side.r .addr em { margin-top: 2px; }
-  .side.r #recent { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
+  .side.r #recent { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 4px; }
   .side.r #recent .empty { grid-column: 1 / -1; }
-  .side.r #recent button { margin: 0; padding: 4px 8px; font-size: 11.5px; overflow: hidden; }
+  .side.r #recent button { margin: 0; padding: 4px 7px; font-size: 11px; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .side .sc { min-width: 0; max-width: 100%; box-sizing: border-box; }
   .side.r #recent button small { font-size: 10.5px; }
   .side.r .lnk { padding: 4px 10px; }
   .side.r .tip { display: flex; gap: 8px; align-items: flex-start; padding: 9px 12px; } .side.r .tip .tipi { font-size: 18px; line-height: 1.2; }
@@ -843,7 +844,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1710</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1720</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
