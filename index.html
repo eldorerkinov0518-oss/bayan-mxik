@@ -837,9 +837,10 @@
   .own .app summary { display: inline-flex; margin: 10px 12px; padding: 9px 16px; border-radius: 11px; background: linear-gradient(135deg, var(--b1), var(--b2)); color: #fff; font-weight: 800; cursor: pointer; list-style: none; box-shadow: 0 6px 16px rgba(40, 18, 116, .25); }
   .own .app summary::-webkit-details-marker { display: none; }
   .own .app .apph { margin: 0 14px 8px; font-weight: 700; color: var(--b1); }
+  .own .app .appw { margin: 0 14px 8px; color: #b45309; font-size: 13px; }
   .own .appf { display: grid; gap: 6px; padding: 0 14px; }
   .own .appf div { display: grid; grid-template-columns: 150px 1fr auto; gap: 10px; align-items: center; padding: 7px 10px; border-radius: 10px; background: var(--card); }
-  .own .appf span { color: var(--muted); font-size: 12.5px; } .own .appf b { font-weight: 600; word-break: break-word; } .own .appf i { color: #b45309; font-size: 13px; }
+  .own .appf span { color: var(--muted); font-size: 12.5px; } .own .appf b { font-weight: 600; word-break: break-word; } .own .appf b small { display: block; color: var(--muted); font-weight: 500; font-size: 12px; } .own .appf i { color: #b45309; font-size: 13px; }
   .own .cp { border: 1px solid var(--line); background: var(--card); color: var(--b1); border-radius: 8px; padding: 5px 10px; font: 700 12px var(--font), sans-serif; cursor: pointer; }
   .own .cp.ok { background: #dcfce7; color: #15803d; border-color: #86efac; }
   .own .appb { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 10px 14px 4px; }
@@ -961,7 +962,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2100</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2120</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1111,11 +1112,14 @@ const I18N = {
   '⬇ PNG юклаб олиш': ['⬇ Скачать PNG', '⬇ Download PNG'],
   'Маҳсулот': ['Продукт', 'Product'],
   'Қадоқ': ['Упаковка', 'Package'],
-  '📝 Ариза тайёрлаш': ['📝 Подготовить заявку', '📝 Prepare an application'], 'МХИК аризаси учун маълумот:': ['Данные для заявки на ИКПУ:', 'Data for the PSCIC application:'], 'Препарат номи': ['Наименование препарата', 'Product name'],
-  'Ўлчов бирлиги': ['Ед. изм.', 'Unit'], 'Нусха': ['Копировать', 'Copy'], 'Тавсифи (РУ)': ['Описание (РУ)', 'Description (reg. cert.)'],
-  'Рўйхатдан ўтиш гувоҳномаси (DV/M …) каталогда йўқ': ['Регистрационного удостоверения (DV/M …) нет в каталоге', 'The registration certificate (DV/M …) is not in the catalog'],
-  '📋 Ҳаммасини нусхалаш': ['📋 Копировать всё', '📋 Copy all'], 'tasnif.soliq.uz кабинетини очиш ↗': ['Открыть кабинет tasnif.soliq.uz ↗', 'Open the tasnif.soliq.uz cabinet ↗'],
-  'Ариза tasnif кабинетида E-IMZO калити билан юборилади.': ['Заявка подаётся в кабинете tasnif с ключом E-IMZO.', 'The application is filed in the tasnif cabinet with an E-IMZO key.'],
+  '📝 Ариза тайёрлаш': ['📝 Подготовить заявку', '📝 Prepare an application'], 'Нусха': ['Копировать', 'Copy'], '📋 Ҳаммасини нусхалаш': ['📋 Копировать всё', '📋 Copy all'],
+  "tasnif «Отправить заявку» ойнаси учун маълумот:": ['Данные для окна tasnif «Отправить заявку»:', "Data for tasnif's «Отправить заявку» form:"],
+  '«до» санаси тахминий (берилган сана + 5 йил), гувоҳномадан текширинг.': ['Дата «до» примерная (дата выдачи + 5 лет), сверьте с удостоверением.', 'The «до» date is estimated (issue date + 5 years); check it against the certificate.'],
+  'Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.': ['Регистрационное удостоверение этого продукта не найдено, в «Описание товара» подставлено описание продукта.', 'No registration certificate found for this product; the product description is used for «Описание товара».'],
+  'Ўхшаш маҳсулот бўйича танланг:': ['Выберите как у похожего продукта:', 'Pick the same as the similar product:'],
+  'Ўхшаш маҳсулотнинг МХИК коди топилмади, рўйхатдан мос позицияни танланг': ['ИКПУ похожего продукта не найден, выберите подходящую позицию из списка', 'No similar product with a PSCIC found; pick the matching position from the list'],
+  'tasnif.soliq.uz ни очиш ↗': ['Открыть tasnif.soliq.uz ↗', 'Open tasnif.soliq.uz ↗'],
+  "tasnif'да «Отправить заявку» ойнасини очинг, майдонларга шу маълумотларни қўйинг, телефон рақами ва расмдаги белгиларни ўзингиз ёзиб юборинг.": ['Откройте на tasnif окно «Отправить заявку», вставьте эти данные, сами укажите телефон и символы с картинки и отправьте.', "Open «Отправить заявку» on tasnif, paste these values, enter the phone number and the picture code yourself, and send."],
   'МХИК коди': ['Код ИКПУ', 'PSCIC code'],
   'МХИК': ['ИКПУ', 'PSCIC'],
   'Маълумотлар манбаи: tasnif.soliq.uz': ['Источник данных: tasnif.soliq.uz', 'Data source: tasnif.soliq.uz'],
@@ -1655,21 +1659,33 @@ function ownBlock(r, appFor) {
 }
 
 // Data asked for in a tasnif.soliq.uz MXIK application, laid out like the company's own sheet, each with a copy button.
-// The application itself is filed in the tasnif cabinet with E-IMZO; this page never touches the key.
+// The visitor fills tasnif's form (phone, captcha) and sends it there; this page only prepares the text.
 const TNVED = '3004900002';
+// Registration certificates (РУ), read from the scanned attachments in Desktop\Bayan РУ 21.08.26 (all amended 2026-08-14).
+// «до» dates come from the company's MXIK sheet; a trailing 1 marks a date not in that sheet (issue date + 5 years) to double-check.
+const RU_FROM = '2026-08-14', RU = {'айронмакс': ['04294/10/22', '2030-08-23'], 'арвениксолин': ['04765/01/25', '2030-01-17', 1], 'бализес': ['04492/06/23', '2028-06-22', 1], 'бонейро': ['04012/12/21', '2026-12-23'], 'велпирам': ['04673/08/24', '2029-08-07'], 'виталис': ['05236/09/25', '2030-09-30'], 'глюменол': ['04293/10/22', '2030-08-23'], 'иновексил': ['04869/03/25', '2030-08-23'], 'л-лизина-эц': ['04849/03/25', '2030-08-23'], 'л-лизамен': ['04360/12/22', '2027-12-21'], 'лизенол': ['04361/12/22', '2030-08-23'], 'малтазам': ['04495/06/23', '2028-06-22', 1], 'мелоксилат': ['04013/12/21', '2026-12-23'], 'менталис': ['05265/09/25', '2030-09-30'], 'примафер': ['04674/08/24', '2029-08-07'], 'таргетон': ['04032/02/22', '2027-02-14'], 'тионейро': ['04586/01/24', '2029-01-30', 1], 'транексол': ['04015/12/21', '2026-12-23'], 'цитинум': ['04813/02/25', '2030-02-22'], 'эклирия': ['05172/09/25', '2030-09-19'], 'элисин': ['04359/12/22', '2027-12-21']};
+const ruOf = r => { const x = RU[(r[2] || r[1] || '').toLowerCase()]; return x && { text: `DV/M ${x[0]} от ${RU_FROM} до ${x[1]}`, guess: !!x[2] }; };
 function appName([, name, brand, desc, pack]) {
   const b = brand || name || '', vol = [...normT(pack).matchAll(/(\d+(?:\.\d+)?)мл/g)].pop()?.[1], n = packMatch(pack)?.[1];
   const d = (desc || '').replace(/^./, c => c.toLowerCase());
   return [b.charAt(0).toUpperCase() + b.slice(1).toLowerCase(), d, vol && !normT(desc).includes(`${vol}мл`) ? `${vol} мл` : '', n ? `№${n}` : ''].filter(Boolean).join(' ');
 }
 function appHtml(r) {
-  const f = [['Препарат номи', appName(r) || '—'], ['Код ТНВЭД', TNVED], ['GTIN / Штрих код', r[0]], ['Ўлчов бирлиги', 'Упаковка']];
-  return `<details class="app"><summary>📝 Ариза тайёрлаш</summary><p class="apph">МХИК аризаси учун маълумот:</p>
+  const [gtin, name, brand, desc, pack] = r, cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : '';
+  // Fields in the order of tasnif's «Отправить заявку» form.
+  const f = [['Название товара', appName(r)], ['Бренд', cap(brand || name)], ['Описание товара', ruOf(r)?.text || [desc, pack].filter(Boolean).join(', ')],
+    ['Код ТНВЭД', TNVED], ['Штрих код', gtin], ['Единица измерения', 'Упаковка'], ['Упаковка товара', pack]].filter(([, v]) => v);
+  // Another pack of the same product that already has an MXIK shows which Группа / Класс / Подкласс / Позиция to pick.
+  const sib = CATALOG.filter(x => x[0] !== gtin && (brand ? x[2] === brand : x[1] === name) && results.get(x[0])?.state === 'yes')
+    .map(x => ({ x, it: results.get(x[0]).items[0] })).find(o => o.it?.mxikCode);
+  const ru = ruOf(r);
+  return `<details class="app"><summary>📝 Ариза тайёрлаш</summary><p class="apph">tasnif «Отправить заявку» ойнаси учун маълумот:</p>
+    ${ru ? (ru.guess ? '<p class="appw">«до» санаси тахминий (берилган сана + 5 йил), гувоҳномадан текширинг.</p>' : '') : '<p class="appw">Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.</p>'}
     <div class="appf">${f.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b><button type="button" class="cp" data-cp="${esc(v)}">Нусха</button></div>`).join('')}
-    <div><span>Тавсифи (РУ)</span><i>Рўйхатдан ўтиш гувоҳномаси (DV/M …) каталогда йўқ</i></div></div>
-    <div class="appb"><button type="button" class="cp" data-cp="${esc(f.map(([k, v]) => `${tr(k)}: ${v}`).join('\n'))}">📋 Ҳаммасини нусхалаш</button>
-    <a href="https://tasnif.soliq.uz/" target="_blank" rel="noopener">tasnif.soliq.uz кабинетини очиш ↗</a></div>
-    <small>Ариза tasnif кабинетида E-IMZO калити билан юборилади.</small></details>`;
+    <div><span>Группа / Класс / Подкласс / Позиция</span>${sib ? `<b>Ўхшаш маҳсулот бўйича танланг: ${esc(sib.it.mxikCode)}<small>${esc(sib.it.mxikName || '')} · ${esc(sib.x[0])}${(n => n ? ` · №${n}` : '')(packMatch(sib.x[4])?.[1])}</small></b><button type="button" class="cp" data-cp="${esc(sib.it.mxikCode)}">Нусха</button>` : '<i>Ўхшаш маҳсулотнинг МХИК коди топилмади, рўйхатдан мос позицияни танланг</i>'}</div></div>
+    <div class="appb"><button type="button" class="cp" data-cp="${esc(f.map(([k, v]) => `${k}: ${v}`).join('\n'))}">📋 Ҳаммасини нусхалаш</button>
+    <a href="https://tasnif.soliq.uz/" target="_blank" rel="noopener">tasnif.soliq.uz ни очиш ↗</a></div>
+    <small>tasnif'да «Отправить заявку» ойнасини очинг, майдонларга шу маълумотларни қўйинг, телефон рақами ва расмдаги белгиларни ўзингиз ёзиб юборинг.</small></details>`;
 }
 document.addEventListener('click', async e => {
   const b = e.target.closest('.cp[data-cp]'); if (!b) return;
