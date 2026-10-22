@@ -962,7 +962,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2130</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2140</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1663,16 +1663,18 @@ const TNVED = '3004900002';
 // Registration certificates (РУ), read from the scanned attachments in Desktop\Bayan РУ 21.08.26 (all amended 2026-08-14).
 // The DV/M number is what matters (Alex); «до» dates come from the company's MXIK sheet, a trailing 1 marks issue date + 5 years.
 const RU_FROM = '2026-08-14', RU = {'айронмакс': ['04294/10/22', '2030-08-23'], 'арвениксолин': ['04765/01/25', '2030-01-17', 1], 'бализес': ['04492/06/23', '2028-06-22', 1], 'бонейро': ['04012/12/21', '2026-12-23'], 'велпирам': ['04673/08/24', '2029-08-07'], 'виталис': ['05236/09/25', '2030-09-30'], 'глюменол': ['04293/10/22', '2030-08-23'], 'иновексил': ['04869/03/25', '2030-08-23'], 'л-лизина-эц': ['04849/03/25', '2030-08-23'], 'л-лизамен': ['04360/12/22', '2027-12-21'], 'лизенол': ['04361/12/22', '2030-08-23'], 'малтазам': ['04495/06/23', '2028-06-22', 1], 'мелоксилат': ['04013/12/21', '2026-12-23'], 'менталис': ['05265/09/25', '2030-09-30'], 'примафер': ['04674/08/24', '2029-08-07'], 'таргетон': ['04032/02/22', '2027-02-14'], 'тионейро': ['04586/01/24', '2029-01-30', 1], 'транексол': ['04015/12/21', '2026-12-23'], 'цитинум': ['04813/02/25', '2030-02-22'], 'эклирия': ['05172/09/25', '2030-09-19'], 'элисин': ['04359/12/22', '2027-12-21']};
-const ruOf = r => { const x = RU[(r[2] || r[1] || '').toLowerCase()]; return x && { text: `DV/M ${x[0]} от ${RU_FROM} до ${x[1]}`, guess: !!x[2] }; };
-function appName([, name, brand, desc, pack]) {
-  const b = brand || name || '', vol = [...normT(pack).matchAll(/(\d+(?:\.\d+)?)мл/g)].pop()?.[1], n = packMatch(pack)?.[1];
+const ruOf = r => { const x = RU[(r[2] || '').toLowerCase()] || RU[(r[1] || '').toLowerCase()]; return x && { text: `DV/M ${x[0]} от ${RU_FROM} до ${x[1]}`, guess: !!x[2] }; };
+// Some catalog rows have the Cyrillic trade name in the name column; the application uses the Cyrillic one.
+const cyrBrand = ([, name, brand]) => [brand, name].find(t => /[а-яё]/i.test(t || '')) || brand || name || '';
+function appName(r) {
+  const [, , , desc, pack] = r, b = cyrBrand(r), vol = [...normT(pack).matchAll(/(\d+(?:\.\d+)?)мл/g)].pop()?.[1], n = packMatch(pack)?.[1];
   const d = (desc || '').replace(/^./, c => c.toLowerCase());
   return [b.charAt(0).toUpperCase() + b.slice(1).toLowerCase(), d, vol && !normT(desc).includes(`${vol}мл`) ? `${vol} мл` : '', n ? `№${n}` : ''].filter(Boolean).join(' ');
 }
 function appHtml(r) {
   const [gtin, name, brand, desc, pack] = r, cap = t => t ? t.charAt(0).toUpperCase() + t.slice(1).toLowerCase() : '';
   // Fields in the order of tasnif's «Отправить заявку» form.
-  const f = [['Название товара', appName(r)], ['Бренд', cap(brand || name)], ['Описание товара', ruOf(r)?.text || [desc, pack].filter(Boolean).join(', ')],
+  const f = [['Название товара', appName(r)], ['Бренд', cap(cyrBrand(r))], ['Описание товара', ruOf(r)?.text || [desc, pack].filter(Boolean).join(', ')],
     ['Код ТНВЭД', TNVED], ['Штрих код', gtin], ['Единица измерения', 'Упаковка'], ['Упаковка товара', pack]].filter(([, v]) => v);
   // Another pack of the same product that already has an MXIK shows which Группа / Класс / Подкласс / Позиция to pick.
   const sib = CATALOG.filter(x => x[0] !== gtin && (brand ? x[2] === brand : x[1] === name) && results.get(x[0])?.state === 'yes')
