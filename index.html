@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <!-- Security: scripts only from this page, network only to tasnif and the chat database. -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://*.soliq.uz; connect-src 'self' https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://bayan-chat-1b132-default-rtdb.europe-west1.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.open-meteo.com; frame-src 'self' about: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://*.soliq.uz; connect-src 'self' https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://bayan-chat-1b132-default-rtdb.europe-west1.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.open-meteo.com https://ipapi.co https://api.ipify.org; frame-src 'self' about: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <title>BAYAN MEDICAL — МХИК кодлари базаси</title>
 <link rel="icon" href="data:image/png;base64,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">
@@ -115,6 +115,7 @@
   .chatnote { margin: 0; padding: 0; background: #f0fdfa; border-bottom: 1px solid #ccf3ea; color: #134e4a; font-size: 12.5px; line-height: 1.5; }
   .chatnote summary { list-style: none; cursor: pointer; padding: 9px 14px; font-weight: 700; color: #0f766e; display: flex; align-items: center; gap: 6px; }
   .chatnote summary::-webkit-details-marker { display: none; }
+  .chatnote .ipnote { display: block; margin-top: 5px; font-size: .92em; opacity: .8; }
   .chatnote summary::after { content: '▾'; margin-left: auto; transition: transform .2s; } .chatnote[open] summary::after { transform: rotate(180deg); }
   .chatnote p { margin: 0; padding: 0 14px 10px; }
   .msgs { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 14px 12px; display: flex; flex-direction: column; gap: 10px;
@@ -857,7 +858,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1740</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1750</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -903,7 +904,7 @@
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
     <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Тортиб ўлчамини ўзгартиринг"></span></header>
-    <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
+    <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<span class="ipnote">🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.</span><a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
     <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="histbtn" title="Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш">💾 Тарих</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
@@ -1048,6 +1049,7 @@ const I18N = {
   'Умумий чат': ['Общий чат', 'Group chat'],
   'Фойдаланувчилар ва админ': ['Пользователи и админ', 'Users and admin'],
   'Ёпиш': ['Закрыть', 'Close'],
+  '🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.': ['🔒 Для порядка при отправке сообщения записываются IP-адрес и тип устройства; их видит только админ.', '🔒 To keep order, your IP address and device type are recorded when you send a message; only the admin sees them.'],
   'Файл ёки расм юбориш (10 МБ гача)': ['Отправить файл или фото (до 10 МБ)', 'Send a file or picture (up to 10 MB)'],
   'юклаб олиш ⬇': ['скачать ⬇', 'download ⬇'],
   '⬇ Юклаб олиш': ['⬇ Скачать', '⬇ Download'],
@@ -2444,7 +2446,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   // Admin: download the whole chat history (not only the last 150 shown) as a text file.
   document.getElementById('histbtn').addEventListener('click', async () => {
     try {
-      const [c, x, d, ed] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`), adminReq('deleted', 'GET').catch(() => null), adminReq('edits', 'GET').catch(() => null)]);
+      const [c, x, d, ed, mt] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`), adminReq('deleted', 'GET').catch(() => null), adminReq('edits', 'GET').catch(() => null), adminReq('meta', 'GET').catch(() => null)]);
       const rx = (x.ok && await x.json()) || {};
       const live = Object.entries((await c.json()) || {}).map(([key, m]) => Object.assign({ key }, m));
       const gone = Object.entries(d || {}).filter(([key]) => !live.some(m => m.key === key)).map(([key, m]) => { if (m.rx) rx[key] = m.rx; return Object.assign({ key }, m); });
@@ -2455,7 +2457,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
         // Each edit kept the text as it was before; listed oldest first under the current text.
         const eds = Object.values((ed || {})[m.key] || {}).sort((a, b) => (a.ts || 0) - (b.ts || 0));
         const hist = eds.map((v, n) => `\n   ✏️ ТАҲРИРЛАНГАН ${v.ts ? when(v.ts) : '—'}, ким: ${v.by || '?'}${v.uid && v.uid !== m.uid ? ' (бошқа фойдаланувчи!)' : ''}\n      ${n ? 'Аввалги' : 'Асл'} матн: ${v.text}`).join('');
-        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}${eds.length ? ' [ТАҲРИРЛАНГАН]' : ''}${m.del ? ` [ЎЧИРИЛГАН ${when(m.del)}]` : ''}:\n${m.text}${hist}${r ? `\n   ${r}` : ''}`;
+        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}${eds.length ? ' [ТАҲРИРЛАНГАН]' : ''}${m.del ? ` [ЎЧИРИЛГАН ${when(m.del)}]` : ''}:\n${m.text}${hist}${r ? `\n   ${r}` : ''}${mt?.[m.key] ? `\n   🌐 ${metaText(m.key, mt)}` : ''}`;
       });
       const now = new Date(), stamp = now.toISOString().slice(0, 10);
       const head = `BAYAN MEDICAL — чат ёзишмалари тарихи\nЮклаб олинди: ${when(now)}\nХабарлар сони: ${all.length} (шундан ўчирилган: ${gone.length})\n${'='.repeat(48)}\n\n`;
@@ -2585,7 +2587,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const ed = canEdit(m) ? '<button type="button" class="edit" title="Таҳрирлаш">✏️</button>' : '';
       const tools = adm ? `<span class="mtools">${ed}<button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>`
         : ed ? `<span class="mtools">${ed}</span>` : '';
-      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${attHtml(m)}${m.file && m.text === autoText(m.file) ? '' : esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}"${adm && meta[m.key] ? ` title="${esc(metaText(m.key))}"` : ''}>${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${attHtml(m)}${m.file && m.text === autoText(m.file) ? '' : esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
       : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
     loadThumbs();
     if ((atEnd && !rxOpen) || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
@@ -2623,7 +2625,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       blocked = (b.ok && await b.json()) || {};
       list = Object.entries(data).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       picked.forEach(k => { if (!data[k]) picked.delete(k); });
-      notify(); readOnline();
+      notify(); readOnline(); await loadMeta();
       state.textContent = isAdmin() ? 'Админ режими' : 'Фойдаланувчилар ва админ';
       if (!box.hidden) { if (!rxOpen) draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
       unread(); drawBar();
@@ -2840,6 +2842,34 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const m = list.find(x => x.key === b.dataset.f);
     if (m?.file) openAtt(m.file);
   }, true);
+  // Who wrote what, for the admin only: after a message is sent the browser asks ipapi.co for its own IP and rough city (ipify as a
+  // fallback) and saves it with the device type to /meta/<message>, which only the admin can read. A VPN shows the VPN's address.
+  const devName = () => {
+    const u = navigator.userAgent;
+    const os = /Android/.test(u) ? 'Android' : /iPhone|iPad/.test(u) ? 'iOS' : /Windows/.test(u) ? 'Windows' : /Mac OS X/.test(u) ? 'macOS' : /Linux/.test(u) ? 'Linux' : '?';
+    const br = /Edg\//.test(u) ? 'Edge' : /OPR\/|Opera/.test(u) ? 'Opera' : /YaBrowser/.test(u) ? 'Yandex' : /Firefox\//.test(u) ? 'Firefox' : /Chrome\//.test(u) ? 'Chrome' : /Safari\//.test(u) ? 'Safari' : '?';
+    return `${os} · ${br}`;
+  };
+  let ipInfo = null;
+  const getIp = async () => {
+    if (ipInfo) return ipInfo;
+    try { const j = await (await fetch('https://ipapi.co/json/')).json(); if (j.ip) return ipInfo = { ip: String(j.ip), city: [j.city, j.country_name].filter(Boolean).join(', ') }; } catch {}
+    try { const j = await (await fetch('https://api.ipify.org?format=json')).json(); if (j.ip) return ipInfo = { ip: String(j.ip), city: '' }; } catch {}
+    return { ip: '', city: '' };
+  };
+  const saveMeta = async (key, q) => {
+    try {
+      const i = await getIp();
+      await fetch(`${CHAT_DB}/meta/${key}.json${q}`, { method: 'PUT', body: JSON.stringify({ ip: i.ip.slice(0, 60), city: i.city.slice(0, 80), dev: devName().slice(0, 60), uid: myId, ts: { '.sv': 'timestamp' } }) });
+    } catch {}
+  };
+  let meta = {}, metaAt = 0;
+  const loadMeta = async () => {
+    if (!isAdmin() || Date.now() - metaAt < 15000) return;
+    metaAt = Date.now();
+    try { meta = (await adminReq('meta', 'GET')) || {}; } catch {}
+  };
+  const metaText = (k, src = meta) => { const x = src[k]; return x ? `IP: ${x.ip || '—'}${x.city ? ` · ${x.city}` : ''}${x.dev ? ` · ${x.dev}` : ''}` : ''; };
   form.addEventListener('submit', async e => {
     emoPick.hidden = true;
     e.preventDefault();
@@ -2872,6 +2902,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       if (file) body.file = file;
       const r = await fetch(`${CHAT_DB}/chat.json${q}`, { method: 'POST', body: JSON.stringify(body) });
       if (!r.ok) throw new Error(r.status);
+      r.json().then(j => { if (j?.name) saveMeta(j.name, q); }).catch(() => {});
       textIn.value = ''; setAtt(null); await load(); msgs.scrollTop = msgs.scrollHeight;
     } catch { await load(); if (!blocked[myId]) alert('Хабар юборилмади. Интернетни текширинг.'); }
     send.textContent = '➤'; send.disabled = false; draw();
