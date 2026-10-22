@@ -830,7 +830,10 @@
   th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: .6px; background: var(--soft); }
   td.mono { font-family: "JetBrains Mono", monospace; font-weight: 600; }
   footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 28px; }
-  .own { margin-top: 16px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px 22px;
+  .byname table.bn { width:100%; border-collapse:collapse; margin:6px 0 }
+.byname tr[data-mx] { cursor:pointer } .byname tr[data-mx]:hover { background:var(--soft, rgba(0,0,0,.04)) }
+.byname td { padding:5px 6px; border-top:1px solid var(--line, #e5e7eb); vertical-align:top } .byname td small { display:block; color:var(--muted) }
+.own { margin-top: 16px; background: var(--card); border-radius: 18px; box-shadow: var(--shadow); padding: 18px 22px;
     border-left: 6px solid var(--brand2); }
   .own .t { font-size: 18px; font-weight: 700; margin: 4px 0 8px; }
   .own .app { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; background: var(--soft); }
@@ -964,7 +967,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2150</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2200</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1327,6 +1330,10 @@ const I18N = {
 };
 // Texts with numbers or names inside: [pattern, Russian, English]. Checked in order, before the phrases above.
 const I18N_RE = [
+  [/tasnif'да «(.+?)» номи билан қидирилмоқда…/g, 'Поиск в tasnif по названию «$1»…', 'Searching tasnif for the name «$1»…'],
+  [/tasnif'да «(.+?)» номи билан (\d+) та МХИК бор, лекин уларда (\d+) штрих коди ёзилмаган/g, 'В tasnif есть $2 ИКПУ с названием «$1», но штрих-код $3 в них не указан', 'tasnif has $2 PSCIC named «$1», but none lists barcode $3'],
+  [/tasnif'да «(.+?)» номи билан ҳам МХИК топилмади/g, 'В tasnif нет ИКПУ и по названию «$1»', 'tasnif has no PSCIC under the name «$1» either'],
+  [/МХИК устига босинг, тўлиқ карточкаси очилади\. Агар шу маҳсулотники бўлса, tasnif'да унга (\d+) штрих кодини қўшиш керак\./g, 'Нажмите на ИКПУ, откроется его карточка. Если он для этого продукта, в tasnif к нему нужно добавить штрих-код $1.', 'Click a PSCIC to open its card. If it is this product, barcode $1 needs to be added to it on tasnif.'],
   [/каталог бўйича концентрат бўлиши керак/g, 'по каталогу должен быть концентрат', 'catalog says concentrate'],
   [/каталог бўйича эритма \(раствор\) бўлиши керак/g, 'по каталогу должен быть раствор', 'catalog says solution'],
   [/tasnif'да концентрат эмас/g, 'в tasnif не концентрат', 'tasnif says not a concentrate'],
@@ -1486,6 +1493,37 @@ async function findByBarcode(code) {
   }
   return [];
 }
+
+// A barcode tasnif doesn't know may still have an MXIK filed under another barcode,
+// so look the product up by name and list what tasnif has for it.
+async function byName(r, code) {
+  const box = document.createElement('div'); box.className = 'own byname';
+  box.innerHTML = `<div class="label">tasnif'да «${esc(r[2] || r[1])}» номи билан қидирилмоқда…</div>`;
+  out.append(box);
+  const words = [...new Set([r[2], r[1]].filter(Boolean).map(w => w.trim()))];
+  const seen = new Map();
+  try {
+    for (const w of words) {
+      const es = await api('/elasticsearch/search', { search: w, page: 0, size: 20, lang: LANG });
+      for (const i of Array.isArray(es.body?.data) ? es.body.data : []) {
+        const nm = `${i.mxikName || i.name || ''} ${i.brandName || ''} ${i.attributeName || ''}`.toLowerCase();
+        if (i.mxikCode && words.some(x => nm.includes(x.toLowerCase())) && !seen.has(i.mxikCode)) seen.set(i.mxikCode, i);
+      }
+    }
+  } catch {}
+  if (q.value.replace(/\s+/g, '') !== code) return box.remove();
+  const list = [...seen.values()].slice(0, 10);
+  box.innerHTML = list.length
+    ? `<div class="label">tasnif'да «${esc(words[0])}» номи билан ${list.length} та МХИК бор, лекин уларда ${esc(code)} штрих коди ёзилмаган</div>
+       <table class="bn">${list.map(i => `<tr data-mx="${esc(i.mxikCode)}"><td class="mono">${esc(i.mxikCode)}</td><td>${esc(i.mxikName || i.name || '')}${i.attributeName ? `<small>${esc(i.attributeName)}</small>` : ''}</td><td class="mono"><small>${esc(i.internationalCode || '—')}</small></td></tr>`).join('')}</table>
+       <small>МХИК устига босинг, тўлиқ карточкаси очилади. Агар шу маҳсулотники бўлса, tasnif'да унга ${esc(code)} штрих кодини қўшиш керак.</small>`
+    : `<div class="label">tasnif'да «${esc(words[0])}» номи билан ҳам МХИК топилмади</div>`;
+  fitLayout?.();
+}
+document.addEventListener('click', e => {
+  const row = e.target.closest('.byname tr[data-mx]'); if (!row) return;
+  q.value = row.dataset.mx; document.getElementById('f').requestSubmit();
+});
 
 async function findByIkpu(code) {
   const { body } = await api('/mxik/search/by-params', { mxikCode: code, page: 0, size: 20, lang: LANG });
@@ -1943,6 +1981,7 @@ document.getElementById('f').addEventListener('submit', async e => {
       out.innerHTML = (isIkpu
         ? status('bad', '✕', `${esc(code)} МХИК коди базада топилмади.`)
         : status('bad', '✕', own ? 'Бу маҳсулотга ҳали МХИК олинмаган.' : 'Бу штрих код учун МХИК топилмади.', esc(code))) + (isIkpu ? ownBlock(own) : ownBlock(own, code) || `<div class="own">${appHtml(['' + code, '', '', '', ''])}</div>`);
+      if (!isIkpu && own) byName(own, code);
       return;
     }
     const cards = await Promise.all(items.map(i => getCard(i.mxikCode)));
