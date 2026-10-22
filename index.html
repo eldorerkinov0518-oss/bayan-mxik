@@ -732,7 +732,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1400</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1410</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2537,6 +2537,11 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   addEventListener('resize', () => { const sz = getLS('bayan-chat-size', null); if (Array.isArray(sz)) setSize(sz[0], sz[1], false); });
   document.getElementById('chatx').addEventListener('click', () => { box.hidden = true; unread(); poll(); });
+  // A click anywhere outside the open chat (and outside its button and pop-ups) closes it, like ✕.
+  document.addEventListener('pointerdown', e => {
+    if (box.hidden || e.target.closest('#chat, #chatbtn, .toast, .zoom, .rxfx')) return;
+    box.hidden = true; rxOpen = null; unread(); poll();
+  });
   form.addEventListener('submit', async e => {
     emoPick.hidden = true;
     e.preventDefault();
