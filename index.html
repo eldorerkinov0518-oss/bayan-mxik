@@ -962,7 +962,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2120</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2130</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1114,7 +1114,6 @@ const I18N = {
   'Қадоқ': ['Упаковка', 'Package'],
   '📝 Ариза тайёрлаш': ['📝 Подготовить заявку', '📝 Prepare an application'], 'Нусха': ['Копировать', 'Copy'], '📋 Ҳаммасини нусхалаш': ['📋 Копировать всё', '📋 Copy all'],
   "tasnif «Отправить заявку» ойнаси учун маълумот:": ['Данные для окна tasnif «Отправить заявку»:', "Data for tasnif's «Отправить заявку» form:"],
-  '«до» санаси тахминий (берилган сана + 5 йил), гувоҳномадан текширинг.': ['Дата «до» примерная (дата выдачи + 5 лет), сверьте с удостоверением.', 'The «до» date is estimated (issue date + 5 years); check it against the certificate.'],
   'Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.': ['Регистрационное удостоверение этого продукта не найдено, в «Описание товара» подставлено описание продукта.', 'No registration certificate found for this product; the product description is used for «Описание товара».'],
   'Ўхшаш маҳсулот бўйича танланг:': ['Выберите как у похожего продукта:', 'Pick the same as the similar product:'],
   'Ўхшаш маҳсулотнинг МХИК коди топилмади, рўйхатдан мос позицияни танланг': ['ИКПУ похожего продукта не найден, выберите подходящую позицию из списка', 'No similar product with a PSCIC found; pick the matching position from the list'],
@@ -1662,7 +1661,7 @@ function ownBlock(r, appFor) {
 // The visitor fills tasnif's form (phone, captcha) and sends it there; this page only prepares the text.
 const TNVED = '3004900002';
 // Registration certificates (РУ), read from the scanned attachments in Desktop\Bayan РУ 21.08.26 (all amended 2026-08-14).
-// «до» dates come from the company's MXIK sheet; a trailing 1 marks a date not in that sheet (issue date + 5 years) to double-check.
+// The DV/M number is what matters (Alex); «до» dates come from the company's MXIK sheet, a trailing 1 marks issue date + 5 years.
 const RU_FROM = '2026-08-14', RU = {'айронмакс': ['04294/10/22', '2030-08-23'], 'арвениксолин': ['04765/01/25', '2030-01-17', 1], 'бализес': ['04492/06/23', '2028-06-22', 1], 'бонейро': ['04012/12/21', '2026-12-23'], 'велпирам': ['04673/08/24', '2029-08-07'], 'виталис': ['05236/09/25', '2030-09-30'], 'глюменол': ['04293/10/22', '2030-08-23'], 'иновексил': ['04869/03/25', '2030-08-23'], 'л-лизина-эц': ['04849/03/25', '2030-08-23'], 'л-лизамен': ['04360/12/22', '2027-12-21'], 'лизенол': ['04361/12/22', '2030-08-23'], 'малтазам': ['04495/06/23', '2028-06-22', 1], 'мелоксилат': ['04013/12/21', '2026-12-23'], 'менталис': ['05265/09/25', '2030-09-30'], 'примафер': ['04674/08/24', '2029-08-07'], 'таргетон': ['04032/02/22', '2027-02-14'], 'тионейро': ['04586/01/24', '2029-01-30', 1], 'транексол': ['04015/12/21', '2026-12-23'], 'цитинум': ['04813/02/25', '2030-02-22'], 'эклирия': ['05172/09/25', '2030-09-19'], 'элисин': ['04359/12/22', '2027-12-21']};
 const ruOf = r => { const x = RU[(r[2] || r[1] || '').toLowerCase()]; return x && { text: `DV/M ${x[0]} от ${RU_FROM} до ${x[1]}`, guess: !!x[2] }; };
 function appName([, name, brand, desc, pack]) {
@@ -1680,7 +1679,7 @@ function appHtml(r) {
     .map(x => ({ x, it: results.get(x[0]).items[0] })).find(o => o.it?.mxikCode);
   const ru = ruOf(r);
   return `<details class="app"><summary>📝 Ариза тайёрлаш</summary><p class="apph">tasnif «Отправить заявку» ойнаси учун маълумот:</p>
-    ${ru ? (ru.guess ? '<p class="appw">«до» санаси тахминий (берилган сана + 5 йил), гувоҳномадан текширинг.</p>' : '') : '<p class="appw">Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.</p>'}
+    ${ru ? '' : '<p class="appw">Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.</p>'}
     <div class="appf">${f.map(([k, v]) => `<div><span>${k}</span><b>${esc(v)}</b><button type="button" class="cp" data-cp="${esc(v)}">Нусха</button></div>`).join('')}
     <div><span>Группа / Класс / Подкласс / Позиция</span>${sib ? `<b>Ўхшаш маҳсулот бўйича танланг: ${esc(sib.it.mxikCode)}<small>${esc(sib.it.mxikName || '')} · ${esc(sib.x[0])}${(n => n ? ` · №${n}` : '')(packMatch(sib.x[4])?.[1])}</small></b><button type="button" class="cp" data-cp="${esc(sib.it.mxikCode)}">Нусха</button>` : '<i>Ўхшаш маҳсулотнинг МХИК коди топилмади, рўйхатдан мос позицияни танланг</i>'}</div></div>
     <div class="appb"><button type="button" class="cp" data-cp="${esc(f.map(([k, v]) => `${k}: ${v}`).join('\n'))}">📋 Ҳаммасини нусхалаш</button>
