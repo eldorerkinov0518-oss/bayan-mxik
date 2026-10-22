@@ -181,6 +181,11 @@
   .blklist { flex-basis: 100%; display: grid; gap: 4px; max-height: 130px; overflow: auto; }
   .blklist div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 8px; border-radius: 8px; background: #fff; font-size: 12.5px; }
   .blklist button { border: 0; background: none; color: #0f766e; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
+  .editbar { display: flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; background: rgba(56, 189, 248, .12); border-left: 3px solid #38bdf8; font-size: 12px; color: inherit; }
+  .editbar[hidden] { display: none; } .editbar span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; opacity: .8; }
+  .editbar button { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 14px; }
+  .chat .editbar b { color: #38bdf8; }
+  .msg small .edtag { font-style: italic; opacity: .85; }
   .mtools { display: flex; flex-direction: column; gap: 3px; opacity: .35; transition: opacity .15s; }
   .mrow:hover .mtools, .mrow.sel .mtools { opacity: 1; }
   .mtools button { width: 24px; height: 24px; border: 1px solid #e2e8f0; border-radius: 7px; background: #fff; font-size: 11px; cursor: pointer; padding: 0; }
@@ -727,7 +732,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1340</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1400</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -782,6 +787,7 @@
     <form id="chatf" autocomplete="off">
       <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
       <div class="emopick" id="emopick" hidden></div>
+      <div class="editbar" id="editbar" hidden>✏️ <b>Таҳрирлаш:</b> <span></span><button type="button" id="editx" aria-label="Бекор қилиш">✕</button></div>
       <div class="row"><button type="button" class="emob" id="emob" title="Смайлик" aria-label="Смайлик">😊</button><textarea id="chattext" maxlength="500" rows="2" placeholder="Изоҳингизни ёзинг…" required></textarea><button type="submit" aria-label="Юбориш">➤</button></div>
     </form>
   </section>
@@ -886,7 +892,7 @@ const I18N = {
   'Реакция': ['Реакция', 'Reaction'],
   '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернетни текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқа': ['Праздник и другое', 'Celebration and more'], 'Охирги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
@@ -2259,7 +2265,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   // Admin: download the whole chat history (not only the last 150 shown) as a text file.
   document.getElementById('histbtn').addEventListener('click', async () => {
     try {
-      const [c, x, d] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`), adminReq('deleted', 'GET').catch(() => null)]);
+      const [c, x, d, ed] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`), adminReq('deleted', 'GET').catch(() => null), adminReq('edits', 'GET').catch(() => null)]);
       const rx = (x.ok && await x.json()) || {};
       const live = Object.entries((await c.json()) || {}).map(([key, m]) => Object.assign({ key }, m));
       const gone = Object.entries(d || {}).filter(([key]) => !live.some(m => m.key === key)).map(([key, m]) => { if (m.rx) rx[key] = m.rx; return Object.assign({ key }, m); });
@@ -2267,7 +2273,10 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const when = ts => new Date(ts).toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       const lines = all.map(m => {
         const r = Object.entries(rx[m.key] || {}).map(([i, who]) => `${EMO[i] || '?'}${Object.keys(who).length}`).join(' ');
-        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}${m.del ? ` [ЎЧИРИЛГАН ${when(m.del)}]` : ''}:\n${m.text}${r ? `\n   ${r}` : ''}`;
+        // Each edit kept the text as it was before; listed oldest first under the current text.
+        const eds = Object.values((ed || {})[m.key] || {}).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+        const hist = eds.map((v, n) => `\n   ✏️ ТАҲРИРЛАНГАН ${v.ts ? when(v.ts) : '—'}, ким: ${v.by || '?'}${v.uid && v.uid !== m.uid ? ' (бошқа фойдаланувчи!)' : ''}\n      ${n ? 'Аввалги' : 'Асл'} матн: ${v.text}`).join('');
+        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}${eds.length ? ' [ТАҲРИРЛАНГАН]' : ''}${m.del ? ` [ЎЧИРИЛГАН ${when(m.del)}]` : ''}:\n${m.text}${hist}${r ? `\n   ${r}` : ''}`;
       });
       const now = new Date(), stamp = now.toISOString().slice(0, 10);
       const head = `BAYAN MEDICAL — чат ёзишмалари тарихи\nЮклаб олинди: ${when(now)}\nХабарлар сони: ${all.length} (шундан ўчирилган: ${gone.length})\n${'='.repeat(48)}\n\n`;
@@ -2301,6 +2310,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const row = e.target.closest('.mrow'); if (!row) return;
     const k = row.dataset.k;
     if (e.target.closest('.rxmore')) { rxMore = true; draw(); return; }
+    if (e.target.closest('.edit')) { const m = list.find(x => x.key === k); if (m && canEdit(m)) setEdit(m); return; }
     const rb = e.target.closest('.rx');
     if (rb) {
       if (blocked[myId] && !isAdmin()) return;
@@ -2379,12 +2389,24 @@ document.querySelectorAll('.tglnk').forEach(a => {
       `<button type="button" class="rx${r[i]?.[myId] ? ' on' : ''}" data-rx="${i}" style="animation-delay:${i * 25}ms">${e}</button>`).join('')}${rxMore ? '' : '<button type="button" class="rxmore" title="Яна">▾</button>'}</div>` : '';
     return `${bar}${chips ? `<div class="rxs">${chips}</div>` : ''}`;
   };
+  // Anyone may edit their own message for 24 hours; each old text is kept in /edits (only the admin can read it).
+  const canEdit = m => m.uid === myId && m.ts && Date.now() - m.ts < 86400000 && !(blocked[myId] && !isAdmin());
+  let editKey = null;
+  const editBar = document.getElementById('editbar');
+  const setEdit = m => {
+    editKey = m ? m.key : null; editBar.hidden = !m;
+    if (m) { editBar.querySelector('span').textContent = m.text.length > 60 ? m.text.slice(0, 60) + '…' : m.text; textIn.value = m.text; textIn.focus(); }
+    else textIn.value = '';
+  };
+  document.getElementById('editx').addEventListener('click', () => setEdit(null));
   const draw = () => {
     if (!CHAT_DB) { msgs.innerHTML = '<div class="sys">Чат уланмоқда. Тез орада бу ерда изоҳ қолдириб, бошқа фойдаланувчилар ва админ билан ёзишишингиз мумкин бўлади.</div>'; return; }
     const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40, adm = isAdmin();
     msgs.innerHTML = list.length ? list.map(m => { const c = hue(m.uid || m.name);
-      const tools = adm ? `<span class="mtools"><button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>` : '';
-      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
+      const ed = canEdit(m) ? '<button type="button" class="edit" title="Таҳрирлаш">✏️</button>' : '';
+      const tools = adm ? `<span class="mtools">${ed}<button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>`
+        : ed ? `<span class="mtools">${ed}</span>` : '';
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
       : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
     if ((atEnd && !rxOpen) || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
     const rb = msgs.querySelector('.rxbar');
@@ -2522,6 +2544,21 @@ document.querySelectorAll('.tglnk').forEach(a => {
     if (!name || !text || !CHAT_DB) return;
     setLS('bayan-chat-name', name);
     const send = form.querySelector('[type=submit]'); send.disabled = true;
+    const old = editKey && list.find(x => x.key === editKey);
+    if (old) {
+      try {
+        if (text !== old.text) {
+          if (!canEdit(old)) throw new Error('late');
+          const q = isAdmin() ? `?auth=${await idToken()}` : '';
+          const r1 = await fetch(`${CHAT_DB}/edits/${old.key}.json${q}`, { method: 'POST', body: JSON.stringify({ text: old.text, by: name, uid: myId, ts: { '.sv': 'timestamp' } }) });
+          if (!r1.ok) throw new Error(r1.status);
+          const r2 = await fetch(`${CHAT_DB}/chat/${old.key}.json${q}`, { method: 'PATCH', body: JSON.stringify({ text, edited: { '.sv': 'timestamp' } }) });
+          if (!r2.ok) throw new Error(r2.status);
+        }
+        setEdit(null); await load();
+      } catch (err) { alert(String(err.message) === 'late' ? 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.' : 'Таҳрирлаб бўлмади. Интернетни текширинг.'); }
+      send.disabled = false; draw(); return;
+    }
     try {
       const adm = isAdmin();
       const r = await fetch(`${CHAT_DB}/chat.json${adm ? `?auth=${await idToken()}` : ''}`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: adm, ts: { '.sv': 'timestamp' } }) });
