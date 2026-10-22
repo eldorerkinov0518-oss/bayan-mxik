@@ -948,7 +948,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2040</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2050</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1569,7 +1569,7 @@ function compare(own, it) {
       ? 'Дори шакли: каталог бўйича концентрат бўлиши керак, tasnif\'да концентрат эмас'
       : 'Дори шакли: каталог бўйича эритма (раствор) бўлиши керак, tasnif\'да концентрат' });
   // Pack count: "5 стеклянных ампул" or "ампулы 5 шт" vs "№5".
-  const cm = packMatch(pack);
+  const pk = normT(pack), cm = packMatch(pack);
   const tm = T.match(/№\s*(\d+)/);
   if (cm && tm) out.push(+cm[1] === +tm[1]
     ? { ok: true, text: `Қадоқ сони: №${cm[1]}` }
