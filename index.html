@@ -727,7 +727,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1330</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1340</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -886,7 +886,7 @@ const I18N = {
   'Реакция': ['Реакция', 'Reaction'],
   '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқа': ['Праздник и другое', 'Celebration and more'], 'Охирги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
@@ -2194,7 +2194,15 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const adminReq = async (path, method, body) => {
     const r = await fetch(`${CHAT_DB}/${path}.json?auth=${await idToken()}`, { method, body: body === undefined ? undefined : JSON.stringify(body) });
     if (!r.ok) throw new Error(r.status);
+    return r.json().catch(() => null);
   };
+  // Before the admin deletes messages they are copied to /deleted (readable by the admin only), so the history file keeps them.
+  const archive = async ms => {
+    if (!ms.length) return;
+    await adminReq('deleted', 'PATCH', Object.fromEntries(ms.map(m => [m.key,
+      { name: m.name || '', text: m.text || '', uid: m.uid || '', ts: m.ts || 0, admin: !!m.admin, rx: reacts[m.key] || null, del: { '.sv': 'timestamp' } }])));
+  };
+  const noArchive = () => alert('Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).');
   adminApi = adminReq;
   fetch(`${CHAT_DB}/settings/accepted.json`).then(r => r.ok ? r.json() : null)
     .then(v => { if (v) { acceptShared = v; acceptRedraw(); } }).catch(() => {});
@@ -2233,6 +2241,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   document.getElementById('blkbtn').addEventListener('click', () => { blkBox.hidden = !blkBox.hidden; });
   document.getElementById('delsel').addEventListener('click', async () => {
     if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
+    try { await archive(list.filter(m => picked.has(m.key))); } catch { noArchive(); return; }
     try { for (const k of picked) { await adminReq(`chat/${k}`, 'DELETE'); adminReq(`reactions/${k}`, 'DELETE').catch(() => {}); } picked.clear(); await load(); }
     catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
   });
@@ -2250,16 +2259,18 @@ document.querySelectorAll('.tglnk').forEach(a => {
   // Admin: download the whole chat history (not only the last 150 shown) as a text file.
   document.getElementById('histbtn').addEventListener('click', async () => {
     try {
-      const [c, x] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`)]);
-      const all = Object.entries((await c.json()) || {}).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      const [c, x, d] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`), adminReq('deleted', 'GET').catch(() => null)]);
       const rx = (x.ok && await x.json()) || {};
+      const live = Object.entries((await c.json()) || {}).map(([key, m]) => Object.assign({ key }, m));
+      const gone = Object.entries(d || {}).filter(([key]) => !live.some(m => m.key === key)).map(([key, m]) => { if (m.rx) rx[key] = m.rx; return Object.assign({ key }, m); });
+      const all = [...live, ...gone].filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       const when = ts => new Date(ts).toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
       const lines = all.map(m => {
         const r = Object.entries(rx[m.key] || {}).map(([i, who]) => `${EMO[i] || '?'}${Object.keys(who).length}`).join(' ');
-        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}:\n${m.text}${r ? `\n   ${r}` : ''}`;
+        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}${m.del ? ` [ЎЧИРИЛГАН ${when(m.del)}]` : ''}:\n${m.text}${r ? `\n   ${r}` : ''}`;
       });
       const now = new Date(), stamp = now.toISOString().slice(0, 10);
-      const head = `BAYAN MEDICAL — чат ёзишмалари тарихи\nЮклаб олинди: ${when(now)}\nХабарлар сони: ${all.length}\n${'='.repeat(48)}\n\n`;
+      const head = `BAYAN MEDICAL — чат ёзишмалари тарихи\nЮклаб олинди: ${when(now)}\nХабарлар сони: ${all.length} (шундан ўчирилган: ${gone.length})\n${'='.repeat(48)}\n\n`;
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob(['\ufeff' + head + lines.join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' }));
       a.download = `bayan-chat-tarix-${stamp}.txt`; document.body.append(a); a.click(); a.remove();
@@ -2278,6 +2289,8 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   document.getElementById('clearall').addEventListener('click', async () => {
     if (!confirm('Бутун чат тозалансинми? Барча хабарлар бутунлай ўчади.')) return;
+    try { const all = (await (await fetch(`${CHAT_DB}/chat.json`)).json()) || {}; await archive(Object.entries(all).map(([key, m]) => Object.assign({ key }, m))); }
+    catch { noArchive(); return; }
     try { await adminReq('chat', 'DELETE'); adminReq('reactions', 'DELETE').catch(() => {}); picked.clear(); await load(); } catch { alert('Тозалаб бўлмади. Админ сифатида қайта киринг.'); }
   });
   blkBox.addEventListener('click', async e => {
@@ -2346,6 +2359,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       try { await adminReq(`blocked/${m.uid}`, 'PUT', { name: m.name, ts: { '.sv': 'timestamp' } }); await load(); } catch { alert('Блоклаб бўлмади.'); }
     } else if (e.target.closest('.del')) {
       if (!confirm('Шу хабар ўчирилсинми?')) return;
+      try { await archive([m]); } catch { noArchive(); return; }
       try { await adminReq(`chat/${m.key}`, 'DELETE'); adminReq(`reactions/${m.key}`, 'DELETE').catch(() => {}); picked.delete(m.key); await load(); } catch { alert('Ўчириб бўлмади.'); }
     } else if (e.target.closest('.pick')) {
       picked.has(m.key) ? picked.delete(m.key) : picked.add(m.key); row.classList.toggle('sel', picked.has(m.key)); drawBar();
