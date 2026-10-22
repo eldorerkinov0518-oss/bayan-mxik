@@ -400,6 +400,11 @@
   .spin { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: logospin 7s cubic-bezier(.65, 0, .35, 1) infinite; }
   .spin svg { position: absolute; inset: 0; width: 100%; height: 100%; backface-visibility: visible; }
   .spin svg.mid { filter: brightness(.5) saturate(.9); }
+  .spin .amp { position: absolute; top: 12%; width: 20.4%; height: 77.6%; transform-style: flat; perspective: 160px; } /* flat: each turn is drawn on its own plane, so it never cuts into the tile */
+  .spin .amp > div { width: 100%; height: 100%; animation: ampspin 3.2s cubic-bezier(.6, 0, .4, 1) infinite; }
+  .spin .amp svg { position: static; display: block; width: 100%; height: 100%; filter: drop-shadow(0 0 3px rgba(150, 225, 255, .7)); }
+  @keyframes ampspin { 0%, 30% { transform: rotateY(0); } 100% { transform: rotateY(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .spin .amp > div { animation: none; } }
   @keyframes logospin { 0%, 22% { transform: rotateY(0) rotateX(6deg); } 50%, 72% { transform: rotateY(180deg) rotateX(-6deg); } 100% { transform: rotateY(360deg) rotateX(6deg); } }
   @keyframes bob { 0%, 100% { translate: 0 0; } 50% { translate: 0 -7px; } }
   .hero3d .orbit { position: absolute; left: 50%; top: 50%; width: 176px; height: 176px; margin: -88px 0 0 -88px; border-radius: 50%;
@@ -929,7 +934,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1940</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1950</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2224,6 +2229,15 @@ document.getElementById('clock').addEventListener('click', e => {
   const n = nowTk(); calY = n.y; calM = n.m; wxOnly = !!e.target.closest('#wnow') && Object.keys(WX.daily).length > 0;
   wxDay = e.target.closest('.week span')?.dataset.day || '';
   drawCal(); calpop.hidden = false;
+  // Open the window right under what was pressed: the weekday, today's weather or the month name.
+  calpop.style.left = calpop.style.right = '';
+  if (innerWidth > 640) {
+    let ar = (e.target.closest('.week span, #wnow') || document.getElementById('cmon')).getBoundingClientRect();
+    if (!ar.width) ar = document.getElementById('clock').getBoundingClientRect();
+    const wr = calpop.parentElement.getBoundingClientRect(), w = calpop.offsetWidth;
+    const x = Math.max(8, Math.min(innerWidth - w - 8, ar.left + ar.width / 2 - w / 2));
+    calpop.style.left = `${x - wr.left}px`; calpop.style.right = 'auto';
+  }
 });
 calpop.addEventListener('click', e => {
   e.stopPropagation();
@@ -2332,7 +2346,6 @@ drawRecent();
 }
 // 3D BAYAN logo (navy-and-blue tile with three white ampoules): draw it several times, stacked along Z, for thickness.
 {
-  const AMP = x => `<path transform="translate(${x} 12) scale(.68 .97)" d="M15 2a5 5 0 0 1 5 5c0 3-2 4-2.6 6.5-.4 1.6 1 2.8 1 4.5 0 1.4-1.4 2.6-1.4 4.2 0 1.6 1.4 2.5 4.6 4.4A8 8 0 0 1 25 33v39a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6V33a8 8 0 0 1 3.4-6.4c3.2-1.9 4.6-2.8 4.6-4.4 0-1.6-1.4-2.8-1.4-4.2 0-1.7 1.4-2.9 1-4.5C12 11 10 10 10 7a5 5 0 0 1 5-5z" fill="url(#lgA)"/>`;
   const LOGO = `<svg viewBox="0 0 100 100"><defs>
     <linearGradient id="lgT" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3a24a0"/><stop offset="1" stop-color="#1e0d5c"/></linearGradient>
     <linearGradient id="lgB" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2aa8f0"/><stop offset="1" stop-color="#0679c4"/></linearGradient>
@@ -2340,7 +2353,6 @@ drawRecent();
     <linearGradient id="lgS" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".55"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>
     <clipPath id="lgC"><rect width="100" height="100" rx="20"/></clipPath></defs>
     <g clip-path="url(#lgC)"><rect width="100" height="100" fill="url(#lgT)"/><rect y="60" width="100" height="40" fill="url(#lgB)"/>
-    ${AMP(16.5)}${AMP(39.8)}${AMP(63.1)}
     <rect x="-60" y="-20" width="34" height="140" fill="url(#lgS)" transform="rotate(18)"><animate attributeName="x" values="-60;-60;150" keyTimes="0;.55;1" dur="3.5s" repeatCount="indefinite"/></rect></g>
     <rect x="1" y="1" width="98" height="98" rx="19" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="2"/></svg>`;
   const slices = (svg, n, gap) => Array.from({ length: n }, (_, i) => {
@@ -2348,7 +2360,22 @@ drawRecent();
     return svg.replace(/id="(\w+)"/g, `id="$1${i}"`).replace(/url\(#(\w+)\)/g, `url(#$1${i})`)
       .replace('<svg', `<svg class="${edge ? '' : 'mid'}" style="transform:translateZ(${z.toFixed(1)}px)"`);
   }).join('');
-  document.getElementById('logo3d').innerHTML = slices(LOGO, 9, 1.5);
+  // The three ampoules stand just off the front and back faces and each turns on its own axis, half a beat apart,
+  // with blue liquid sloshing inside and small bubbles rising.
+  const AP = 'M15 2a5 5 0 0 1 5 5c0 3-2 4-2.6 6.5-.4 1.6 1 2.8 1 4.5 0 1.4-1.4 2.6-1.4 4.2 0 1.6 1.4 2.5 4.6 4.4A8 8 0 0 1 25 33v39a6 6 0 0 1-6 6h-8a6 6 0 0 1-6-6V33a8 8 0 0 1 3.4-6.4c3.2-1.9 4.6-2.8 4.6-4.4 0-1.6-1.4-2.8-1.4-4.2 0-1.7 1.4-2.9 1-4.5C12 11 10 10 10 7a5 5 0 0 1 5-5z';
+  const ampSvg = (k, d) => `<svg viewBox="0 0 30 80" preserveAspectRatio="none"><defs>
+    <clipPath id="apc${k}"><path d="${AP}"/></clipPath>
+    <linearGradient id="apl${k}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c4f6ff"/><stop offset=".25" stop-color="#6fdcff"/><stop offset="1" stop-color="#22a6f2"/></linearGradient>
+    <linearGradient id="aph${k}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity=".15"/><stop offset=".3" stop-color="#fff" stop-opacity=".9"/><stop offset=".45" stop-color="#fff" stop-opacity=".2"/><stop offset="1" stop-color="#fff" stop-opacity=".05"/></linearGradient></defs>
+    <path d="${AP}" fill="#fff" fill-opacity=".9"/>
+    <g clip-path="url(#apc${k})"><g><animateTransform attributeName="transform" type="translate" values="0 0;0 -3;0 1;0 0" dur="2.6s" begin="${d}s" repeatCount="indefinite"/>
+      <path d="M-30 46q7.5-3.5 15 0t15 0 15 0 15 0V82H-30z" fill="url(#apl${k})"><animateTransform attributeName="transform" type="translate" values="0 0;30 0" dur="1.4s" repeatCount="indefinite"/></path>
+      <path d="M-30 48q7.5 3 15 0t15 0 15 0 15 0V82H-30z" fill="#0b5fb0" fill-opacity=".35"><animateTransform attributeName="transform" type="translate" values="30 0;0 0" dur="1.9s" repeatCount="indefinite"/></path></g>
+      ${[[11, 2.2, 0], [17, 1.6, .9], [14, 1.2, 1.7]].map(([x, r, b]) => `<circle cx="${x}" r="${r}" fill="#fff" fill-opacity=".75"><animate attributeName="cy" values="78;50" dur="2.4s" begin="${b + d}s" repeatCount="indefinite"/><animate attributeName="fill-opacity" values="0;.8;0" dur="2.4s" begin="${b + d}s" repeatCount="indefinite"/></circle>`).join('')}
+      <rect x="5" y="0" width="20" height="80" fill="url(#aph${k})"/></g>
+    <path d="${AP}" fill="none" stroke="#0a2a78" stroke-opacity=".35" stroke-width="2.6"/><path d="${AP}" fill="none" stroke="#fff" stroke-width="1.2"/></svg>`;
+  const amps = (z, side) => [16.5, 39.8, 63.1].map((x, i) => `<div class="amp" style="left:${x}%;transform:translateZ(${z}px)"><div style="animation-delay:${i * .45}s">${ampSvg(side + i, i * .4)}</div></div>`).join('');
+  document.getElementById('logo3d').innerHTML = slices(LOGO, 9, 1.5) + amps(7.5, 'f') + amps(-7.5, 'b');
 }
 
 // Exchange rates in the top bar: the Central Bank of Uzbekistan's daily rates (cbu.uz), open.er-api.com if that is unreachable;
