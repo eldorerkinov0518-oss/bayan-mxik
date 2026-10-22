@@ -721,7 +721,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1310</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1320</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -770,7 +770,7 @@
     <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Тортиб ўлчамини ўзгартиринг"></span></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
-    <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
+    <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="histbtn" title="Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш">💾 Тарих</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
@@ -880,7 +880,7 @@ const I18N = {
   'Реакция': ['Реакция', 'Reaction'],
   '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқа': ['Праздник и другое', 'Celebration and more'], 'Охирги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
@@ -2241,6 +2241,25 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const admBar = document.getElementById('adminbar');
   admBar.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !admTools.hidden) { clearTimeout(admTimer); admTimer = setTimeout(() => admShow(false), 600); } });
   admBar.addEventListener('pointerenter', admArm);
+  // Admin: download the whole chat history (not only the last 150 shown) as a text file.
+  document.getElementById('histbtn').addEventListener('click', async () => {
+    try {
+      const [c, x] = await Promise.all([fetch(`${CHAT_DB}/chat.json`), fetch(`${CHAT_DB}/reactions.json`)]);
+      const all = Object.entries((await c.json()) || {}).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
+      const rx = (x.ok && await x.json()) || {};
+      const when = ts => new Date(ts).toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' });
+      const lines = all.map(m => {
+        const r = Object.entries(rx[m.key] || {}).map(([i, who]) => `${EMO[i] || '?'}${Object.keys(who).length}`).join(' ');
+        return `[${m.ts ? when(m.ts) : '—'}] ${m.name}${m.admin ? ' (админ)' : ''}${blocked[m.uid] ? ' (блокланган)' : ''}:\n${m.text}${r ? `\n   ${r}` : ''}`;
+      });
+      const now = new Date(), stamp = now.toISOString().slice(0, 10);
+      const head = `BAYAN MEDICAL — чат ёзишмалари тарихи\nЮклаб олинди: ${when(now)}\nХабарлар сони: ${all.length}\n${'='.repeat(48)}\n\n`;
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(new Blob(['\ufeff' + head + lines.join('\n\n') + '\n'], { type: 'text/plain;charset=utf-8' }));
+      a.download = `bayan-chat-tarix-${stamp}.txt`; document.body.append(a); a.click(); a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    } catch { alert('Тарихни юклаб бўлмади. Интернет алоқасини текширинг.'); }
+  });
   document.getElementById('thbtn').addEventListener('click', () => { showTheme(); thList.hidden = !thList.hidden; });
   thList.addEventListener('click', async e => {
     const b = e.target.closest('[data-th]'); if (!b) return;
