@@ -919,7 +919,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1910</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1920</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2196,14 +2196,15 @@ document.getElementById('clock').addEventListener('click', e => {
   e.stopPropagation();
   if (e.target.closest('#ctime')) { clkMode = (clkMode + 1) % 3; try { localStorage.setItem('bayan-clock', clkMode); } catch {} drawTime(nowTk()); return; }
   // A press on the weather (today's chip or a day's icon) opens the 10-day forecast; anywhere else opens the calendar with it.
-  const w = !!e.target.closest('#wnow, .week u') && Object.keys(WX.daily).length > 0;
-  if (calpop.hidden || w !== wxOnly) { const n = nowTk(); calY = n.y; calM = n.m; wxOnly = w; drawCal(); calpop.hidden = false; }
-  else calpop.hidden = true;
+  // A second press anywhere on the bar closes it.
+  if (!calpop.hidden) { calpop.hidden = true; return; }
+  const n = nowTk(); calY = n.y; calM = n.m; wxOnly = !!e.target.closest('#wnow, .week u') && Object.keys(WX.daily).length > 0;
+  drawCal(); calpop.hidden = false;
 });
 calpop.addEventListener('click', e => {
   e.stopPropagation();
   const b = e.target.closest('[data-step]');
-  if (!b) return;
+  if (!b) { calpop.hidden = true; return; } // a press on the calendar itself closes it; only ‹ › keep it open
   calM += +b.dataset.step;
   if (calM < 0) { calM = 11; calY--; } else if (calM > 11) { calM = 0; calY++; }
   drawCal();
