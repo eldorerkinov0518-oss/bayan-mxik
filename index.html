@@ -160,8 +160,13 @@
   .adminlogin button { padding: 0 12px; border: 0; border-radius: 9px; background: #f59e0b; color: #fff; font-weight: 700; cursor: pointer; }
   .adminlogin small { grid-column: 1 / -1; font-size: 11.5px; color: #b45309; } .adminlogin small:empty { display: none; }
   .adminbar { position: relative; display: flex; flex-wrap: wrap; gap: 6px; padding: 8px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
-  .adminbar > button { padding: 5px 10px; border: 1px solid #fcd34d; border-radius: 999px; background: #fff; color: #92400e; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
-  .adminbar > button:hover:not(:disabled) { background: #fef3c7; } .adminbar > button:disabled { opacity: .5; cursor: default; }
+  .adminbar .admtog { flex-basis: 100%; display: flex; justify-content: space-between; align-items: center; padding: 2px 4px; border: 0; background: transparent; color: #fbbf24; font: 700 12.5px Inter, system-ui, sans-serif; cursor: pointer; }
+  .adminbar .admtog span { transition: transform .2s; } .adminbar .admtog[aria-expanded="true"] span { transform: rotate(180deg); }
+  .admtools { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; animation: admin .2s ease-out; }
+  .admtools[hidden] { display: none; }
+  @keyframes admin { from { opacity: 0; transform: translateY(-6px); } }
+  .admtools > button { padding: 5px 10px; border: 1px solid #fcd34d; border-radius: 999px; background: #fff; color: #92400e; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
+  .admtools > button:hover:not(:disabled) { background: #fef3c7; } .admtools > button:disabled { opacity: .5; cursor: default; }
   #clearall { color: #b91c1c; border-color: #fca5a5; } #adminout { margin-left: auto; }
   .blklist { flex-basis: 100%; display: grid; gap: 4px; max-height: 130px; overflow: auto; }
   .blklist div { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 8px; border-radius: 8px; background: #fff; font-size: 12.5px; }
@@ -226,7 +231,7 @@
   .onlist { background: #111a30; border-bottom-color: #1e2a47; } .onlist span { background: #1b2540; color: #e2e8f0; }
   .adminlogin, .adminbar { background: #1a1530; border-bottom-color: #3b2f63; }
   .adminlogin b { color: #fbbf24; } .adminlogin input { background: #0b1020; color: #e5e7eb; border-color: #4c3f7a; }
-  .adminbar > button { background: #241d42; color: #fde68a; border-color: #4c3f7a; } .adminbar > button:hover:not(:disabled) { background: #2f2656; }
+  .admtools > button { background: #241d42; color: #fde68a; border-color: #4c3f7a; } .admtools > button:hover:not(:disabled) { background: #2f2656; }
   #clearall { color: #fca5a5; border-color: #7f1d1d; }
   .blklist div { background: #0b1020; color: #e2e8f0; } .blklist button { color: #22d3ee; }
   .mtools button { background: #1b2540; border-color: #2c3a5e; color: #e2e8f0; } .mtools button:hover { background: #26324f; }
@@ -706,7 +711,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1230</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1240</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -755,7 +760,7 @@
     <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
-    <div class="adminbar" id="adminbar" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div>
+    <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
@@ -863,6 +868,7 @@ const I18N = {
   'Мўлжал: Юнусобод кичик саноат зонаси': ['Ориентир: малая промзона Юнусабад', 'Landmark: Yunusabad small industrial zone'],
   'Охирги излашлар': ['Последние поиски', 'Recent searches'],
   'Реакция': ['Реакция', 'Reaction'],
+  '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
   'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
@@ -2214,6 +2220,17 @@ document.querySelectorAll('.tglnk').forEach(a => {
     try { for (const k of picked) { await adminReq(`chat/${k}`, 'DELETE'); adminReq(`reactions/${k}`, 'DELETE').catch(() => {}); } picked.clear(); await load(); }
     catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
   });
+  // Admin tools stay folded under one arrow; they close again on a second click, when the cursor leaves, or after 20 s untouched.
+  const admTog = document.getElementById('admtog'), admTools = document.getElementById('admtools');
+  let admTimer;
+  const admArm = () => { clearTimeout(admTimer); if (!admTools.hidden) admTimer = setTimeout(() => admShow(false), 20000); };
+  const admShow = on => { admTools.hidden = !on; admTog.setAttribute('aria-expanded', on); if (!on) { thList.hidden = true; blkBox.hidden = true; } admArm(); };
+  admTog.addEventListener('click', () => admShow(admTools.hidden));
+  ['pointermove', 'click', 'keydown'].forEach(ev => admTools.addEventListener(ev, admArm));
+  // Moving the cursor away from the admin bar (e.g. into the messages) folds it shortly after.
+  const admBar = document.getElementById('adminbar');
+  admBar.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !admTools.hidden) { clearTimeout(admTimer); admTimer = setTimeout(() => admShow(false), 600); } });
+  admBar.addEventListener('pointerenter', admArm);
   document.getElementById('thbtn').addEventListener('click', () => { showTheme(); thList.hidden = !thList.hidden; });
   thList.addEventListener('click', async e => {
     const b = e.target.closest('[data-th]'); if (!b) return;
