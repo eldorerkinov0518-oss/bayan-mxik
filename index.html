@@ -75,6 +75,12 @@
   .chat { position: fixed; right: 16px; bottom: 104px; z-index: 31; width: min(390px, calc(100vw - 32px)); height: min(580px, calc(100vh - 150px));
     display: flex; flex-direction: column; border-radius: 22px; overflow: hidden; background: #fff; box-shadow: 0 24px 70px rgba(6, 60, 52, .35); border: 1px solid rgba(20, 184, 166, .25); }
   .chat[hidden] { display: none; }
+  /* Everyone can resize the chat: drag the top-left corner, or ⤢ for a big window. The size is remembered in this browser. */
+  .chatrsz { position: absolute; left: 0; top: 0; z-index: 7; width: 22px; height: 22px; cursor: nwse-resize; touch-action: none;
+    background: linear-gradient(135deg, rgba(255, 255, 255, .75) 0 2px, transparent 2px 5px, rgba(255, 255, 255, .55) 5px 7px, transparent 7px 10px, rgba(255, 255, 255, .35) 10px 12px, transparent 12px); border-top-left-radius: 22px; opacity: .6; }
+  .chatrsz:hover { opacity: 1; }
+  .chat.resizing { user-select: none; transition: none; }
+  #chatmax { margin-right: -4px; font-size: 16px; }
   .chat header { display: flex; align-items: center; gap: 11px; padding: 13px 14px; color: #fff; background: linear-gradient(135deg, #0b8f7a, #14b8a6 60%, #22c55e); }
   .chat header .ava { position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.22); font-size: 20px; }
   .chat header .ava::after { content: ''; position: absolute; right: 1px; bottom: 1px; width: 10px; height: 10px; border-radius: 50%; background: #a3ff7a; border: 2px solid #14b8a6; }
@@ -148,10 +154,14 @@
   .chat header .onl { width: auto; height: auto; border-radius: 999px; margin-left: 6px; vertical-align: 2px; font-size: 11px; }
   .onl[hidden] { display: none; } .onl::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: #a3ff7a; box-shadow: 0 0 0 2px rgba(163,255,122,.35); }
   .chat.adm .onl { cursor: pointer; } .chat.adm .onl:hover { background: rgba(255,255,255,.32); }
-  .onlist { display: flex; flex-wrap: wrap; gap: 5px; padding: 8px 12px; background: #f0fdfa; border-bottom: 1px solid #ccf3ea; }
+  /* Who is online: a small list that drops down from the «N online» badge (admin only). */
+  .onlist { position: absolute; z-index: 6; display: grid; gap: 3px; min-width: 190px; max-width: 260px; max-height: 260px; overflow-y: auto; padding: 8px; border-radius: 14px;
+    background: #f0fdfa; border: 1px solid #ccf3ea; box-shadow: 0 14px 34px rgba(0, 0, 0, .35); animation: rxbar .18s ease-out; transform-origin: 20% 0; }
+  .onlist b { padding: 2px 6px 4px; font-size: 11px; letter-spacing: .05em; text-transform: uppercase; opacity: .7; }
   .onlist[hidden] { display: none; }
-  .onlist span { display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px 3px 4px; border-radius: 999px; background: #fff; font-size: 12px; color: #134e4a; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
-  .onlist span i { width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 9px Inter, system-ui, sans-serif; font-style: normal; }
+  .onlist span { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 10px; background: #fff; font-size: 12px; color: #134e4a; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+  .onlist span::after { content: ''; margin-left: auto; width: 7px; height: 7px; border-radius: 50%; background: #4ade80; }
+  .onlist span i { flex: none; width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 9px Inter, system-ui, sans-serif; font-style: normal; }
   .chat header small { display: block; }
   .adminlogin { display: grid; grid-template-columns: 1fr 1fr auto; gap: 6px; padding: 10px 12px; background: #fffbeb; border-bottom: 1px solid #fde68a; }
   .adminlogin[hidden], .adminbar[hidden], .blklist[hidden] { display: none; }
@@ -228,7 +238,7 @@
   .mrow.me .msg { background: linear-gradient(135deg, #06b6d4, #6366f1 60%, #a855f7); box-shadow: 0 4px 14px rgba(99, 102, 241, .35); }
   .mrow.admin .msg { box-shadow: 0 0 0 1.5px #fbbf24, 0 0 14px rgba(251, 191, 36, .3); }
   .msgs .sys { color: #67e8f9; background: rgba(34, 211, 238, .1); }
-  .onlist { background: #111a30; border-bottom-color: #1e2a47; } .onlist span { background: #1b2540; color: #e2e8f0; }
+  .onlist { background: #111a30; border-color: #2c3a5e; color: #cbd5e1; } .onlist span { background: #1b2540; color: #e2e8f0; }
   .adminlogin, .adminbar { background: #1a1530; border-bottom-color: #3b2f63; }
   .adminlogin b { color: #fbbf24; } .adminlogin input { background: #0b1020; color: #e5e7eb; border-color: #4c3f7a; }
   .admtools > button { background: #241d42; color: #fde68a; border-color: #4c3f7a; } .admtools > button:hover:not(:disabled) { background: #2f2656; }
@@ -711,7 +721,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1240</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1310</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -757,7 +767,7 @@
 <div class="toasts" id="toasts" aria-live="polite"></div>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
-    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatx" aria-label="Ёпиш">✕</button></header>
+    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Тортиб ўлчамини ўзгартиринг"></span></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
     <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
@@ -870,7 +880,7 @@ const I18N = {
   'Реакция': ['Реакция', 'Reaction'],
   '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқа': ['Праздник и другое', 'Celebration and more'], 'Охирги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
@@ -2395,9 +2405,20 @@ document.querySelectorAll('.tglnk').forEach(a => {
     } catch {}
   };
   const drawOnline = () => {
-    onlist.innerHTML = online.map(v => `<span><i style="background:${v.admin ? '#f59e0b' : hue(v.id)}">${esc(initials(v.name))}</i>${esc(v.name)}${v.id === myId ? ' (сиз)' : ''}</span>`).join('');
+    onlist.innerHTML = `<b>Онлайн: ${online.length}</b>` + online.map(v => `<span><i style="background:${v.admin ? '#f59e0b' : hue(v.id)}">${esc(initials(v.name))}</i>${esc(v.name)}${v.id === myId ? ' (сиз)' : ''}</span>`).join('');
+    // Placed right under the badge in the chat header.
+    const o = onl.getBoundingClientRect(), c = box.getBoundingClientRect();
+    onlist.style.top = o.bottom - c.top + 6 + 'px'; onlist.style.left = Math.max(8, o.left - c.left - 20) + 'px';
   };
-  onl.addEventListener('click', () => { if (!isAdmin()) return; onlist.hidden = !onlist.hidden; if (!onlist.hidden) drawOnline(); });
+  // Hovering the badge shows the list; a click pins it open until the next click or a click elsewhere.
+  let onlPinned = false, onlTimer;
+  const onlShow = on => { clearTimeout(onlTimer); if (on && !isAdmin()) return; onlist.hidden = !on; if (on) drawOnline(); };
+  onl.addEventListener('mouseenter', () => onlShow(true));
+  onl.addEventListener('mouseleave', () => { if (!onlPinned) onlTimer = setTimeout(() => onlShow(false), 250); });
+  onlist.addEventListener('mouseenter', () => clearTimeout(onlTimer));
+  onlist.addEventListener('mouseleave', () => { if (!onlPinned) onlTimer = setTimeout(() => onlShow(false), 250); });
+  onl.addEventListener('click', e => { e.stopPropagation(); if (!isAdmin()) return; onlPinned = !onlPinned || onlist.hidden; onlShow(onlPinned); });
+  document.addEventListener('click', e => { if (onlPinned && !e.target.closest('#onlist')) { onlPinned = false; onlShow(false); } });
   addEventListener('pagehide', () => { if (CHAT_DB) fetch(`${CHAT_DB}/online/${myId}.json`, { method: 'DELETE', keepalive: true }).catch(() => {}); });
   beat(); setInterval(beat, 30000);
   nameIn.addEventListener('change', beat);
@@ -2432,6 +2453,28 @@ document.querySelectorAll('.tglnk').forEach(a => {
     if (!box.hidden) { toasts.innerHTML = ''; draw(); load(); (nameIn.value ? textIn : nameIn).focus(); }
     unread(); poll();
   });
+  // Chat size: drag the top-left corner (the window is pinned at the bottom-right), ⤢ toggles a big window.
+  const rsz = document.getElementById('chatrsz'), maxBtn = document.getElementById('chatmax');
+  const fitSize = (w, h) => [Math.min(Math.max(w, 320), innerWidth - 32), Math.min(Math.max(h, 380), innerHeight - 120)];
+  const setSize = (w, h, save = true) => {
+    [w, h] = fitSize(w, h); box.style.width = w + 'px'; box.style.height = h + 'px';
+    maxBtn.textContent = w >= innerWidth - 40 || w >= 760 ? '⤡' : '⤢';
+    if (save) setLS('bayan-chat-size', [w, h]);
+  };
+  { const sz = getLS('bayan-chat-size', null); if (Array.isArray(sz)) setSize(sz[0], sz[1], false); }
+  rsz.addEventListener('pointerdown', e => {
+    e.preventDefault(); rsz.setPointerCapture(e.pointerId); box.classList.add('resizing');
+    const r = box.getBoundingClientRect(), x0 = e.clientX, y0 = e.clientY;
+    const move = ev => setSize(r.width + x0 - ev.clientX, r.height + y0 - ev.clientY);
+    const up = () => { box.classList.remove('resizing'); rsz.removeEventListener('pointermove', move); rsz.removeEventListener('pointerup', up); };
+    rsz.addEventListener('pointermove', move); rsz.addEventListener('pointerup', up);
+  });
+  maxBtn.addEventListener('click', () => {
+    const big = box.getBoundingClientRect().width >= Math.min(760, innerWidth - 40);
+    if (big) { box.style.width = box.style.height = ''; setLS('bayan-chat-size', null); maxBtn.textContent = '⤢'; }
+    else setSize(760, innerHeight - 140);
+  });
+  addEventListener('resize', () => { const sz = getLS('bayan-chat-size', null); if (Array.isArray(sz)) setSize(sz[0], sz[1], false); });
   document.getElementById('chatx').addEventListener('click', () => { box.hidden = true; unread(); poll(); });
   form.addEventListener('submit', async e => {
     emoPick.hidden = true;
