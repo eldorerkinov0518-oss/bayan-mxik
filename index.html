@@ -95,6 +95,14 @@
   .msg { padding: 8px 12px 6px; border-radius: 16px 16px 16px 5px; background: #fff; color: #1f2937; font-size: 13.5px; line-height: 1.45; word-wrap: break-word; min-width: 90px;
     box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
   .msg i { display: block; font-style: normal; font-size: 11.5px; font-weight: 700; margin-bottom: 2px; }
+  .rxs { display: flex; flex-wrap: wrap; align-items: center; gap: 4px; margin-top: 4px; }
+  .rxs .rx, .rxs .rxadd { border: 1px solid rgba(148, 163, 184, .35); background: rgba(255, 255, 255, .08); color: inherit; border-radius: 999px; padding: 1px 7px; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; line-height: 1.5; }
+  .rxs .rx.mine { background: rgba(56, 189, 248, .25); border-color: #38bdf8; }
+  .rxs .rxadd { opacity: .45; padding: 1px 6px; } .mrow:hover .rxadd, .rxs .rxadd:focus { opacity: 1; }
+  .rxpick { display: flex; flex-wrap: wrap; gap: 2px; width: 100%; max-width: 232px; padding: 4px 6px; border-radius: 14px; background: #1b2540; box-shadow: 0 4px 14px rgba(0, 0, 0, .35); }
+  .rxpick .rx { border: 0 !important; background: transparent !important; font-size: 17px !important; padding: 0 3px !important; transition: transform .12s; }
+  .rxpick .rx:hover { transform: scale(1.3); }
+  .mrow.me .rxs { justify-content: flex-end; }
   .msg small { display: block; font-size: 10.5px; color: #94a3b8; margin-top: 3px; text-align: right; }
   .mrow.me .msg { border-radius: 16px 16px 5px 16px; background: linear-gradient(135deg, #0f9f87, #14b8a6); color: #fff; }
   .mrow.me .msg i { color: rgba(255,255,255,.85) !important; } .mrow.me .msg small { color: rgba(255,255,255,.75); }
@@ -162,6 +170,12 @@
   #chatf .row { display: flex; gap: 8px; align-items: flex-end; }
   #chatf .row button { flex: none; width: 46px; height: 46px; border: 0; border-radius: 50%; background: linear-gradient(135deg, #0f9f87, #22c55e); color: #fff; font-size: 18px; cursor: pointer;
     box-shadow: 0 4px 12px rgba(15, 159, 135, .35); transition: transform .15s; }
+  #chatf .row .emob { width: 38px; height: 38px; margin-bottom: 4px; background: transparent; box-shadow: none; font-size: 22px; opacity: .85; }
+  #chatf .row .emob:hover { opacity: 1; }
+  .emopick { display: flex; flex-wrap: wrap; gap: 2px; max-height: 150px; overflow-y: auto; padding: 6px; border-radius: 14px; background: #1b2540; border: 1px solid #2c3a60; }
+  .emopick[hidden] { display: none; }
+  .emopick button { border: 0; background: transparent; font-size: 21px; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; }
+  .emopick button:hover { background: rgba(255, 255, 255, .12); }
   #chatf .row button:hover:not(:disabled) { transform: scale(1.06); }
   #chatf .row button:disabled { opacity: .45; cursor: default; box-shadow: none; }
   /* Chat in a dark theme with bright neon accents. */
@@ -599,7 +613,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-0940</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1130</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -653,7 +667,8 @@
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
       <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
-      <div class="row"><textarea id="chattext" maxlength="500" rows="2" placeholder="Изоҳингизни ёзинг…" required></textarea><button type="submit" aria-label="Юбориш">➤</button></div>
+      <div class="emopick" id="emopick" hidden></div>
+      <div class="row"><button type="button" class="emob" id="emob" title="Смайлик" aria-label="Смайлик">😊</button><textarea id="chattext" maxlength="500" rows="2" placeholder="Изоҳингизни ёзинг…" required></textarea><button type="submit" aria-label="Юбориш">➤</button></div>
     </form>
   </section>
 <script>/*! ExcelJS 4.4.0 | MIT */
@@ -754,6 +769,8 @@ const I18N = {
   'Тошкент ш., Бўғишамол кўчаси, 160': ['г. Ташкент, ул. Богишамол, 160', '160 Bogishamol St., Tashkent'],
   'Мўлжал: Юнусобод кичик саноат зонаси': ['Ориентир: малая промзона Юнусабад', 'Landmark: Yunusabad small industrial zone'],
   'Охирги излашлар': ['Последние поиски', 'Recent searches'],
+  'Реакция': ['Реакция', 'Reaction'],
+  'Смайлик': ['Смайлик', 'Smiley'],
   'ℹ Кодлар ҳақида': ['ℹ О кодах', 'ℹ About codes'],
   '▌▌▌ Штрих код (GTIN)': ['▌▌▌ Штрих-код (GTIN)', '▌▌▌ Barcode (GTIN)'],
   'Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.': ['Линейный код на упаковке из 8, 12, 13 или 14 цифр.', 'The striped code on the box, 8, 12, 13 or 14 digits long.'],
@@ -1977,10 +1994,25 @@ document.querySelectorAll('.tglnk').forEach(a => {
 });
 {
   const btn = document.getElementById('chatbtn'), box = document.getElementById('chat'), msgs = document.getElementById('msgs');
+  // Smiley picker for the message box: a click inserts the smiley at the cursor.
+  const SMILES = '😀 😃 😄 😁 😆 😅 😂 🤣 😊 🙂 😉 😍 🥰 😘 😎 🤩 🥳 😇 🤗 🤔 🤨 😐 😏 😌 😴 😮 😲 😢 😭 😤 😡 🤯 😱 🥺 🙄 😬 🤝 👍 👎 👏 🙌 🙏 💪 👌 ✌️ 👋 ❤️ 💙 💚 💯 🔥 ⭐ ✨ 🎉 🎁 ✅ ❌ ⚠️ ❓ 💊 💉 🩺 🏥 📦 🚚 📞 ✉️ 📌'.split(' ');
+  const emoPick = document.getElementById('emopick');
+  emoPick.innerHTML = SMILES.map(e => `<button type="button">${e}</button>`).join('');
+  document.getElementById('emob').addEventListener('click', () => { emoPick.hidden = !emoPick.hidden; });
+  emoPick.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const t = document.getElementById('chattext'), a = t.selectionStart ?? t.value.length, z = t.selectionEnd ?? a;
+    if (t.value.length + b.textContent.length > 500) return;
+    t.value = t.value.slice(0, a) + b.textContent + t.value.slice(z);
+    t.focus(); t.selectionStart = t.selectionEnd = a + b.textContent.length;
+  });
   const nameIn = document.getElementById('chatname'), textIn = document.getElementById('chattext'), form = document.getElementById('chatf');
   const badge = document.getElementById('chatbadge'), state = document.getElementById('chatstate');
   const bar = document.getElementById('adminbar'), login = document.getElementById('adminlogin'), blkBox = document.getElementById('blklist');
   const myId = getLS('bayan-chat-id', null) || (() => { const id = Math.random().toString(36).slice(2, 10); setLS('bayan-chat-id', id); return id; })();
+  // Reactions: /reactions/<message>/<emoji index>/<person id> = true; anyone can toggle their own, the admin can clear them.
+  const EMO = ['👍', '❤️', '😂', '😮', '🙏', '🔥', '👏', '🎉', '😢', '😡', '🤔', '👎', '✅', '💯', '😍', '🤝'];
+  let reacts = {}, rxOpen = null;
   let list = [], blocked = {}, picked = new Set(), seen = getLS('bayan-chat-seen', 0), timer;
 
   // Admin signs in with the e-mail and password made in Firebase Authentication; the database rules
@@ -2047,7 +2079,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   document.getElementById('blkbtn').addEventListener('click', () => { blkBox.hidden = !blkBox.hidden; });
   document.getElementById('delsel').addEventListener('click', async () => {
     if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
-    try { for (const k of picked) await adminReq(`chat/${k}`, 'DELETE'); picked.clear(); await load(); }
+    try { for (const k of picked) { await adminReq(`chat/${k}`, 'DELETE'); adminReq(`reactions/${k}`, 'DELETE').catch(() => {}); } picked.clear(); await load(); }
     catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
   });
   document.getElementById('testbtn').addEventListener('click', async () => {
@@ -2056,11 +2088,25 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   document.getElementById('clearall').addEventListener('click', async () => {
     if (!confirm('Бутун чат тозалансинми? Барча хабарлар бутунлай ўчади.')) return;
-    try { await adminReq('chat', 'DELETE'); picked.clear(); await load(); } catch { alert('Тозалаб бўлмади. Админ сифатида қайта киринг.'); }
+    try { await adminReq('chat', 'DELETE'); adminReq('reactions', 'DELETE').catch(() => {}); picked.clear(); await load(); } catch { alert('Тозалаб бўлмади. Админ сифатида қайта киринг.'); }
   });
   blkBox.addEventListener('click', async e => {
     const id = e.target.dataset.unblock; if (!id) return;
     try { await adminReq(`blocked/${id}`, 'DELETE'); await load(); } catch { alert('Бажариб бўлмади.'); }
+  });
+  msgs.addEventListener('click', async e => {
+    const row = e.target.closest('.mrow'); if (!row) return;
+    const k = row.dataset.k;
+    if (e.target.closest('.rxadd')) { rxOpen = rxOpen === k ? null : k; draw(); return; }
+    const rb = e.target.closest('.rx');
+    if (rb) {
+      if (blocked[myId] && !isAdmin()) return;
+      const i = rb.dataset.rx, on = !!reacts[k]?.[i]?.[myId], node = ((reacts[k] ||= {})[i] ||= {});
+      on ? delete node[myId] : node[myId] = true;
+      rxOpen = null; draw();
+      fetch(`${CHAT_DB}/reactions/${k}/${i}/${myId}.json`, on ? { method: 'DELETE' } : { method: 'PUT', body: 'true' }).catch(() => {});
+      return;
+    }
   });
   msgs.addEventListener('click', async e => {
     const row = e.target.closest('.mrow'); if (!row || !isAdmin()) return;
@@ -2070,7 +2116,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       try { await adminReq(`blocked/${m.uid}`, 'PUT', { name: m.name, ts: { '.sv': 'timestamp' } }); await load(); } catch { alert('Блоклаб бўлмади.'); }
     } else if (e.target.closest('.del')) {
       if (!confirm('Шу хабар ўчирилсинми?')) return;
-      try { await adminReq(`chat/${m.key}`, 'DELETE'); picked.delete(m.key); await load(); } catch { alert('Ўчириб бўлмади.'); }
+      try { await adminReq(`chat/${m.key}`, 'DELETE'); adminReq(`reactions/${m.key}`, 'DELETE').catch(() => {}); picked.delete(m.key); await load(); } catch { alert('Ўчириб бўлмади.'); }
     } else if (e.target.closest('.pick')) {
       picked.has(m.key) ? picked.delete(m.key) : picked.add(m.key); row.classList.toggle('sel', picked.has(m.key)); drawBar();
     }
@@ -2081,19 +2127,26 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const hue = k => { let h = 0; for (const ch of String(k)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h}, 62%, 42%)`; };
   const initials = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const fmt = ts => { const d = new Date(ts); return d.toLocaleString('ru-RU', { timeZone: 'Asia/Tashkent', day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); };
+  const rxLine = k => {
+    const r = reacts[k] || {};
+    const chips = EMO.map((e, i) => { const who = Object.keys(r[i] || {}); return who.length
+      ? `<button type="button" class="rx${who.includes(myId) ? ' mine' : ''}" data-rx="${i}">${e} ${who.length}</button>` : ''; }).join('');
+    return `<div class="rxs">${chips}<button type="button" class="rxadd" title="Реакция">☺+</button>${rxOpen === k
+      ? `<span class="rxpick">${EMO.map((e, i) => `<button type="button" class="rx" data-rx="${i}">${e}</button>`).join('')}</span>` : ''}</div>`;
+  };
   const draw = () => {
     if (!CHAT_DB) { msgs.innerHTML = '<div class="sys">Чат уланмоқда. Тез орада бу ерда изоҳ қолдириб, бошқа фойдаланувчилар ва админ билан ёзишишингиз мумкин бўлади.</div>'; return; }
     const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40, adm = isAdmin();
     msgs.innerHTML = list.length ? list.map(m => { const c = hue(m.uid || m.name);
       const tools = adm ? `<span class="mtools"><button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>` : '';
-      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small></div>${tools}</div>`; }).join('')
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}">${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${esc(m.text).replace(/\n/g, '<br>')}<small>${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
       : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
     if (atEnd || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
     box.dataset.drawn = 1;
     const me = !!blocked[myId] && !adm;
     form.classList.toggle('blocked', me);
     textIn.placeholder = me ? 'Сиз админ томонидан блоклангансиз' : 'Изоҳингизни ёзинг…';
-    textIn.disabled = me; form.querySelector('button').disabled = me || !CHAT_DB;
+    textIn.disabled = me; form.querySelector('[type=submit]').disabled = me || !CHAT_DB;
   };
   const unread = () => {
     const n = list.filter(m => m.ts > seen && m.uid !== myId).length;
@@ -2102,7 +2155,8 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const load = async () => {
     if (!CHAT_DB) return;
     try {
-      const [r, b] = await Promise.all([fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`), fetch(`${CHAT_DB}/blocked.json`)]);
+      const [r, b, x] = await Promise.all([fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`), fetch(`${CHAT_DB}/blocked.json`), fetch(`${CHAT_DB}/reactions.json`)]);
+      reacts = (x.ok && await x.json()) || {};
       if (!r.ok) { state.textContent = 'Чат вақтинча ёпиқ'; return; }
       const data = await r.json() || {};
       blocked = (b.ok && await b.json()) || {};
@@ -2170,11 +2224,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   document.getElementById('chatx').addEventListener('click', () => { box.hidden = true; unread(); poll(); });
   form.addEventListener('submit', async e => {
+    emoPick.hidden = true;
     e.preventDefault();
     const name = nameIn.value.trim().slice(0, 40), text = textIn.value.trim().slice(0, 500);
     if (!name || !text || !CHAT_DB) return;
     setLS('bayan-chat-name', name);
-    const send = form.querySelector('button'); send.disabled = true;
+    const send = form.querySelector('[type=submit]'); send.disabled = true;
     try {
       const adm = isAdmin();
       const r = await fetch(`${CHAT_DB}/chat.json${adm ? `?auth=${await idToken()}` : ''}`, { method: 'POST', body: JSON.stringify({ name, text, uid: myId, admin: adm, ts: { '.sv': 'timestamp' } }) });
@@ -2184,7 +2239,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     send.disabled = false; draw();
   });
   textIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
-  form.querySelector('button').disabled = !CHAT_DB;
+  form.querySelector('[type=submit]').disabled = !CHAT_DB;
   // The notice is open on the first visit; once someone folds it, it stays folded.
   const note = document.getElementById('chatnote');
   if (getLS('bayan-chat-note', '') === 'closed') note.open = false;
