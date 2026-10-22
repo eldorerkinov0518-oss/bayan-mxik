@@ -306,7 +306,13 @@
   .chat[data-th="neon"] #chatf input, .chat[data-th="neon"] #chatf textarea { background-color: rgba(15, 23, 60, .5); color: #f8fafc; border-color: rgba(255, 255, 255, .25); }
   .chat[data-th="neon"] #chatf input::placeholder, .chat[data-th="neon"] #chatf textarea::placeholder { color: #c7d2fe; }
   .chat[data-th="neon"] #chatf .row button:not(.emob) { background: linear-gradient(135deg, #f472b6, #a855f7); }
-  .chat[data-th="light"] .onlist { background: #fff; } .chat[data-th="light"] .onlist span { background: #f1f5f9; color: #1e293b; }
+  /* The online list looks like a plain white browser tooltip, whatever the chat background. */
+  .chat .onlist, .chat[data-th] .onlist { gap: 0; min-width: 0; padding: 4px 0; border-radius: 3px; background: #fff; border: 1px solid #a0a0a0; color: #1f2937;
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, .25); font: 400 12px 'Segoe UI', Inter, system-ui, sans-serif; animation: none; }
+  .chat .onlist b { padding: 0 10px 3px; font: 600 11px 'Segoe UI', Inter, system-ui, sans-serif; letter-spacing: 0; text-transform: none; color: #4b5563; opacity: 1; }
+  .chat .onlist span, .chat[data-th] .onlist span { gap: 6px; padding: 2px 10px; border-radius: 0; background: transparent; color: #111827; box-shadow: none; font-size: 12px; }
+  .chat .onlist span i { width: 16px; height: 16px; font-size: 8px; }
+  .chat .onlist span::after { width: 6px; height: 6px; margin-left: 10px; }
   .chat[data-th="light"] .mtools button { background: #fff; border-color: #cbd5e1; color: #334155; }
   .thlist { flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 6px; }
   .thlist button { display: flex; align-items: center; gap: 6px; padding: 4px 10px 4px 4px; border-radius: 999px; border: 1.5px solid #4c3f7a; background: #0b1020; color: #e2e8f0; font: 600 12px Inter, system-ui, sans-serif; cursor: pointer; }
@@ -721,7 +727,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1320</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1330</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2419,7 +2425,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const d = await r.json() || {}, srv = Math.max(Date.now(), ...Object.values(d).map(v => v.ts || 0));
       online = Object.entries(d).filter(([, v]) => v && srv - v.ts < 75000).map(([id, v]) => Object.assign({ id }, v));
       onl.hidden = !online.length; onl.textContent = `${online.length} киши онлайн`;
-      onl.title = isAdmin() ? 'Кимлар онлайн — кўриш учун босинг' : '';
+      onl.removeAttribute('title');
       if (!onlist.hidden) drawOnline();
     } catch {}
   };
