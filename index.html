@@ -167,7 +167,7 @@
   /* Barcode (EAN-13 of the GTIN) and QR (the MXIK code) on the product card, each with a PNG download. */
   .codes { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 8px; }
   .cimg { margin: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 14px; background: #fff; }
-  .cimg .cbox { height: 120px; display: grid; place-items: center; } .cimg svg { height: 100%; width: auto; display: block; }
+  .cimg .cbox { height: 120px; display: grid; place-items: center; cursor: zoom-in; transition: transform .15s; } .cimg .cbox:hover { transform: scale(1.04); } .cimg svg { height: 100%; width: auto; display: block; }
   .cimg figcaption { font-size: 12px; color: #5b6b80; text-align: center; } .cimg figcaption b { display: block; font: 600 12.5px ui-monospace, Consolas, monospace; color: #1a2233; }
   .cimg .dl { border: 0; border-radius: 9px; padding: 6px 12px; background: var(--b1); color: #fff; font: 700 12px var(--font), sans-serif; cursor: pointer; }
   .cimg .dl:hover { background: var(--b2); }
@@ -176,7 +176,7 @@
   .gal-it:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(20,20,60,.15); }
   .gal-it img { width: 100%; height: 100%; object-fit: contain; }
   .zoom { position: fixed; inset: 0; z-index: 60; display: grid; place-items: center; padding: 24px; background: rgba(10, 12, 30, .82); cursor: zoom-out; animation: tin .2s ease; }
-  .zoom img { max-width: 100%; max-height: 100%; border-radius: 12px; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
+  .zoom img { max-width: 100%; max-height: 100%; padding: 0; border-radius: 12px; background: #fff; box-shadow: 0 20px 60px rgba(0,0,0,.5); }
   .zoom button { position: absolute; top: 16px; right: 16px; width: 40px; height: 40px; border: 0; border-radius: 50%; background: rgba(255,255,255,.2); color: #fff; font-size: 18px; cursor: pointer; }
   .toasts { position: fixed; right: 16px; bottom: 104px; z-index: 32; display: grid; gap: 8px; width: min(320px, calc(100vw - 32px)); pointer-events: none; }
   .toast { pointer-events: auto; display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; border-radius: 16px; background: #fff; cursor: pointer;
@@ -893,7 +893,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1840</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1850</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1666,13 +1666,15 @@ function qrSvg(text) {
   for (let y = 0; y < n; y++) for (let x = 0; x < n; x++) if (q.isDark(y, x)) d += `M${x + m} ${y + m}h1v1h-1z`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${n + 2 * m} ${n + 2 * m}" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path d="${d}" fill="#000"/></svg>`;
 }
+// A click on a code opens it large in the page's zoom view (the SVG gets a fixed size so it fills the screen sharply).
+const zoomSvg = (svg, w) => `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.replace('<svg ', `<svg width="${w}" `))}`;
 function codesBlock(c) {
   const g = String(c.internationalCode || '').trim().replace(/^0(?=\d{13}$)/, ''), mx = String(c.mxikCode || '');
   const bar = /^\d{13}$/.test(g), qr = /^\d{6,20}$/.test(mx);
   if (!bar && !qr) return '';
   return `<div class="sec"><div class="label">Штрих код ва QR код</div><div class="codes">`
-    + (bar ? `<figure class="cimg"><div class="cbox">${eanSvg(g)}</div><figcaption><span>Штрих код</span><b>${g}</b></figcaption><button type="button" class="dl" data-dl="bar" data-v="${g}">⬇ PNG юклаб олиш</button></figure>` : '')
-    + (qr ? `<figure class="cimg"><div class="cbox">${qrSvg(mx)}</div><figcaption><span>МХИК QR коди</span><b>${mx}</b></figcaption><button type="button" class="dl" data-dl="qr" data-v="${mx}">⬇ PNG юклаб олиш</button></figure>` : '')
+    + (bar ? `<figure class="cimg"><div class="cbox" data-zoom="${zoomSvg(eanSvg(g), 900)}" title="Катталаштириш">${eanSvg(g)}</div><figcaption><span>Штрих код</span><b>${g}</b></figcaption><button type="button" class="dl" data-dl="bar" data-v="${g}">⬇ PNG юклаб олиш</button></figure>` : '')
+    + (qr ? `<figure class="cimg"><div class="cbox" data-zoom="${zoomSvg(qrSvg(mx), 560)}" title="Катталаштириш">${qrSvg(mx)}</div><figcaption><span>МХИК QR коди</span><b>${mx}</b></figcaption><button type="button" class="dl" data-dl="qr" data-v="${mx}">⬇ PNG юклаб олиш</button></figure>` : '')
     + `</div></div>`;
 }
 // PNG download: the SVG is drawn on a canvas at 8× so it stays sharp for printing.
