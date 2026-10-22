@@ -666,6 +666,7 @@
   .side.r .lnk { padding: 4px 10px; }
   .side.r .tip { display: flex; gap: 8px; align-items: flex-start; padding: 9px 12px; } .side.r .tip .tipi { font-size: 18px; line-height: 1.2; }
   .side.r .tip #tip { font-size: 12.5px; line-height: 1.4; }
+  .tiplnk { font-weight: 700; color: var(--b2); text-decoration: none; white-space: nowrap; } .tiplnk:hover { text-decoration: underline; }
   .side.r .addr em { display: none; }
   .side .prodline.dv svg { max-height: 78px; }
   /* Side panels: a darker blue-lavender card with a clear border, so they don't glare next to the white main column. */
@@ -856,7 +857,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1730</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-1740</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2111,7 +2112,12 @@ document.getElementById('stats').addEventListener('click', e => {
     '17 хонали МХИК кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
     'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.'];
   let ti = Math.floor(Math.random() * TIPS.length);
-  const showTip = () => { document.getElementById('tip').textContent = TIPS[ti++ % TIPS.length]; };
+  // The Telegram tip ends with the bot's address as a link.
+  const showTip = () => {
+    const el = document.getElementById('tip'), t = TIPS[ti++ % TIPS.length];
+    el.textContent = t;
+    if (t.startsWith('Телеграм бот')) el.insertAdjacentHTML('beforeend', ' <a class="tiplnk" href="https://t.me/bayan_mxik_bot" target="_blank" rel="noopener">@bayan_mxik_bot</a>');
+  };
   showTip(); setInterval(showTip, 15000);
 }
 function drawRecent() {
