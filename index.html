@@ -853,6 +853,8 @@
   .tbl tr.r { cursor: pointer; }
   .tbl tr.r:hover td { background: var(--soft); }
   .tbl td small { display: block; color: var(--muted); }
+  .tbl .pkn { width: 1%; text-align: center; white-space: nowrap; }
+  .tbl td.pkn span { display: inline-block; padding: 3px 9px; border-radius: 999px; background: var(--accent-soft); color: var(--b1); font: 800 13px var(--font), sans-serif; }
   .pill { display: inline-block; font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; }
   .pill.yes { background: var(--okbg); color: var(--ok); } .pill.no { background: var(--badbg); color: var(--bad); }
   .pill.err { background: var(--warnbg); color: var(--warn); } .pill.wait { background: var(--soft); color: var(--muted); }
@@ -942,11 +944,11 @@
       <button class="copy" id="txt" type="button">TXT</button>
     </div>
     <div class="prog" id="prog">Маҳсулотлар tasnif.soliq.uz да текширилмоқда…</div>
-    <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th>Қадоқ</th><th>МХИК</th></tr></thead><tbody id="lt"></tbody></table></div>
+    <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th class="pkn">№</th><th>Қадоқ</th><th>МХИК</th></tr></thead><tbody id="lt"></tbody></table></div>
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2030</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2040</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1491,6 +1493,10 @@ const ownOf = code => byCore.get(strip0(code));
 const CYR = { а:'a',б:'b',в:'v',г:'g',д:'d',е:'e',ё:'yo',ж:'j',з:'z',и:'i',й:'y',к:'k',л:'l',м:'m',н:'n',о:'o',п:'p',р:'r',с:'s',т:'t',у:'u',ф:'f',х:'x',ц:'ts',ч:'ch',ш:'sh',щ:'sh',ъ:'',ы:'i',ь:'',э:'e',ю:'yu',я:'ya',ў:'o',қ:'q',ғ:'g',ҳ:'h' };
 const nameKey = t => String(t || '').toLowerCase().replace(/[а-яёўқғҳ]/g, c => CYR[c] ?? c)
   .replace(/x/g, 'ks').replace(/[cq]/g, 'k').replace(/w/g, 'v').replace(/[^a-z0-9]/g, '');
+// Pack count from the catalog's package text: "5 стеклянных ампул" or "ампулы 5 шт" → 5.
+const packMatch = pack => { const pk = normT(pack);
+  return pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(?:ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор|комплект)/)
+    || pk.match(/(?:ампул[а-я]*|флакон[а-я]*)\s+(?:[\d.]+(?:мл|мг)\s+)?(\d+)шт/); };
 const normT = t => String(t || '').toLowerCase().replace(/,/g, '.').replace(/(\d)\s+(?=[a-zа-яё%])/gi, '$1').replace(/\s+/g, ' ');
 const reEsc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const hasTok = (text, tok) => new RegExp('(^|[^\\d.])' + reEsc(tok) + '(?![а-яёa-z])', 'i').test(text);
@@ -1563,9 +1569,7 @@ function compare(own, it) {
       ? 'Дори шакли: каталог бўйича концентрат бўлиши керак, tasnif\'да концентрат эмас'
       : 'Дори шакли: каталог бўйича эритма (раствор) бўлиши керак, tasnif\'да концентрат' });
   // Pack count: "5 стеклянных ампул" or "ампулы 5 шт" vs "№5".
-  const pk = normT(pack);
-  const cm = pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(?:ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор|комплект)/)
-    || pk.match(/(?:ампул[а-я]*|флакон[а-я]*)\s+(?:[\d.]+(?:мл|мг)\s+)?(\d+)шт/);
+  const cm = packMatch(pack);
   const tm = T.match(/№\s*(\d+)/);
   if (cm && tm) out.push(+cm[1] === +tm[1]
     ? { ok: true, text: `Қадоқ сони: №${cm[1]}` }
@@ -1911,7 +1915,7 @@ function renderList() {
   updateSide();
   lt.innerHTML = rows.map(([g, name, brand, desc, pack]) => `<tr class="r" data-g="${g}">
     <td class="mono">${g}</td><td><b>${esc(name || brand)}</b><small>${esc(desc)}</small></td>
-    <td><small style="color:var(--text)">${esc(pack)}</small></td><td id="s${g}">${pill(g)}</td></tr>`).join('');
+    <td class="pkn">${(n => n ? `<span>№${n}</span>` : '')(packMatch(pack)?.[1])}</td><td><small style="color:var(--text)">${esc(pack)}</small></td><td id="s${g}">${pill(g)}</td></tr>`).join('');
 }
 // A full IKPU code that isn't in the checked results yet: ask tasnif which barcodes it has.
 let lookupSeq = 0;
