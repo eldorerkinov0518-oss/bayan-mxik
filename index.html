@@ -599,7 +599,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v21.10-2200</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-0930</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -866,7 +866,9 @@ const I18N = {
   'та савдо номи': ['торговых названий', 'trade names'],
   'Асл белгисидан олинган 14 хонали, 0 билан бошланадиган штрих кодни ҳам киритсангиз бўлади.': ['Можно вводить и 14-значный штрих-код из Асл белгиси, начинающийся с 0.', 'You can also enter the 14-digit barcode from Asl Belgisi that starts with 0.'],
   '«❗ Асосий хато» фильтри савдо номи ёки қадоқ сони (№) нотўғри бўлган маҳсулотларни кўрсатади.': ['Фильтр «❗ Основная ошибка» показывает продукты с неверным торговым названием или количеством в упаковке (№).', 'The «❗ Major error» filter shows products with a wrong trade name or pack count (№).'],
-  'Фарқ аслида тўғри бўлса, «Тўғри деб қабул қилиш» тугмасини босинг.': ['Если расхождение на самом деле верное, нажмите «Принять как верное».', 'If a difference is actually correct, press «Accept as correct».'],
+  'Фарқ аслида тўғри бўлса, админ уни «Тўғри деб қабул қилиш» тугмаси билан тасдиқлайди.': ['Если расхождение на самом деле верное, администратор подтверждает его кнопкой «Принять как верное».', 'If a difference is actually correct, the admin confirms it with the «Accept as correct» button.'],
+  'Бекор қилиш': ['Отменить', 'Undo'],
+  'Сақлаб бўлмади. Админ сифатида қайта киринг.': ['Не удалось сохранить. Войдите снова как администратор.', 'Could not save. Sign in again as admin.'],
   'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.': ['Список можно скачать в Excel, PDF или TXT. Скачиваются только продукты из фильтра.', 'You can download the list as Excel, PDF or TXT. Only the filtered products are included.'],
   '17 хонали ИКПУ кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.': ['Введите 17-значный код ИКПУ в поиск, и страница найдёт, к каким штрих-кодам он относится.', 'Type a 17-digit IKPU code into the search to find which barcodes it belongs to.'],
   'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.': ['Telegram-бот делает ту же проверку: отправьте ему штрих-код.', 'The Telegram bot does the same check: send it a barcode.'],
@@ -1115,13 +1117,14 @@ function nearIn(text, k) {
     for (let i = 0; i + n <= text.length; i++) if (lev(text.slice(i, i + n), k) <= max) return true;
   return false;
 }
-// Differences someone confirmed as correct: GTIN → check names ("Номи", "Доза", ...).
-// The built-in list applies on every computer; the button adds to this browser's list.
+// Differences confirmed as correct: GTIN → check names ("Номи", "Доза", ...).
+// The built-in list plus the shared list in the database (settings/accepted/<gtin>/<check>: true) apply on every computer;
+// only the signed-in admin sees the button and can change the shared list.
 const ACCEPT_BASE = { '4780090866668': ['Номи'] };
-const ACCEPT_STORE = 'bayan-accepted';
-let acceptLocal = {};
-try { acceptLocal = JSON.parse(localStorage.getItem(ACCEPT_STORE)) || {}; } catch {}
-const isAccepted = (g, k) => (ACCEPT_BASE[g] || []).includes(k) || (acceptLocal[g] || []).includes(k);
+let acceptShared = {};
+const adminOn = () => { try { return !!JSON.parse(localStorage.getItem('bayan-admin-rt')); } catch { return false; } };
+let adminApi = null;  // set by the chat block once the admin request helper exists
+const isAccepted = (g, k) => (ACCEPT_BASE[g] || []).includes(k) || !!acceptShared[g]?.[k];
 const checkName = x => x.text.split(':')[0];
 // Wrong trade name or wrong pack count (№5 vs №1) are the main errors; dose, volume and form are secondary.
 const MAIN = ['Номи', 'Қадоқ сони'];
@@ -1202,17 +1205,24 @@ function compareBlock(own, it) {
       bad.filter(x => !isMain(x)).length && `⚠ ${bad.filter(x => !isMain(x)).length} та бошқа фарқ`].filter(Boolean).join(' · ')
       : `✓ Каталогга мос (${res.map(x => checkName(x).toLowerCase()).join(', ')})`}</div>
     ${bad.length || acc.length ? `<ul>${bad.map(x => `<li class="bad${isMain(x) ? ' main' : ''}">${mark(x)}${hiNote(x.text)}
-      <button class="copy acc" data-g="${esc(own[0])}" data-k="${esc(checkName(x))}">Тўғри деб қабул қилиш</button></li>`).join('')}
-      ${acc.map(x => `<li class="ok">✓ ${esc(checkName(x))}: тўғри деб қабул қилинган</li>`).join('')}</ul>` : ''}</div>`;
+      ${adminOn() ? `<button class="copy acc" data-g="${esc(own[0])}" data-k="${esc(checkName(x))}">Тўғри деб қабул қилиш</button>` : ''}</li>`).join('')}
+      ${acc.map(x => `<li class="ok">✓ ${esc(checkName(x))}: тўғри деб қабул қилинган
+      ${adminOn() && acceptShared[own[0]]?.[checkName(x)] ? `<button class="copy acc" data-undo="1" data-g="${esc(own[0])}" data-k="${esc(checkName(x))}">Бекор қилиш</button>` : ''}</li>`).join('')}</ul>` : ''}</div>`;
 }
-document.addEventListener('click', e => {
-  const b = e.target.closest('.acc');
-  if (!b) return;
-  (acceptLocal[b.dataset.g] ||= []).push(b.dataset.k);
+const acceptRedraw = () => {
   acceptVer++;
-  try { localStorage.setItem(ACCEPT_STORE, JSON.stringify(acceptLocal)); } catch {}
-  document.getElementById('f').requestSubmit();
+  if (document.getElementById('q').value.trim()) document.getElementById('f').requestSubmit();
   renderList();
+};
+document.addEventListener('click', async e => {
+  const b = e.target.closest('.acc');
+  if (!b || !adminApi) return;
+  const { g, k } = b.dataset, undo = !!b.dataset.undo;
+  b.disabled = true;
+  try { await adminApi(`settings/accepted/${encodeURIComponent(g)}/${encodeURIComponent(k)}`, undo ? 'DELETE' : 'PUT', undo ? undefined : true); }
+  catch { b.disabled = false; alert('Сақлаб бўлмади. Админ сифатида қайта киринг.'); return; }
+  if (undo) { delete acceptShared[g]?.[k]; } else (acceptShared[g] ||= {})[k] = true;
+  acceptRedraw();
 });
 
 function ownBlock(r) {
@@ -1771,7 +1781,7 @@ document.getElementById('stats').addEventListener('click', e => {
   document.getElementById('cosub').innerHTML = `Инъекцион дори воситалари<br><b>${CATALOG.length}</b> та штрих код · <b>${brands}</b> та савдо номи`;
   const TIPS = ['Асл белгисидан олинган 14 хонали, 0 билан бошланадиган штрих кодни ҳам киритсангиз бўлади.',
     '«❗ Асосий хато» фильтри савдо номи ёки қадоқ сони (№) нотўғри бўлган маҳсулотларни кўрсатади.',
-    'Фарқ аслида тўғри бўлса, «Тўғри деб қабул қилиш» тугмасини босинг.',
+    'Фарқ аслида тўғри бўлса, админ уни «Тўғри деб қабул қилиш» тугмаси билан тасдиқлайди.',
     'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.',
     '17 хонали ИКПУ кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
     'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.'];
@@ -1999,7 +2009,11 @@ document.querySelectorAll('.tglnk').forEach(a => {
     const r = await fetch(`${CHAT_DB}/${path}.json?auth=${await idToken()}`, { method, body: body === undefined ? undefined : JSON.stringify(body) });
     if (!r.ok) throw new Error(r.status);
   };
+  adminApi = adminReq;
+  fetch(`${CHAT_DB}/settings/accepted.json`).then(r => r.ok ? r.json() : null)
+    .then(v => { if (v) { acceptShared = v; acceptRedraw(); } }).catch(() => {});
   const showAdmin = () => {
+    if (typeof acceptRedraw === 'function' && showAdmin.was !== isAdmin()) { if (showAdmin.was !== undefined) acceptRedraw(); showAdmin.was = isAdmin(); }
     bar.hidden = !isAdmin();
     login.hidden = isAdmin() || location.hash !== '#admin';
     if (isAdmin() && !nameIn.value) nameIn.value = 'Админ';
