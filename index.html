@@ -58,6 +58,25 @@
   .fxt { display: grid; line-height: 1.3; transition: opacity .35s; } .fxt.fade { opacity: 0; }
   .fxt b { font: 800 15px var(--font), sans-serif; color: var(--b1); font-variant-numeric: tabular-nums; white-space: nowrap; }
   .fxt span { font-size: 11px; color: #5b6b80; white-space: nowrap; } .fxt em { font-style: normal; font-weight: 700; } .fxt .up { color: #0b7a55; } .fxt .dn { color: #c0362c; }
+  .fx { cursor: pointer; border-radius: 12px; padding: 2px 8px 2px 2px; transition: background .15s; } .fx:hover, .fx:focus-visible { background: rgba(40, 18, 116, .07); outline: none; }
+  /* Full rate list with a converter, opened by a press on the rate. */
+  .fxpop { position: fixed; z-index: 60; width: 420px; max-width: calc(100vw - 24px); max-height: calc(100vh - 90px); display: flex; flex-direction: column; padding: 14px; border-radius: 16px;
+    background: #fff; box-shadow: 0 12px 40px rgba(20, 20, 60, .25); border-top: 4px solid var(--b2); color: #1a2233; font: 600 13px var(--font), sans-serif; }
+  .fxpop[hidden] { display: none; }
+  .fxpop h4 { margin: 0; font: 800 16px var(--font), sans-serif; color: var(--b1); display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .fxpop h4 small { font: 600 12px var(--font), sans-serif; color: #5b6b80; }
+  .fxpop .cv { margin: 10px 0; padding: 10px; border-radius: 12px; background: linear-gradient(135deg, var(--b1), var(--b2)); color: #fff; display: grid; grid-template-columns: 1fr 80px 36px; gap: 6px; align-items: center; }
+  .fxpop .cv input, .fxpop .cv select { min-width: 0; height: 34px; border: 0; border-radius: 8px; padding: 0 8px; font: 700 14px var(--font), sans-serif; color: var(--b1); background: #fff; }
+  .fxpop .cv button { height: 34px; border: 0; border-radius: 8px; background: rgba(255,255,255,.2); color: #fff; font-size: 17px; cursor: pointer; }
+  .fxpop .cv output { grid-column: 1 / -1; font: 800 18px var(--font), sans-serif; font-variant-numeric: tabular-nums; word-break: break-word; }
+  .fxpop .flt { height: 32px; border: 1px solid #dfe5ef; border-radius: 8px; padding: 0 10px; font: 600 13px var(--font), sans-serif; margin-bottom: 6px; }
+  .fxpop .tb { overflow: auto; min-height: 0; }
+  .fxpop .tb div { display: grid; grid-template-columns: 40px 1fr auto 78px; gap: 8px; align-items: center; padding: 5px 8px; border-radius: 8px; cursor: pointer; }
+  .fxpop .tb div:nth-child(odd) { background: #f5f7fb; } .fxpop .tb div:hover { background: #e9e4fb; } .fxpop .tb div.on { outline: 2px solid var(--b2); outline-offset: -2px; }
+  .fxpop .tb b { color: var(--b1); } .fxpop .tb small { color: #5b6b80; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fxpop .tb i { font-style: normal; font-weight: 800; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+  .fxpop .tb em { font-style: normal; font-size: 11.5px; line-height: 1.25; text-align: right; white-space: nowrap; color: #5b6b80; } .fxpop .up { color: #0b7a55 !important; } .fxpop .dn { color: #c0362c !important; }
+  .fxpop .ft { margin-top: 8px; font-size: 11.5px; color: #5b6b80; }
   .ecg { flex: 1; height: 48px; min-width: 0; }
   .ecg path { fill: none; stroke-width: 2.4; stroke-linejoin: round; stroke-linecap: round; }
   .ecgbg { stroke: #e3e9f2; }
@@ -1126,8 +1145,8 @@
 <div class="bgfx" aria-hidden="true"><b class="blob b1"></b><b class="blob b2"></b><b class="blob b3"></b><b class="blob b4"></b><div id="bgfloat"></div></div>
 <div class="testbar" role="status"><div class="tb-track"><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span></div></div>
 <div class="topbar">
-  <div class="deco l" aria-hidden="true">
-    <div class="fx" id="fx" hidden><span class="fxs" id="fxs">$</span><div class="fxt"><b id="fxrate"></b><span id="fxdiff"></span></div></div>
+  <div class="deco l">
+    <div class="fx" id="fx" role="button" tabindex="0" aria-haspopup="dialog" hidden><span class="fxs" id="fxs">$</span><div class="fxt"><b id="fxrate"></b><span id="fxdiff"></span></div></div>
   </div>
   <div class="deco r" aria-hidden="true">
     <svg class="ecg" viewBox="0 0 300 60" preserveAspectRatio="none"><path class="ecgbg" d="M0 30H70l8-6 6 6h10l6 18 9-44 8 34 6-8h21l7-7 7 7H300"/><path class="ecgln" d="M0 30H70l8-6 6 6h10l6 18 9-44 8 34 6-8h21l7-7 7 7H300"/></svg>
@@ -1217,7 +1236,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2400</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2410</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2933,18 +2952,90 @@ drawRecent();
   const load = async () => {
     try {
       const j = await (await fetch('https://cbu.uz/uz/arkhiv-kursov-valyut/json/')).json();
-      const list = CUR.map(c => j.find(x => x.Ccy === c)).filter(Boolean).map(x => ({ ccy: x.Ccy, rate: +x.Rate / (+x.Nominal || 1), diff: +x.Diff / (+x.Nominal || 1) }));
-      if (list.length) rates = { src: 'cbu', date: (j[0].Date || '').slice(0, 5), list };
+      const all = j.filter(x => x.Ccy && +x.Rate).map(x => ({ ccy: x.Ccy, nm: [x.CcyNm_UZC || x.CcyNm_UZ || x.Ccy, x.CcyNm_RU || x.Ccy, x.CcyNm_EN || x.Ccy], nom: +x.Nominal || 1,
+        rate: +x.Rate / (+x.Nominal || 1), diff: +x.Diff / (+x.Nominal || 1) }));
+      const list = CUR.map(c => all.find(x => x.ccy === c)).filter(Boolean);
+      if (list.length) rates = { src: 'cbu', date: (j[0].Date || '').slice(0, 5), day: j[0].Date || '', list, all };
     } catch {
       try {
         const j = await (await fetch('https://open.er-api.com/v6/latest/UZS')).json(), u = j.rates || {};
-        const list = CUR.filter(c => u[c]).map(c => ({ ccy: c, rate: 1 / u[c], diff: 0 }));
-        if (list.length) rates = { src: 'er', date: new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }), list };
+        const all = Object.keys(u).filter(c => c !== 'UZS' && u[c]).map(c => ({ ccy: c, nm: [c, c, c], nom: 1, rate: 1 / u[c], diff: 0 }));
+        const list = CUR.map(c => all.find(x => x.ccy === c)).filter(Boolean);
+        if (list.length) rates = { src: 'er', date: new Date().toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit' }), day: new Date().toLocaleDateString('ru-RU'), list, all };
       } catch {}
     }
     try { if (rates) localStorage.setItem('bayan-fx', JSON.stringify(rates)); } catch {}
     show();
+    if (!pop.hidden) draw();
   };
+  // The popup: every currency the bank publishes, the change since the previous day, and a converter to and from sum.
+  const L = (uz, ru, en) => UI === 'ru' ? ru : UI === 'en' ? en : uz, LI = UI === 'ru' ? 1 : UI === 'en' ? 2 : 0;
+  const TOP = ['USD', 'EUR', 'RUB', 'GBP', 'CNY', 'KZT', 'TRY', 'AED', 'CHF', 'JPY', 'KRW', 'INR', 'KGS', 'TJS', 'TMT'];
+  const num = v => (+v).toLocaleString('ru-RU', { minimumFractionDigits: Math.abs(v) >= 1 && v % 1 ? 2 : 0, maximumFractionDigits: Math.abs(v) >= 100 ? 2 : Math.abs(v) >= 1 ? 4 : 6 });
+  const SUM = L('сўм', 'сум', 'UZS');
+  const pop = document.createElement('div');
+  pop.className = 'fxpop'; pop.hidden = true; pop.setAttribute('role', 'dialog');
+  document.body.appendChild(pop);
+  let cur = 'USD', back = false, amt = '100';
+  const sorted = () => {
+    const a = rates?.all?.length ? rates.all : rates?.list || [];
+    return [...a].sort((x, y) => (TOP.indexOf(x.ccy) + 1 || 99) - (TOP.indexOf(y.ccy) + 1 || 99) || x.ccy.localeCompare(y.ccy));
+  };
+  const name = r => r.nm ? r.nm[LI] : r.ccy;
+  const calc = () => {
+    const r = sorted().find(x => x.ccy === cur), out = pop.querySelector('output');
+    const a = +String(pop.querySelector('.cv input').value).replace(/\s/g, '').replace(',', '.');
+    if (!r || !isFinite(a)) { out.textContent = '—'; return; }
+    out.textContent = back ? `${num(a)} ${SUM} = ${num(a / r.rate)} ${r.ccy}` : `${num(a)} ${r.ccy} = ${num(a * r.rate)} ${SUM}`;
+  };
+  const rows = () => {
+    const f = (pop.querySelector('.flt')?.value || '').trim().toLowerCase();
+    pop.querySelector('.tb').innerHTML = sorted().filter(r => !f || r.ccy.toLowerCase().includes(f) || (r.nm || []).some(n => n.toLowerCase().includes(f))).map(r => {
+      const d = +r.diff || 0, pc = r.rate - d ? d / (r.rate - d) * 100 : 0;
+      return `<div data-c="${esc(r.ccy)}" class="${r.ccy === cur ? 'on' : ''}"><b>${esc(r.ccy)}</b><small title="${esc(name(r))}">${esc(SYM[r.ccy] ? SYM[r.ccy] + ' · ' : '')}${esc(name(r))}</small><i>${num(r.rate)}</i>`
+        + `<em class="${d > 0 ? 'up' : d < 0 ? 'dn' : ''}">${d ? `${d > 0 ? '▲' : '▼'} ${num(Math.abs(d))}<br>${Math.abs(pc).toFixed(2).replace(".", ",")}%` : '—'}</em></div>`;
+    }).join('') || `<p>${L('Топилмади', 'Не найдено', 'Not found')}</p>`;
+  };
+  const draw = () => {
+    const a = sorted();
+    if (!a.some(r => r.ccy === cur)) cur = a[0]?.ccy || 'USD';
+    pop.innerHTML = `<h4>${L('Валюта курслари', 'Курсы валют', 'Exchange rates')}<small>${rates?.src === 'cbu' ? L('Марказий банк', 'Центробанк', 'Central Bank') : L('Тахминий курс', 'Примерный курс', 'Approximate rate')} · ${esc(rates?.day || rates?.date || '')}</small></h4>`
+      + `<div class="cv"><input inputmode="decimal" value="${esc(amt)}" aria-label="${L('Миқдор', 'Сумма', 'Amount')}">`
+      + `<select aria-label="${L('Валюта', 'Валюта', 'Currency')}">${a.map(r => `<option value="${esc(r.ccy)}"${r.ccy === cur ? ' selected' : ''}>${esc(r.ccy)}</option>`).join('')}</select>`
+      + `<button type="button" title="${L('Йўналишни алмаштириш', 'Поменять направление', 'Swap direction')}">⇄</button><output></output></div>`
+      + `<input class="flt" type="search" placeholder="${L('Валюта қидириш (код ёки ном)', 'Поиск валюты (код или название)', 'Find a currency (code or name)')}">`
+      + `<div class="tb"></div><div class="ft">${L('1 бирлик учун сўмда · ўзгариш олдинги кунга нисбатан', 'В сумах за 1 единицу · изменение к предыдущему дню', 'In sum per 1 unit · change since the previous day')}</div>`;
+    rows(); calc();
+  };
+  const place = () => {
+    const b = box.getBoundingClientRect(), w = pop.offsetWidth;
+    pop.style.top = `${b.bottom + 8}px`;
+    pop.style.left = `${Math.max(12, Math.min(b.left, innerWidth - w - 12))}px`;
+  };
+  const toggle = () => {
+    if (!pop.hidden) { pop.hidden = true; return; }
+    if (!rates) return;
+    draw(); pop.hidden = false; place();
+    pop.querySelector('.cv input').focus();
+  };
+  box.addEventListener('click', e => { e.stopPropagation(); toggle(); });
+  box.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  box.title = L('Батафсил: барча валюталар ва калькулятор', 'Подробно: все валюты и калькулятор', 'Details: all currencies and a converter');
+  pop.addEventListener('click', e => {
+    e.stopPropagation();
+    if (e.target.closest('.cv button')) { back = !back; calc(); return; }
+    const r = e.target.closest('.tb [data-c]');
+    if (r) { cur = r.dataset.c; pop.querySelector('.cv select').value = cur; pop.querySelectorAll('.tb .on').forEach(x => x.classList.remove('on')); r.classList.add('on'); calc(); }
+  });
+  pop.addEventListener('input', e => {
+    if (e.target.matches('.cv input')) { amt = e.target.value; calc(); }
+    else if (e.target.matches('.flt')) rows();
+  });
+  pop.addEventListener('change', e => { if (e.target.matches('.cv select')) { cur = e.target.value; rows(); calc(); } });
+  document.addEventListener('click', () => { pop.hidden = true; });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') pop.hidden = true; });
+  addEventListener('resize', () => { if (!pop.hidden) place(); });
+  addEventListener('scroll', () => { if (!pop.hidden) place(); }, { passive: true });
   if (!MOB) { show(); load(); setInterval(show, 4000); setInterval(load, 60 * 60 * 1000); }
 }
 
