@@ -1298,7 +1298,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2560</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2570</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -3992,9 +3992,10 @@ document.addEventListener('click', e => {
   // The last series counted for each medicine is offered again, so a repeat count needs only Enter.
   const SERS = 'bayan-inv-ser', sers = () => { try { return JSON.parse(localStorage.getItem(SERS)) || {}; } catch { return {}; } };
   const ibFill = code => { const r = ownOf(code); if (!r) return false; ibF.prod.value = optOf(r); if (!ibF.qty.value) ibF.qty.value = boxCaps()[r[0]] || '';
-    if (!ibF.ser.value) ibF.ser.value = sers()[r[0]] || ''; ibF.ser.focus(); ibF.ser.select(); return true; };
+    serGate(); if (!ibF.ser.value) ibF.ser.value = sers()[r[0]] || ''; ibF.ser.focus(); ibF.ser.select(); return true; };
   const ibList = () => { const dl = document.getElementById('ibprods'); if (!dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(optOf(r))}">`).join(''); };
-  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { pend = ''; ibF.prod.value = optOf(ownOf(g)); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value; if (!ibF.ser.value) ibF.ser.value = sers()[ownOf(g)[0]] || ''; } });
+  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { pend = ''; ibF.prod.value = optOf(ownOf(g)); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value;
+    if (ibF.ser.value && !bookSer(ibF.ser.value, g) && allSers().some(y => nser(y.ser) === nser(ibF.ser.value))) ibF.ser.value = ''; if (!ibF.ser.value) ibF.ser.value = sers()[ownOf(g)[0]] || ''; } serGate(); });
   ibF.addEventListener('submit', e => {
     e.preventDefault();
     // A scanner typing a pack code into the medicine field picks that medicine.
@@ -4024,7 +4025,7 @@ document.addEventListener('click', e => {
     const c = m && cur();
     ibF.hidden = !m || !!c; curEl.hidden = !c;
     if (!m) return;
-    if (!c) { ibList(); i18nApply(ibF); return; }
+    if (!c) { ibList(); i18nApply(ibF); serGate(); return; }
     const mine = l.filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser), total = mine.reduce((t, x) => t + units(x), 0), boxes = mine.filter(x => x.box).length;
     const bs = c.ser && bookSer(c.ser, c.gtin);
     curEl.innerHTML = `<span>💊 <b>${esc(c.name)}</b><br><small>${c.ser ? `${esc(L('Серия', 'Серия', 'Series'))} ${esc(c.ser)} · ` : ''}${bs ? `${esc(L('ҳисобда', 'по учёту', 'in the ledger'))} ${bs.qty} · ` : ''}📦 1 ${esc(L('қути', 'короб', 'box'))} = ${c.qty} ${esc(L('та', 'шт', 'pcs'))}</small></span>`
@@ -4274,21 +4275,18 @@ document.addEventListener('click', e => {
     // With stock in the ledger only series still on hand are offered; the newest series come first.
     const all = sers.filter(x => !stocked || x.qty > 0).slice().reverse();
     const mine = r ? all.filter(x => x.gtin ? strip0(x.gtin) === strip0(r[0]) : nrm(x.name).startsWith(nrm(r[2]))) : [];
-    dl.innerHTML = (mine.length ? mine : all).slice(0, 400).map(x => `<option value="${esc(x.ser)}" label="${esc([x.name, x.cap ? `1 қути = ${x.cap}` : '', x.qty ? `қолдиқ ${x.qty}` : ''].filter(Boolean).join(' · '))}">`).join('');
+    dl.innerHTML = mine.slice(0, 400).map(x => `<option value="${esc(x.ser)}" label="${esc([x.name, x.cap ? `1 қути = ${x.cap}` : '', x.qty ? `қолдиқ ${x.qty}` : ''].filter(Boolean).join(' · '))}">`).join('');
   };
+  // The medicine is chosen first (Alex): the series field opens after it and offers only that medicine's series,
+  // since one series number can belong to several medicines.
+  const serGate = () => { const g = ibGtin(); ibF.ser.disabled = !g; ibF.ser.placeholder = g ? L('Масалан: 307 10 26F', 'Например: 307 10 26F', 'For example: 307 10 26F') : L('Аввал дорини танланг', 'Сначала выберите препарат', 'Pick the medicine first'); if (g) serList(); };
+  ibF.prod.addEventListener('input', serGate);
   ibF.ser.addEventListener('focus', serList);
   ibF.ser.addEventListener('change', () => {
-    // A series shared by several medicines fills nothing until the medicine is chosen, unless only one of them is in stock.
-    const g = ibGtin(), same = allSers().filter(y => nser(y.ser) === nser(ibF.ser.value));
-    const names = [...new Set(same.map(y => y.name))], inStock = new Set(same.filter(y => y.qty > 0).map(y => y.name));
-    if (!g && names.length > 1 && inStock.size !== 1) {
-      out.innerHTML = status('warn', '!', esc(L(`${same[0].ser} серияси бир нечта дорида бор: ${names.join(', ')}. Аввал дорини танланг.`, `Серия ${same[0].ser} есть у нескольких препаратов: ${names.join(', ')}. Сначала выберите препарат.`, `Series ${same[0].ser} belongs to several medicines: ${names.join(', ')}. Pick the medicine first.`)));
-      ibF.prod.focus(); return;
-    }
+    const g = ibGtin(); if (!g) return;
     const x = bookSer(ibF.ser.value, g); if (!x) return;
     ibF.ser.value = x.ser;
     if (x.cap) ibF.qty.value = x.cap;
-    if (!ibGtin()) { const r = (x.gtin && ownOf(x.gtin)) || ledgerProd(x.name); if (r) ibF.prod.value = optOf(r); }
   });
   const readBook = async f => {
     if (/\.xls$/i.test(f.name)) throw new Error('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.');
