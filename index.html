@@ -904,6 +904,17 @@
   .uwk { display: flex; align-items: flex-end; gap: 2px; height: 18px; } .uwk i { width: 4px; border-radius: 2px; background: linear-gradient(var(--b2), var(--b1)); opacity: .8; }
   .unone { margin: 0; font-size: 12px; color: var(--muted); }
   :root[data-theme="night"] .urow { background: rgba(255, 255, 255, .05); } :root[data-theme="night"] .utiles div { background: rgba(255, 255, 255, .06); }
+  .invadm .atabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; border-bottom: 1px solid var(--line); padding-bottom: 8px; }
+  .invadm .atabs button { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 999px; padding: 7px 14px; font: 600 13px var(--font), sans-serif; cursor: pointer; }
+  .invadm .atabs button.on { background: var(--b1); border-color: var(--b1); color: #fff; }
+  .invadm .apane[hidden] { display: none; }
+  .admsite .arow { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); }
+  .admsite .arow span { display: grid; gap: 2px; } .admsite .arow small { color: var(--muted); font-size: 12px; }
+  .admsite .arow button { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 10px; padding: 8px 12px; font: 600 13px var(--font), sans-serif; cursor: pointer; white-space: nowrap; }
+  .admsite .arow button.on { background: var(--b1); color: #fff; border-color: var(--b1); }
+  .admsite .thlist { padding: 4px 0 8px; }
+  #admC .ucard { box-shadow: none; padding: 0; background: none; } #admC .ulist { max-height: none; }
+  html.mob .admsite .arow { flex-direction: column; align-items: stretch; }
   .list h2 .lshut:hover { color: var(--text); border-color: var(--b2); }
   html.lshut .list > :not(h2) { display: none !important; }
   /* The admin can freeze every moving effect for everyone (settings/still); the camera scanner keeps its beam. */
@@ -1295,7 +1306,20 @@
       <span id="cnt">0 рақам</span>
     </div>
     <div class="invbar"><button type="button" class="invbtn" id="invbtn" hidden>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button> <button type="button" class="invbtn" id="invadmbtn" hidden></button></div>
-    <div class="invadm" id="invadm" hidden></div>
+    <div class="invadm" id="invadm" hidden>
+      <div class="atabs" role="tablist"><button type="button" data-tab="admA" class="on">📦 Хатлов ва базалар</button><button type="button" data-tab="admB">🌐 Сайт ва чат</button><button type="button" data-tab="admC">👥 Фойдаланувчилар</button></div>
+      <div class="apane" id="admA"></div>
+      <div class="apane admsite" id="admB" hidden>
+        <p class="s">Бу созламалар ҳамма фойдаланувчилар учун бирдан ўзгаради.</p>
+        <div class="arow" data-slot="testbtn"><span><b>Тест режими</b><small>Сайт тепасидаги сариқ «тест режими» ёзуви.</small></span></div>
+        <div class="arow" data-slot="stillbtn"><span><b>Ҳаракатли эффектлар</b><small>Безакли анимацияларни тўхтатиш ёки қайта юргизиш. Мавзуга тегмайди.</small></span></div>
+        <div class="arow" data-slot="thbtn"><span><b>Чат фони</b><small>Чат ойнасининг ранги ҳамма учун.</small></span></div>
+        <div class="arow" data-slot="histbtn"><span><b>Чат тарихи</b><small>Бутун ёзишмаларни (ўчирилган ва таҳрирланганлари билан) .txt файлга юклаб олиш.</small></span></div>
+        <div class="arow" data-slot="clearall"><span><b>Чатни тозалаш</b><small>Барча хабарларни ўчиради. Нусхаси тарихда қолади.</small></span></div>
+        <p class="s">Хабарни ўчириш ва блоклаш чат ойнасининг ўзида қолди: хабарни танлаб, «🛠 Админ асбоблари»дан фойдаланинг.</p>
+      </div>
+      <div class="apane" id="admC" hidden></div>
+    </div>
     <div class="inv" id="inv" hidden>
       <div class="invh"><b>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></b><span id="invsum"></span></div>
       <form class="invstart" id="invstart">
@@ -1348,7 +1372,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2580</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2590</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1651,7 +1675,14 @@ const I18N = {
   '🎨 Фон': ['🎨 Фон', '🎨 Background'],
   '⏸ Эффектлар: ҳаракатда': ['⏸ Эффекты: в движении', '⏸ Effects: moving'], '▶ Эффектлар: қотирилган': ['▶ Эффекты: остановлены', '▶ Effects: frozen'],
   'Сайтдаги ҳаракатланувчи эффектларни ҳамма учун қотириш ёки қайта юргизиш': ['Остановить или снова запустить движущиеся эффекты сайта для всех', 'Freeze or restart the site’s moving effects for everyone'],
-  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📲 Иловани ўрнатиш': ['📲 Установить приложение', '📲 Install the app'], 'Сайтни телефон ёки компьютерга илова қилиб ўрнатиш': ['Установить сайт как приложение на телефон или компьютер', 'Install the site as an app on a phone or computer'], '▾ Очиш': ['▾ Развернуть', '▾ Expand'], 'Рўйхатни йиғиш ёки очиш': ['Свернуть или развернуть список', 'Collapse or expand the list'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
+  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📦 Хатлов ва базалар': ['📦 Инвентаризация и базы', '📦 Inventory and bases'], '🌐 Сайт ва чат': ['🌐 Сайт и чат', '🌐 Site and chat'], '👥 Фойдаланувчилар': ['👥 Пользователи', '👥 Users'],
+  'Бу созламалар ҳамма фойдаланувчилар учун бирдан ўзгаради.': ['Эти настройки меняются сразу для всех пользователей.', 'These settings change at once for every user.'],
+  'Тест режими': ['Тестовый режим', 'Test mode'], 'Сайт тепасидаги сариқ «тест режими» ёзуви.': ['Жёлтая надпись «тестовый режим» вверху сайта.', 'The yellow «test mode» line at the top of the site.'],
+  'Ҳаракатли эффектлар': ['Движущиеся эффекты', 'Moving effects'], 'Безакли анимацияларни тўхтатиш ёки қайта юргизиш. Мавзуга тегмайди.': ['Остановить или снова запустить декоративные анимации. Тема не меняется.', 'Stop or restart the decorative animations. The theme stays as it is.'],
+  'Чат фони': ['Фон чата', 'Chat background'], 'Чат ойнасининг ранги ҳамма учун.': ['Цвет окна чата для всех.', 'The chat window colour for everyone.'],
+  'Чат тарихи': ['История чата', 'Chat history'], 'Бутун ёзишмаларни (ўчирилган ва таҳрирланганлари билан) .txt файлга юклаб олиш.': ['Скачать всю переписку (с удалёнными и изменёнными) в файл .txt.', 'Download the whole chat (with deleted and edited messages) as a .txt file.'],
+  'Чатни тозалаш': ['Очистить чат', 'Clear the chat'], 'Барча хабарларни ўчиради. Нусхаси тарихда қолади.': ['Удаляет все сообщения. Копия остаётся в истории.', 'Deletes every message. A copy stays in the history.'],
+  'Хабарни ўчириш ва блоклаш чат ойнасининг ўзида қолди: хабарни танлаб, «🛠 Админ асбоблари»дан фойдаланинг.': ['Удаление и блокировка сообщений остались в самом чате: выберите сообщение и используйте «🛠 Инструменты админа».', 'Deleting and blocking stay in the chat itself: pick a message and use «🛠 Admin tools».'], '📲 Иловани ўрнатиш': ['📲 Установить приложение', '📲 Install the app'], 'Сайтни телефон ёки компьютерга илова қилиб ўрнатиш': ['Установить сайт как приложение на телефон или компьютер', 'Install the site as an app on a phone or computer'], '▾ Очиш': ['▾ Развернуть', '▾ Expand'], 'Рўйхатни йиғиш ёки очиш': ['Свернуть или развернуть список', 'Collapse or expand the list'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
   'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Сайт мавзуси': ['Тема сайта', 'Site theme'], 'Стандарт': ['Стандарт', 'Standard'], 'Тунги': ['Ночная', 'Night'], 'Денгиз': ['Море', 'Sea'], 'Табиат': ['Природа', 'Nature'], 'Классик': ['Классика', 'Classic'], 'Шафақ': ['Закат', 'Sunset'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Ўлчамини ўзгартириш учун тортинг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқалар': ['Праздник и другое', 'Celebration and more'], 'Сўнгги ишлатилганлар': ['Недавние', 'Recently used'],
@@ -3975,15 +4006,22 @@ document.addEventListener('click', e => {
 {
   const ov = document.getElementById('scanov'), video = document.getElementById('scanv'), msg = document.getElementById('scanmsg');
   const WANT = ['qr_code', 'data_matrix', 'ean_13', 'ean_8', 'upc_a', 'code_128'];
-  let stream = null, reader = null, timer = null, busy = false;
+  let stream = null, reader = null, timer = null, busy = false, sink = null;
   const stop = () => {
-    clearTimeout(timer); timer = null;
+    clearTimeout(timer); timer = null; sink = null;
     try { reader?.reset(); } catch {} reader = null;
     stream?.getTracks().forEach(t => t.stop()); stream = null; video.srcObject = null;
     ov.hidden = true;
   };
   let lastText = '', lastAt = 0;
   const found = text => {
+    if (sink) {
+      // A form asked for codes (the admin's manual entry): the camera stays open and each new code goes to it.
+      if (text === lastText && Date.now() - lastAt < 2500) { lastAt = Date.now(); return; }
+      lastText = text; lastAt = Date.now(); navigator.vibrate?.(60);
+      const el = document.getElementById('scanlast'); el.style.color = ''; el.textContent = tr(sink(text) || '✓');
+      return;
+    }
     if (window.invMode?.()) {
       // Inventory: keep the camera open and count each new code; the same code held in view counts once.
       if (text === lastText && Date.now() - lastAt < 2500) { lastAt = Date.now(); return; }
@@ -4029,6 +4067,7 @@ document.addEventListener('click', e => {
       }
     } catch (e) { stream?.getTracks().forEach(t => t.stop()); stream = null; fail(e); }
   };
+  window.openCamTo = cb => { openCam(); sink = cb; lastText = ''; };
   document.getElementById('qcam').addEventListener('click', openCam);
   document.getElementById('invcam').addEventListener('click', openCam);
   document.getElementById('scanx').addEventListener('click', stop);
@@ -4654,15 +4693,25 @@ document.addEventListener('click', e => {
   // codes, filled from Excel, CSV or TXT files; a scanned code missing from the base is counted with a warning.
   const admEl = document.getElementById('invadm'), codesF = document.createElement('input');
   codesF.type = 'file'; codesF.accept = '.xlsx,.csv,.txt,.xls'; codesF.hidden = true; admEl.after(codesF);
-  admBtn.textContent = '⚙ ' + L('Хатлов созламалари', 'Настройки инвентаризации', 'Inventory settings');
+  admBtn.textContent = '🛠 ' + L('Админ панели', 'Панель админа', 'Admin panel');
+  // One admin panel with three tabs; the site-wide chat buttons are moved here from the chat's admin tools.
+  const admA = document.getElementById('admA');
+  admEl.querySelectorAll('[data-slot]').forEach(r => { const b = document.getElementById(r.dataset.slot); if (b) { r.append(b); if (b.id === 'thbtn') r.after(document.getElementById('thlist')); } });
+  admEl.querySelector('.atabs').addEventListener('click', e => {
+    const t = e.target.closest('[data-tab]'); if (!t) return;
+    admEl.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === t));
+    admEl.querySelectorAll('.apane').forEach(x => { x.hidden = x.id !== t.dataset.tab; });
+    try { localStorage.setItem('bayan-adm-tab', t.dataset.tab); } catch {}
+  });
+  try { const t = localStorage.getItem('bayan-adm-tab'); if (t) admEl.querySelector(`[data-tab="${t}"]`)?.click(); } catch {}
   const drawAdm = async () => {
-    admEl.innerHTML = `<p class="s">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
+    admA.innerHTML = `<p class="s">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
     let users = {}, perm = {}, info = null, sinfo = null, err = '';
     try { [users, perm, info, sinfo] = await Promise.all([db('users'), db('invUsers'), db('settings/codes'), db('stock/info').catch(() => null)]); }
     catch (e) { err = e.status ? L('Маълумотни ўқиб бўлмади. Firebase’да янги қоидаларни (firebase-rules.json) Publish қилинг.', 'Не удалось прочитать данные. Опубликуйте новые правила Firebase (firebase-rules.json → Publish).', 'Could not read the data. Publish the new Firebase rules (firebase-rules.json).') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.'); }
     users ||= {}; perm ||= {}; codesN = info?.n || 0;
     const ul = Object.entries(users).filter(([id]) => id !== ADMIN_ID).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name)));
-    admEl.innerHTML = (err ? `<p class="er">${esc(err)}</p>` : '')
+    admA.innerHTML = (err ? `<p class="er">${esc(err)}</p>` : '')
       + `<h4>👥 ${esc(L('Инвентаризация ўтказадиган ходимлар', 'Кто проводит инвентаризацию', 'Staff who may run the inventory'))}</h4>`
       + `<p class="s">${esc(L('Белгиланган ходимларда «Инвентаризация» тугмаси кўринади. Админ уни доим кўради.', 'У отмеченных сотрудников появится кнопка «Инвентаризация». Администратор видит её всегда.', 'Ticked staff see the «Inventory» button. The admin always sees it.'))}</p>`
       + `<div class="ul">${ul.map(([id, u]) => `<label><input type="checkbox" data-u="${esc(id)}"${perm[id] === true ? ' checked' : ''}> <b>${esc(u.name || '—')}</b> <small>${esc(u.email || '')}</small></label>`).join('')
@@ -4672,7 +4721,7 @@ document.addEventListener('click', e => {
       + `<p class="s">${esc(L('Excel (.xlsx), CSV ёки TXT файлдаги маркировка кодлари (DataMatrix) ва қути кодлари (SSCC) базага қўшилади, бор кодлар такрорланмайди. Янги кодлар чиққанда файлни яна юклайверинг. Сканерланган код базада бўлмаса, бу ҳақда огоҳлантирилади.', 'Коды маркировки (DataMatrix) и коды коробов (SSCC) из файла Excel (.xlsx), CSV или TXT добавляются в базу без повторов. Когда появятся новые коды, просто загрузите файл ещё раз. Если отсканированного кода нет в базе, появится предупреждение.', 'Marking codes (DataMatrix) and box codes (SSCC) from an Excel (.xlsx), CSV or TXT file are added to the base without repeats. When new codes come out, upload the file again. A scanned code that is not in the base gets a warning.'))}</p>`
       + `<div class="bt"><button type="button" class="go" data-up>📥 ${esc(L('Файлдан кодлар юклаш', 'Загрузить коды из файла', 'Upload codes from a file'))}</button><button type="button" class="copy" data-ctpl>⬇ ${esc(L('Шаблонни юклаб олиш', 'Скачать шаблон', 'Download the template'))}</button>`
       + (info?.n ? `<button type="button" class="copy" data-wipe>🗑 ${esc(L('Базани тозалаш', 'Очистить базу', 'Clear the base'))}</button>` : '') + `<span class="pr"></span></div>`
-      + `<form class="madd"><label><span>✍ ${esc(L('Қўлда киритиш: кодларни ёзинг ёки сканерланг, ҳар қаторга биттадан', 'Ввод вручную: впишите или отсканируйте коды, по одному в строке', 'Enter by hand: type or scan codes, one per line'))}</span><textarea name="codes" rows="3" spellcheck="false" placeholder="0104780090865883217XlWGnGLwE4Ex&#10;147800908603816735"></textarea></label><button type="submit" class="go">➕ ${esc(L('Базага қўшиш', 'Добавить в базу', 'Add to the base'))}</button></form>`
+      + `<form class="madd"><label><span>✍ ${esc(L('Қўлда киритиш: кодларни ёзинг ёки сканерланг, ҳар қаторга биттадан', 'Ввод вручную: впишите или отсканируйте коды, по одному в строке', 'Enter by hand: type or scan codes, one per line'))}</span><textarea name="codes" rows="3" spellcheck="false" placeholder="0104780090865883217XlWGnGLwE4Ex&#10;147800908603816735"></textarea></label><div class="bt"><button type="button" class="copy" data-mcam>📷 ${esc(L('Сканерлаш', 'Сканировать', 'Scan'))}</button><button type="submit" class="go">➕ ${esc(L('Базага қўшиш', 'Добавить в базу', 'Add to the base'))}</button></div></form>`
       + `<h4>🏬 ${esc(L('Склад базаси: серия ва қутидаги қадоқлар сони', 'База склада: серии и количество в коробке', 'Warehouse base: series and packs per box'))}</h4>`
       + `<p class="s"><b>${esc(sinfo?.n ? L(`Базада ${sinfo.n} та серия`, `В базе ${sinfo.n} серий`, `${sinfo.n} series in the base`) : L('База ҳозирча бўш.', 'База пока пуста.', 'The base is empty.'))}</b>${sinfo?.n ? ` · ${esc(L('охирги юклаш', 'последняя загрузка', 'last upload'))}: ${esc(sinfo.file || '')}, ${esc(sinfo.at || '')}` : ''}</p>`
       + `<p class="s">${esc(L('Янги дори ёки серия чиққанда уни шаблонга ёзиб, шу ерга юкланг. Бор сериялар янгиланади, янгилари қўшилади. «Склад ГП» ҳисоботини ҳам шундайлигича юклаш мумкин. Инвентаризацияда серия ёзилганда дори ва битта қутидаги қадоқлар сони ҳамма ходимларда ўзи қўйилади.', 'Когда появляется новый препарат или серия, впишите его в шаблон и загрузите сюда. Существующие серии обновятся, новые добавятся. Отчёт «Склад ГП» можно загрузить как есть. При инвентаризации после ввода серии препарат и количество в коробке подставятся сами у всех сотрудников.', 'When a new medicine or series comes out, add it to the template and upload it here. Existing series are updated and new ones added. The «Склад ГП» report can be uploaded as it is. During the inventory, typing a series fills the medicine and packs per box for every staff member.'))}</p>`
@@ -4757,6 +4806,15 @@ document.addEventListener('click', e => {
     if (e.target.closest('[data-sup]')) stockF.click();
     if (e.target.closest('[data-stpl]')) stockTpl();
     if (e.target.closest('[data-ctpl]')) codesTpl();
+    if (e.target.closest('[data-mcam]')) {
+      const ta = admEl.querySelector('.madd textarea');
+      window.openCamTo?.(t => {
+        const c = String(t).replace(/\x1d/g, '').trim(), have = ta.value.split(/\r?\n/).map(x => x.trim()).filter(Boolean);
+        if (have.includes(c)) return L('Бу код рўйхатда бор', 'Этот код уже в списке', 'This code is already listed');
+        ta.value = [...have, c].join('\n') + '\n';
+        return L(`✓ Қўшилди. Рўйхатда ${have.length + 1} та код. Тугатгач «Ёпиш»ни босинг.`, `✓ Добавлен. В списке ${have.length + 1} кодов. В конце нажмите «Закрыть».`, `✓ Added. ${have.length + 1} codes listed. Press «Close» when done.`);
+      });
+    }
     if (e.target.closest('[data-swipe]') && confirm(L('Склад базаси бутунлай тозалансинми?', 'Полностью очистить базу склада?', 'Clear the whole warehouse base?'))) {
       try { await db('stock', 'DELETE'); localStorage.removeItem(STOCK); } catch { alert(L('Тозалаб бўлмади.', 'Не удалось очистить.', 'Could not clear.')); }
       drawAdm();
@@ -4952,17 +5010,18 @@ document.addEventListener('click', e => {
   setInterval(tick, 60000);
 
   if (ADM()) {
-  const side = document.querySelector('.side.r'), card = document.createElement('div');
-  card.className = 'sc ucard'; side.append(card);
+  const side = document.querySelector('.side.r'), card = document.createElement('div'), pc = document.createElement('div');
+  card.className = 'sc ucard'; side.append(card); pc.className = 'ucard'; document.getElementById('admC')?.append(pc);
   const hm = m => m >= 60 ? L(`${Math.floor(m / 60)} соат ${m % 60} дақ`, `${Math.floor(m / 60)} ч ${m % 60} мин`, `${Math.floor(m / 60)} h ${m % 60} min`) : L(`${m} дақ`, `${m} мин`, `${m} min`);
   const ago = t => { const s = (Date.now() - t) / 1000; return s < 120 ? L('ҳозиргина', 'только что', 'just now') : s < 3600 ? L(`${Math.round(s / 60)} дақ олдин`, `${Math.round(s / 60)} мин назад`, `${Math.round(s / 60)} min ago`)
     : s < 86400 ? L(`${Math.round(s / 3600)} соат олдин`, `${Math.round(s / 3600)} ч назад`, `${Math.round(s / 3600)} h ago`) : L(`${Math.round(s / 86400)} кун олдин`, `${Math.round(s / 86400)} дн назад`, `${Math.round(s / 86400)} d ago`); };
   const ini = n => String(n || '?').trim().split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
   const hue = k => { let h = 0; for (const ch of String(k)) h = (h * 31 + ch.charCodeAt(0)) % 360; return `hsl(${h}, 62%, 42%)`; };
   let open = ls('bayan-ucard-open') !== false, rows = [];
-  const draw = () => {
+  // The same list is drawn in the right column (can be folded) and, always open, in the admin panel's «Users» tab.
+  const build = (open, tog) => {
     const on = rows.filter(r => r.st === 'on').length, act = rows.filter(r => r.today > 0).length, tot = rows.reduce((a, r) => a + r.today, 0);
-    card.innerHTML = `<div class="sh uh"><span>👥 ${esc(L('Фойдаланувчилар', 'Пользователи', 'Users'))}</span><button type="button" data-ut>${open ? '▴' : '▾'}</button></div>`
+    return `<div class="sh uh"><span>👥 ${esc(L('Фойдаланувчилар', 'Пользователи', 'Users'))}</span>${tog ? `<button type="button" data-ut>${open ? '▴' : '▾'}</button>` : ''}</div>`
       + `<div class="utiles"><div><b>${rows.length}</b><span>${esc(L('жами', 'всего', 'total'))}</span></div><div class="g"><b>${on}</b><span>${esc(L('онлайн', 'онлайн', 'online'))}</span></div><div><b>${act}</b><span>${esc(L('бугун фаол', 'активны сегодня', 'active today'))}</span></div><div><b>${hm(tot)}</b><span>${esc(L('бугун жами', 'всего сегодня', 'today in all'))}</span></div></div>`
       + (open ? `<div class="ulist">${rows.map(r => {
         const mx = Math.max(30, ...r.week);
@@ -4970,6 +5029,7 @@ document.addEventListener('click', e => {
           + `<div class="ui"><b>${esc(r.name)}${r.inv ? ' <em title="' + esc(L('Хатловга рухсат берилган', 'Допущен к инвентаризации', 'Allowed to count')) + '">📦</em>' : ''}</b><small>${r.st === 'on' ? '🟢 ' + esc(L('онлайн', 'онлайн', 'online')) + (r.kind ? ' ' + r.kind : '') : r.st === 'idle' ? '🟡 ' + esc(L('сайт очиқ, фаол эмас', 'сайт открыт, неактивен', 'site open, idle')) : r.last ? '⚪ ' + esc(ago(r.last)) : '⚪ ' + esc(L('ҳали кирмаган', 'ещё не заходил', 'not yet signed in'))}</small></div>`
           + `<div class="ut"><b>${r.today ? hm(r.today) : '—'}</b><span class="uwk">${r.week.map((m, i) => `<i style="height:${Math.max(2, Math.round(m / mx * 18))}px" title="${esc(r.days[i])}: ${esc(hm(m))}"></i>`).join('')}</span></div></div>`; }).join('') || `<p class="unone">${esc(L('Ҳали ҳеч ким рўйхатдан ўтмаган.', 'Пока никто не зарегистрирован.', 'Nobody has signed up yet.'))}</p>`}</div>` : '');
   };
+  const draw = () => { card.innerHTML = build(open, true); pc.innerHTML = build(true, false); };
   card.addEventListener('click', e => { if (e.target.closest('[data-ut]')) { open = !open; ls('bayan-ucard-open', open); draw(); } });
   const load = async () => {
     if (document.hidden) return;
@@ -4987,7 +5047,7 @@ document.addEventListener('click', e => {
           today: sum(td), week: days.map(sum), days, last: Math.max(lastV.last || 0, live ? live.ts : 0), kind: lastV.kind, st: recent ? 'on' : live ? 'idle' : 'off' };
       }).sort((x, y) => ({ on: 0, idle: 1, off: 2 })[x.st] - ({ on: 0, idle: 1, off: 2 })[y.st] || y.today - x.today || y.last - x.last);
       draw();
-    } catch (e) { if (e.status === 401) card.innerHTML = `<div class="sh">👥 ${esc(L('Фойдаланувчилар', 'Пользователи', 'Users'))}</div><p class="unone">${esc(L('Firebase’да янги қоидаларни Publish қилинг.', 'Опубликуйте новые правила Firebase.', 'Publish the new Firebase rules.'))}</p>`; }
+    } catch (e) { if (e.status === 401) card.innerHTML = pc.innerHTML = `<div class="sh">👥 ${esc(L('Фойдаланувчилар', 'Пользователи', 'Users'))}</div><p class="unone">${esc(L('Firebase’да янги қоидаларни Publish қилинг.', 'Опубликуйте новые правила Firebase.', 'Publish the new Firebase rules.'))}</p>`; }
   };
   draw(); setTimeout(load, 1500); setInterval(load, 30000);
   }
