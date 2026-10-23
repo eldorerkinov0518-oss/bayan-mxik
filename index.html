@@ -721,7 +721,7 @@
     .side { display: grid; gap: 10px; align-content: start; position: fixed; top: 142px; z-index: 2; width: min(340px, calc(50vw - var(--mw) / 2 - 48px));
       max-height: calc(100vh - 165px); overflow: hidden; }
     .side .sc.cut { display: none; }
-    .side.l { right: calc(50% + var(--mw) / 2 + 24px); } .side.r { left: calc(50% + var(--mw) / 2 + 24px); max-height: calc(100vh - 210px); }
+    .side.l { right: calc(50% + var(--mw) / 2 + 24px); } .side.r { left: calc(50% + var(--mw) / 2 + 24px); max-height: calc(100vh - 240px); }
   }
   .sc { background: var(--card); border-radius: 16px; box-shadow: var(--shadow); padding: 12px 14px; }
   .sh { font: 800 12px var(--font), sans-serif; text-transform: uppercase; letter-spacing: .6px; color: var(--muted); margin-bottom: 8px; }
@@ -894,7 +894,7 @@
   .ucard { display: grid; gap: 8px; } .ucard .uh { display: flex; justify-content: space-between; align-items: center; margin: 0; } .ucard .uh button { border: 0; background: none; cursor: pointer; color: var(--muted); font-size: 14px; }
   .utiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; } .utiles div { background: var(--soft, #f1f5fb); border-radius: 10px; padding: 6px 4px; text-align: center; display: grid; }
   .utiles b { font-size: 14px; color: var(--b1); white-space: nowrap; } .utiles .g b { color: #0b7a55; } .utiles span { font-size: 10px; color: var(--muted); line-height: 1.2; }
-  .ulist { display: grid; gap: 4px; max-height: 300px; overflow-y: auto; scrollbar-width: thin; }
+  .ulist { display: grid; gap: 4px; max-height: 150px; overflow-y: auto; scrollbar-width: thin; }
   .urow { display: flex; align-items: center; gap: 8px; padding: 5px 6px; border-radius: 10px; background: rgba(255, 255, 255, .55); }
   .uav { position: relative; flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 700 12px var(--font), sans-serif; }
   .uav img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; } .uav i { position: absolute; right: -1px; bottom: -1px; width: 10px; height: 10px; border-radius: 50%; border: 2px solid #fff; background: #94a3b8; }
@@ -1372,7 +1372,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2590</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2600</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1402,7 +1402,7 @@
     <div class="sh">Сўнгги қидирувлар</div>
     <div id="recent"></div>
   </div>
-  <div class="sc">
+  <div class="sc" data-cut="2">
     <div class="sh">Фойдали ҳаволалар</div>
     <div class="lnks">
     <a class="lnk" href="https://tasnif.soliq.uz/" target="_blank" rel="noopener"><b>tasnif.soliq.uz</b><span>МХИК классификатори</span></a>
@@ -5011,7 +5011,7 @@ document.addEventListener('click', e => {
 
   if (ADM()) {
   const side = document.querySelector('.side.r'), card = document.createElement('div'), pc = document.createElement('div');
-  card.className = 'sc ucard'; side.append(card); pc.className = 'ucard'; document.getElementById('admC')?.append(pc);
+  card.className = 'sc ucard'; (side.querySelector('.co') || side.firstChild).after(card); pc.className = 'ucard'; document.getElementById('admC')?.append(pc);
   const hm = m => m >= 60 ? L(`${Math.floor(m / 60)} соат ${m % 60} дақ`, `${Math.floor(m / 60)} ч ${m % 60} мин`, `${Math.floor(m / 60)} h ${m % 60} min`) : L(`${m} дақ`, `${m} мин`, `${m} min`);
   const ago = t => { const s = (Date.now() - t) / 1000; return s < 120 ? L('ҳозиргина', 'только что', 'just now') : s < 3600 ? L(`${Math.round(s / 60)} дақ олдин`, `${Math.round(s / 60)} мин назад`, `${Math.round(s / 60)} min ago`)
     : s < 86400 ? L(`${Math.round(s / 3600)} соат олдин`, `${Math.round(s / 3600)} ч назад`, `${Math.round(s / 3600)} h ago`) : L(`${Math.round(s / 86400)} кун олдин`, `${Math.round(s / 86400)} дн назад`, `${Math.round(s / 86400)} d ago`); };
@@ -5029,7 +5029,7 @@ document.addEventListener('click', e => {
           + `<div class="ui"><b>${esc(r.name)}${r.inv ? ' <em title="' + esc(L('Хатловга рухсат берилган', 'Допущен к инвентаризации', 'Allowed to count')) + '">📦</em>' : ''}</b><small>${r.st === 'on' ? '🟢 ' + esc(L('онлайн', 'онлайн', 'online')) + (r.kind ? ' ' + r.kind : '') : r.st === 'idle' ? '🟡 ' + esc(L('сайт очиқ, фаол эмас', 'сайт открыт, неактивен', 'site open, idle')) : r.last ? '⚪ ' + esc(ago(r.last)) : '⚪ ' + esc(L('ҳали кирмаган', 'ещё не заходил', 'not yet signed in'))}</small></div>`
           + `<div class="ut"><b>${r.today ? hm(r.today) : '—'}</b><span class="uwk">${r.week.map((m, i) => `<i style="height:${Math.max(2, Math.round(m / mx * 18))}px" title="${esc(r.days[i])}: ${esc(hm(m))}"></i>`).join('')}</span></div></div>`; }).join('') || `<p class="unone">${esc(L('Ҳали ҳеч ким рўйхатдан ўтмаган.', 'Пока никто не зарегистрирован.', 'Nobody has signed up yet.'))}</p>`}</div>` : '');
   };
-  const draw = () => { card.innerHTML = build(open, true); pc.innerHTML = build(true, false); };
+  const draw = () => { card.innerHTML = build(open, true); pc.innerHTML = build(true, false); try { fitSides(); } catch {} };
   card.addEventListener('click', e => { if (e.target.closest('[data-ut]')) { open = !open; ls('bayan-ucard-open', open); draw(); } });
   const load = async () => {
     if (document.hidden) return;
