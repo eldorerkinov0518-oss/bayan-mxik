@@ -116,6 +116,9 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .tb-track span { padding: 0 34px; } .tb-track span::after { content: '•'; margin-left: 34px; opacity: .5; }
   @keyframes tbmove { to { transform: translateX(-50%); } }
   .testbar:hover .tb-track { animation-play-state: paused; }
+  /* The running line no longer runs: its notices appear in the 💡 tip card. The empty strip stays in the top bar's colour
+     and holds the user tab, so the language buttons under it stay free. */
+  .testbar { background: var(--tb); box-shadow: none; } .testbar .tb-track { display: none; }
 
   .chatbtn { position: fixed; right: 16px; bottom: 50px; z-index: 30; display: flex; align-items: center; gap: 8px; padding: 11px 18px; border: 0; border-radius: 999px;
     background: linear-gradient(135deg, #0b8f7a, #14b8a6 55%, #22c55e); color: #fff; font: 700 14px var(--font), sans-serif; cursor: pointer;
@@ -1443,7 +1446,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2730</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2740</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -3149,11 +3152,14 @@ document.getElementById('stats').addEventListener('click', e => {
     'Фарқ аслида тўғри бўлса, админ уни «Тўғри деб қабул қилиш» тугмаси билан тасдиқлайди.',
     'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.',
     '17 хонали МХИК кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.',
-    'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.'];
+    'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.',
+    'Таклиф ва фикрларингизни «Чат ва изоҳлар» орқали юборинг.'];
+  // While the admin keeps test mode on, its notice joins the tips (the yellow running line at the top was removed).
+  const TEST_TIP = '⚠ Сайт тест режимида ишламоқда: маълумотлар дастлабки, текширув босқичида.';
   let ti = Math.floor(Math.random() * TIPS.length);
   // The Telegram tip ends with the bot's address as a link.
   const showTip = () => {
-    const el = document.getElementById('tip'), t = TIPS[ti++ % TIPS.length];
+    const all = window.testModeOn ? [TEST_TIP, ...TIPS] : TIPS, el = document.getElementById('tip'), t = all[ti++ % all.length];
     el.textContent = t;
     if (t.startsWith('Телеграм бот')) el.insertAdjacentHTML('beforeend', ' <a class="tiplnk" href="https://t.me/bayan_mxik_bot" target="_blank" rel="noopener">@bayan_mxik_bot</a>');
   };
@@ -3540,12 +3546,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
     tok = d.id_token; tokExp = Date.now() + (d.expires_in - 60) * 1000; return tok;
   };
   // Test mode is one shared setting in the database: everyone can read it, only the admin can change it.
-  let testMode = true;
+  let testMode = true; window.testModeOn = true;
   const track = document.querySelector('.tb-track'), trackHtml = track.innerHTML;
   const showTest = () => {
     // Without the test notices the line gets short, so the remaining notices repeat to keep it full.
     const keep = [...track.children].slice(0, track.children.length / 2).filter(x => !x.classList.contains('tm')).map(x => x.outerHTML).join('');
-    track.innerHTML = testMode ? trackHtml : keep.repeat(6);
+    track.innerHTML = testMode ? trackHtml : keep.repeat(6); window.testModeOn = testMode;
     drawBar();
   };
   fetch(`${CHAT_DB}/settings/testMode.json`).then(r => r.ok ? r.json() : null).then(v => { if (v === false) { testMode = false; showTest(); } }).catch(() => {});
