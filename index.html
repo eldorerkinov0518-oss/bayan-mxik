@@ -1443,7 +1443,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2690</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2700</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -3418,13 +3418,13 @@ addEventListener('load', fitLayout); document.fonts?.ready.then(fitLayout);
   }).join('');
   // Phone view: Bayan ampoules in the three real glass and solution pairs.
   if (MOB) {
-    // A real glass ampoule: round-bottomed body, sloping shoulder, a narrow break neck with its ring, then a slim tapering tip.
-    const AMPV = 'M5 50V91a5 5 0 0 0 5 5h10a5 5 0 0 0 5-5V50C25 43 17.4 41 17.4 35C17.4 31 19.2 29 19.2 23C19.2 15 16.2 9 15.8 4Q15 1.5 14.2 4C13.8 9 10.8 15 10.8 23C10.8 29 12.6 31 12.6 35C12.6 41 5 43 5 50Z';
+    // The ampoule as drawn in the Bayan logo: straight body, a small notch at the break line, a top that narrows to a round end.
+    const AMPV = 'M4 93V46L7 43L4.8 40L7.2 10A7.8 7.8 0 0 1 22.8 10L25.2 40L23 43L26 46V93a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3Z';
     const PAIRS = [['rgba(235,244,255,.75)', '#7c8db5', 'rgba(190,222,255,.75)'], ['rgba(235,244,255,.75)', '#7c8db5', '#c01c28'], ['rgba(196,116,34,.45)', '#8a4b12', 'rgba(190,105,30,.6)']];
     const one = (k, [glass, edge, liq], w) => `<svg viewBox="0 0 30 100" width="${w}" height="${(w * 100 / 30).toFixed(1)}"><defs><clipPath id="mac${k}"><path d="${AMPV}"/></clipPath>
       <linearGradient id="mah${k}" x1="0" x2="1"><stop offset="0" stop-color="#fff" stop-opacity=".1"/><stop offset=".3" stop-color="#fff" stop-opacity=".95"/><stop offset=".45" stop-color="#fff" stop-opacity=".15"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient></defs>
-      <path d="${AMPV}" fill="${glass}"/><g clip-path="url(#mac${k})"><rect x="0" y="56" width="30" height="44" fill="${liq}"/><path d="M0 56q7.5-2.4 15 0t15 0v3H0z" fill="#fff" fill-opacity=".35"/>
-      <rect x="0" y="33.5" width="30" height="2.4" fill="#0a8ee0" fill-opacity=".85"/><rect x="5" y="0" width="20" height="100" fill="url(#mah${k})"/></g>
+      <path d="${AMPV}" fill="${glass}"/><g clip-path="url(#mac${k})"><rect x="0" y="58" width="30" height="42" fill="${liq}"/><path d="M0 58q7.5-2.4 15 0t15 0v3H0z" fill="#fff" fill-opacity=".35"/>
+      <rect x="5" y="0" width="20" height="100" fill="url(#mah${k})"/></g>
       <path d="${AMPV}" fill="none" stroke="${edge}" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
     document.getElementById('mamp').innerHTML = Array.from({ length: 12 }, (_, i) => {
       const d = 18 + (i * 7) % 14, w = 16 + (i * 5) % 14;
