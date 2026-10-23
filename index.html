@@ -893,6 +893,13 @@
   html.locked body > :not(#gate):not(script) { display: none !important; }
   html.locked #gate { display: flex; min-height: 100vh; align-items: center; justify-content: center; padding: 16px; }
   #gate .gbox { width: 100%; max-width: 380px; background: var(--card); color: var(--text); border-radius: 20px; box-shadow: var(--shadow); padding: 26px 24px; }
+  #gate .glogo { background: #fff; border-radius: 14px; padding: 14px 16px 10px; margin-bottom: 14px; text-align: center; position: relative; overflow: hidden; }
+  #gate .glogo img { max-width: 100%; height: 56px; object-fit: contain; display: block; margin: 0 auto; }
+  #gate .gcodes { display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 10px; position: relative; }
+  #gate .gcodes svg { height: 54px; width: auto; display: block; } #gate .gcodes .gean svg { height: 54px; }
+  #gate .gbeam { position: absolute; left: 0; right: 0; height: 2px; background: #ef4444; box-shadow: 0 0 8px #ef4444; top: 0; animation: gbeam 2.4s ease-in-out infinite alternate; z-index: 1; }
+  @keyframes gbeam { to { top: calc(100% - 2px); } }
+  @media (prefers-reduced-motion: reduce) { #gate .gbeam { animation: none; display: none; } }
   #gate h1 { font-size: 20px; margin: 0 0 4px; } #gate p { margin: 0 0 16px; color: var(--muted); font-size: 14px; }
   #gate .glang { display: flex; gap: 4px; justify-content: flex-end; margin-bottom: 8px; } #gate .glang button { border: 1px solid var(--line); background: var(--soft); color: var(--text); border-radius: 8px; padding: 3px 8px; font: inherit; font-size: 12px; cursor: pointer; }
   #gate .gtabs { display: flex; gap: 6px; margin-bottom: 14px; }
@@ -909,7 +916,7 @@
 </head>
 <body>
 <div id="gate"><div class="gbox">
-  <h1>BAYAN MEDICAL — МХИК базаси</h1>
+  <div class="glogo"><img id="glogo" alt="BAYAN MEDICAL"><div class="gcodes" id="gcodes" aria-hidden="true"><i class="gbeam"></i></div></div>
   <p>Сайтдан фойдаланиш учун киринг ёки рўйхатдан ўтинг.</p>
   <div class="glang" data-noi18n><button type="button" data-gl="uz">Ўзб</button><button type="button" data-gl="ru">Рус</button><button type="button" data-gl="en">Eng</button></div>
   <div class="gtabs"><button type="button" data-gt="in" class="on">Кириш</button><button type="button" data-gt="up">Рўйхатдан ўтиш</button></div>
@@ -1014,6 +1021,11 @@
     say(r.ok ? 'Паролни тиклаш ҳаволаси email манзилингизга юборилди.' : errText(r.d), r.ok);
   });
   addEventListener('DOMContentLoaded', () => {
+    // Gate header: the company logo from the top bar with a barcode and a QR code under it.
+    const lg = document.querySelector('.topbar-in img'), gl = document.getElementById('glogo');
+    if (lg && gl) gl.src = lg.src;
+    const gc = document.getElementById('gcodes');
+    try { if (gc) gc.insertAdjacentHTML('beforeend', `<span class="gean">${eanSvg('4780090860727')}</span><span>${qrSvg('03004001001003012')}</span>`); } catch {}
     const name = ls('bayan-user-name'), box = document.getElementById('userout');
     if (box && (ls('bayan-user-rt') || ls('bayan-admin-rt'))) { box.hidden = false; document.getElementById('username').textContent = name || ''; }
     document.getElementById('logout')?.addEventListener('click', () => {
@@ -1101,7 +1113,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2220</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2230</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
