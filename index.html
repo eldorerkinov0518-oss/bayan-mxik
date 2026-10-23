@@ -988,6 +988,17 @@
   .invh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; } .invh span { color: var(--muted); font-size: 13px; }
   .invhelp { margin: 6px 0 10px; font-size: 13px; color: var(--muted); }
   .invtools { display: flex; gap: 8px; flex-wrap: wrap; } .invtools .go { padding: 10px 16px; font-size: 14px; }
+  .invcmp { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
+  .invcmp .hd { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; }
+  .invcmp .hd small { font-weight: 500; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
+  .invcmp .hd button { border: 0; background: transparent; color: var(--muted); font-size: 16px; cursor: pointer; padding: 2px 6px; }
+  .invcmp .ch { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; } .invcmp .ch span { border-radius: 999px; padding: 3px 10px; font-size: 12.5px; background: #eef2f8; color: #1a2233; }
+  .invcmp .ch .ok { background: #dcfce7; color: #0b7a55; } .invcmp .ch .lo { background: #fde2e2; color: #b91c1c; } .invcmp .ch .hi { background: #fef3c7; color: #92400e; }
+  .invcmp table { width: 100%; border-collapse: collapse; font-size: 13px; } .invcmp th { text-align: left; color: var(--muted); font-weight: 600; font-size: 12px; padding: 4px; }
+  .invcmp th:not(:first-child) { text-align: right; } .invcmp .ch span span { background: none; padding: 0; }
+  .invcmp td { padding: 5px 4px; border-top: 1px solid var(--line); vertical-align: top; } .invcmp td.n { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .invcmp td small { display: block; color: var(--muted); font-size: 11.5px; } .invcmp .tb { max-height: 260px; overflow: auto; }
+  .invcmp tr.lo td.d { color: #b91c1c; font-weight: 700; } .invcmp tr.hi td.d { color: #b45309; font-weight: 700; } .invcmp tr.ok td.d { color: #0b7a55; font-weight: 700; }
   .invlist { margin-top: 10px; max-height: 320px; overflow: auto; }
   .invlist div { display: flex; justify-content: space-between; gap: 10px; padding: 7px 2px; border-top: 1px solid var(--line); font-size: 14px; }
   .invlist div small { display: block; color: var(--muted); font-size: 12px; } .invlist div b.n { font-size: 16px; white-space: nowrap; }
@@ -1072,9 +1083,9 @@
   };
   const ERR = { EMAIL_EXISTS: 'Бу email билан аллақачон рўйхатдан ўтилган. «Кириш»ни танланг.', EMAIL_NOT_FOUND: 'Email ёки парол нотўғри.',
     INVALID_PASSWORD: 'Email ёки парол нотўғри.', INVALID_LOGIN_CREDENTIALS: 'Email ёки парол нотўғри.', INVALID_EMAIL: 'Email нотўғри ёзилган.',
-    USER_DISABLED: 'Бу ҳисоб админ томонидан ўчириб қўйилган.', OPERATION_NOT_ALLOWED: 'Рўйхатдан ўтиш ҳали ёқилмаган. Админга мурожаат қилинг.',
-    ADMIN_ONLY_OPERATION: 'Рўйхатдан ўтиш ҳали ёқилмаган. Админга мурожаат қилинг.', TOO_MANY_ATTEMPTS_TRY_LATER: 'Уринишлар кўп бўлди, бироздан кейин қайта уриниб кўринг.' };
-  const errText = d => { const c = String(d?.error?.message || '').split(/[ :]/)[0]; return ERR[c] || (c.startsWith('WEAK_PASSWORD') ? 'Парол камида 6 белгидан иборат бўлсин.' : 'Хатолик юз берди. Интернетни текшириб, қайта уриниб кўринг.'); };
+    USER_DISABLED: 'Бу ҳисоб администратор томонидан ўчириб қўйилган.', OPERATION_NOT_ALLOWED: 'Рўйхатдан ўтиш ҳали ёқилмаган. Администраторга мурожаат қилинг.',
+    ADMIN_ONLY_OPERATION: 'Рўйхатдан ўтиш ҳали ёқилмаган. Администраторга мурожаат қилинг.', TOO_MANY_ATTEMPTS_TRY_LATER: 'Уринишлар сони ошиб кетди. Бироз кутиб, қайта уриниб кўринг.' };
+  const errText = d => { const c = String(d?.error?.message || '').split(/[ :]/)[0]; return ERR[c] || (c.startsWith('WEAK_PASSWORD') ? 'Парол камида 6 белгидан иборат бўлсин.' : 'Хатолик юз берди. Интернет алоқасини текшириб, қайта уриниб кўринг.'); };
   const f = document.getElementById('gform'), msg = document.getElementById('gmsg'), sub = document.getElementById('gsub');
   let mode = 'in';
   const say = (m, ok) => { msg.textContent = t(m); msg.classList.toggle('ok', !!ok); };
@@ -1117,7 +1128,7 @@
         if (!r.ok) return say(errText(r.d));
         done(r.d);
       }
-    } catch { say('Хатолик юз берди. Интернетни текшириб, қайта уриниб кўринг.'); }
+    } catch { say('Хатолик юз берди. Интернет алоқасини текшириб, қайта уриниб кўринг.'); }
     finally { sub.disabled = false; }
   });
   document.getElementById('gforgot').addEventListener('click', async () => {
@@ -1144,7 +1155,7 @@
 </script>
 <div class="edge l" aria-hidden="true"><svg viewBox="0 0 120 600" preserveAspectRatio="xMidYMid meet"><g transform="translate(60 20)"><g class="rung" style="animation-delay:-0.00s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 46)"><g class="rung" style="animation-delay:-0.16s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 72)"><g class="rung" style="animation-delay:-0.32s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 98)"><g class="rung" style="animation-delay:-0.48s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 124)"><g class="rung" style="animation-delay:-0.64s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 150)"><g class="rung" style="animation-delay:-0.80s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 176)"><g class="rung" style="animation-delay:-0.96s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 202)"><g class="rung" style="animation-delay:-1.12s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 228)"><g class="rung" style="animation-delay:-1.28s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 254)"><g class="rung" style="animation-delay:-1.44s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 280)"><g class="rung" style="animation-delay:-1.60s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 306)"><g class="rung" style="animation-delay:-1.76s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 332)"><g class="rung" style="animation-delay:-1.92s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 358)"><g class="rung" style="animation-delay:-2.08s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 384)"><g class="rung" style="animation-delay:-2.24s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 410)"><g class="rung" style="animation-delay:-2.40s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 436)"><g class="rung" style="animation-delay:-2.56s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 462)"><g class="rung" style="animation-delay:-2.72s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 488)"><g class="rung" style="animation-delay:-2.88s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 514)"><g class="rung" style="animation-delay:-3.04s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 540)"><g class="rung" style="animation-delay:-3.20s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g><g transform="translate(60 566)"><g class="rung" style="animation-delay:-3.36s"><line x1="-34" x2="34" stroke="#a5b4fc" stroke-width="2"/><circle cx="-34" r="6" fill="#281274"/><circle cx="34" r="6" fill="#0a8ee0"/></g></g></svg></div><div class="edge r" aria-hidden="true"><svg viewBox="0 0 120 600" preserveAspectRatio="xMidYMid meet"><g class="mol" transform="translate(60 92)"><g class="molr"><polygon points="0,-34 29,-17 29,17 0,34 -29,17 -29,-17" fill="none" stroke="#281274" stroke-width="3"/><polygon points="0,-22 19,-11 19,11 0,22 -19,11 -19,-11" fill="none" stroke="#0a8ee0" stroke-width="2" stroke-dasharray="6 5"/><circle cx="0" cy="-34" r="6" fill="#0a8ee0"/><circle cx="29" cy="-17" r="6" fill="#281274"/><circle cx="29" cy="17" r="6" fill="#0a8ee0"/><circle cx="0" cy="34" r="6" fill="#281274"/><circle cx="-29" cy="17" r="6" fill="#0a8ee0"/><circle cx="-29" cy="-17" r="6" fill="#281274"/><line x1="29" y1="-17" x2="50" y2="-30" stroke="#281274" stroke-width="3"/><circle cx="50" cy="-30" r="5" fill="#f97316"/><line x1="-29" y1="17" x2="-50" y2="30" stroke="#281274" stroke-width="3"/><circle cx="-50" cy="30" r="5" fill="#22c55e"/></g></g><path d="M16 170h48" stroke="#7c8db5" stroke-width="3" stroke-linecap="round"/><path d="M20 170v400q0 16 20 16t20-16V170" fill="rgba(255,255,255,.55)" stroke="#7c8db5" stroke-width="2.5"/><path class="lq" d="M22 300q9-6 18 0t18 0v270q0 14-18 14t-18-14z" fill="url(#lqg)"/><defs><linearGradient id="lqg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#38bdf8"/><stop offset="1" stop-color="#6366f1"/></linearGradient></defs><circle class="bub" cx="33" cy="560" r="3.5" style="animation-duration:2.8s;animation-delay:-2.0s"/><circle class="bub" cx="30" cy="560" r="2.5" style="animation-duration:2.7s;animation-delay:-2.0s"/><circle class="bub" cx="35" cy="560" r="2.5" style="animation-duration:3.1s;animation-delay:-2.7s"/><circle class="bub" cx="34" cy="560" r="3" style="animation-duration:4.6s;animation-delay:-1.3s"/><circle class="bub" cx="26" cy="560" r="3.5" style="animation-duration:4.5s;animation-delay:-1.0s"/><circle class="bub" cx="35" cy="560" r="3.5" style="animation-duration:4.1s;animation-delay:-3.7s"/><circle class="bub" cx="53" cy="560" r="3.5" style="animation-duration:2.7s;animation-delay:-3.0s"/><circle class="bub" cx="47" cy="560" r="4" style="animation-duration:3.8s;animation-delay:-0.9s"/><circle class="bub" cx="41" cy="560" r="3.5" style="animation-duration:2.7s;animation-delay:-4.7s"/><circle class="bub" cx="53" cy="560" r="5" style="animation-duration:4.6s;animation-delay:-0.0s"/><circle class="bub" cx="35" cy="560" r="5" style="animation-duration:4.3s;animation-delay:-1.6s"/><circle class="bub" cx="50" cy="560" r="5" style="animation-duration:3.0s;animation-delay:-2.1s"/><circle class="bub" cx="35" cy="560" r="4" style="animation-duration:3.6s;animation-delay:-1.2s"/><circle class="bub" cx="34" cy="560" r="2.5" style="animation-duration:2.7s;animation-delay:-2.3s"/><line x1="18" x2="34" y1="220" y2="220" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="250" y2="250" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="34" y1="280" y2="280" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="310" y2="310" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="34" y1="340" y2="340" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="370" y2="370" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="34" y1="400" y2="400" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="430" y2="430" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="34" y1="460" y2="460" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="490" y2="490" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="34" y1="520" y2="520" stroke="#7c8db5" stroke-width="1.5"/><line x1="18" x2="28" y1="550" y2="550" stroke="#7c8db5" stroke-width="1.5"/></svg></div>
 <div class="bgfx" aria-hidden="true"><b class="blob b1"></b><b class="blob b2"></b><b class="blob b3"></b><b class="blob b4"></b><div id="bgfloat"></div></div>
-<div class="testbar" role="status"><div class="tb-track"><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар бирламчи ва текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span></div></div>
+<div class="testbar" role="status"><div class="tb-track"><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар дастлабки бўлиб, текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span class="tm">Маълумотлар дастлабки бўлиб, текширув босқичида</span><span class="tm">⚠ Сайт тест режимида ишламоқда</span><span>Таклифларингизни «Чат ва изоҳлар» орқали юборинг</span><span>📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин</span></div></div>
 <div class="topbar">
   <div class="deco l">
     <div class="fx" id="fx" role="button" tabindex="0" aria-haspopup="dialog" hidden><span class="fxs" id="fxs">$</span><div class="fxt"><b id="fxrate"></b><span id="fxdiff"></span></div></div>
@@ -1208,15 +1219,17 @@
       <div id="invwork" hidden>
         <div class="invmeta" id="invmeta"></div>
         <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.</p>
-        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invbk" title="Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш">📥 Ҳисоб файли</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <input type="file" id="invfile" accept=".xlsx,.csv,.txt,.xls" hidden>
+        <div class="invcmp" id="invcmp" hidden></div>
         <div class="invlist" id="invlist"></div>
       </div>
       <details class="invhist" id="invhist" hidden><summary>🕘 Тарих <span id="invhn"></span></summary><div id="invhl"></div></details>
     </div>
     <div class="codeinfo" id="codeinfo" hidden>
-      <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
+      <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот тури ва ишлаб чиқарувчини бутун дунё миқёсида аниқлаш имконини беради. Бир хил маҳсулотнинг барча қутиларида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
       <div class="ci"><b>🧾 МХИК коди</b><p>МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.</p><p>Солиқ қўмитасининг tasnif.soliq.uz классификаторида берилади. Электрон ҳисоб-фактура, касса чеки ва маркировкада ишлатилади.</p><small>Мисол: 03004172006063001</small></div>
-      <div class="ci"><b>▦ Маркировка коди</b><p>Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).</p><p>Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.</p><small>Ҳар бир қутида бошқача бўлади</small></div>
+      <div class="ci"><b>▦ Маркировка коди</b><p>Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).</p><p>Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.</p><small>Ҳар бир қутида ўзига хос бўлади</small></div>
     </div>
   </section>
   <div id="out"></div>
@@ -1237,7 +1250,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2420</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2430</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1264,7 +1277,7 @@
       <span><b>Тошкент ш., Бўғишамол кўчаси, 160</b><small>Мўлжал: Юнусобод кичик саноат зонаси</small><em>Харитада кўриш →</em></span></a>
   </div>
   <div class="sc">
-    <div class="sh">Охирги излашлар</div>
+    <div class="sh">Сўнгги қидирувлар</div>
     <div id="recent"></div>
   </div>
   <div class="sc">
@@ -1294,14 +1307,14 @@
 }</script>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
-    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Тортиб ўлчамини ўзгартиринг"></span></header>
+    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Ўлчамини ўзгартириш учун тортинг"></span></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<span class="ipnote">🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.</span><a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
     <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="histbtn" title="Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш">💾 Тарих</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
     <form id="chatf" autocomplete="off">
-      <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки никингиз" required>
+      <input id="chatname" maxlength="40" placeholder="Исм-шарифингиз ёки тахаллусингиз" required>
       <div class="emopick" id="emopick" hidden></div>
       <div class="editbar" id="editbar" hidden>✏️ <b>Таҳрирлаш:</b> <span></span><button type="button" id="editx" aria-label="Бекор қилиш">✕</button></div>
       <div class="attpend" id="attpend" hidden></div>
@@ -1366,6 +1379,32 @@ const UI = (() => { try { return ['uz', 'ru', 'en'].includes(localStorage.getIte
 const LI = UI === 'ru' ? 0 : 1;
 // Whole texts and phrases: Uzbek → [Russian, English].
 const I18N = {
+  '📥 Ҳисоб файли': ['📥 Файл учёта', '📥 Book file'],
+  'Ҳисоб файли': ['Файл учёта', 'Book file'],
+  'Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш': ['Загрузить коды из учёта предприятия и сравнить с фактом', 'Load the codes from the company books and compare them with the count'],
+  'Ҳисоб билан солиштириш': ['Сравнение с учётом', 'Comparison with the books'],
+  'Ҳисоб файлини олиб ташлаш': ['Убрать файл учёта', 'Remove the book file'],
+  'Ҳисобда': ['По учёту', 'Books'],
+  'Фактда': ['Факт', 'Counted'],
+  'Ҳисобда:': ['По учёту:', 'Books:'],
+  'Фактда:': ['Факт:', 'Counted:'],
+  'Мос:': ['Совпадает:', 'Match:'],
+  'Камомад:': ['Недостача:', 'Shortage:'],
+  'Ортиқча:': ['Излишек:', 'Surplus:'],
+  'Камомад': ['Недостача', 'Shortage'],
+  'Ортиқча': ['Излишек', 'Surplus'],
+  'Фарқ': ['Разница', 'Difference'],
+  'Солиштириш': ['Сравнение', 'Comparison'],
+  'Кодлар фарқи': ['Расхождения кодов', 'Code differences'],
+  'Юкланган': ['Загружен', 'Loaded'],
+  'Юкланган:': ['Загружен:', 'Loaded:'],
+  'Ҳисоб файли:': ['Файл учёта:', 'Book file:'],
+  'Сканерланмаган кодлар:': ['Не отсканировано кодов:', 'Codes not scanned:'],
+  'Ҳисобда йўқ кодлар:': ['Кодов нет в учёте:', 'Codes not in the books:'],
+  'Ҳисобда бор, сканерланмаган': ['Есть в учёте, не отсканирован', 'In the books, not scanned'],
+  'Сканерланган, ҳисобда йўқ': ['Отсканирован, нет в учёте', 'Scanned, not in the books'],
+  'Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.': ['Сохраните старый файл .xls в Excel как .xlsx и загрузите снова.', 'Save the old .xls file as .xlsx in Excel and load it again.'],
+  'Файлдан штрих код ёки маркировка коди топилмади. Excel (.xlsx), CSV ёки TXT файл танланг.': ['В файле не найдено штрих-кодов или кодов маркировки. Выберите файл Excel (.xlsx), CSV или TXT.', 'No barcodes or marking codes found in the file. Pick an Excel (.xlsx), CSV or TXT file.'],
   '✓ Тугатиш': ['✓ Завершить', '✓ Finish'],
   'Тугатилган': ['Завершена', 'Finished'],
   'Бошланган': ['Начата', 'Started'],
@@ -1374,7 +1413,7 @@ const I18N = {
   'Жорий инвентаризация тугатилиб, тарихга сақлансинми?': ['Завершить текущую инвентаризацию и сохранить в историю?', 'Finish the current stock count and save it to history?'],
   '🕘 Тарих': ['🕘 История', '🕘 History'],
   'Бундай маҳсулот топилмади.': ['Такой продукт не найден.', 'No such product found.'],
-  'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.': ['Попробуйте написать название иначе или отсканировать штрих-код.', 'Try another spelling or scan the barcode.'],
+  'Номини бошқача ёзиб кўринг ёки штрих кодни сканерланг.': ['Попробуйте написать название иначе или отсканировать штрих-код.', 'Try another spelling or scan the barcode.'],
   'Омбор': ['Склад', 'Warehouse'],
   'Масъул шахс': ['Ответственное лицо', 'Responsible person'],
   'Масалан: Асосий омбор': ['Например: Основной склад', 'For example: Main warehouse'],
@@ -1399,7 +1438,7 @@ const I18N = {
   'Тугатиш': ['Завершить', 'Finish'],
   'Бу код аллақачон саналган': ['Этот код уже посчитан', 'This code is already counted'],
   'Каталогда йўқ': ['Нет в каталоге', 'Not in catalog'],
-  'Инвентаризация рўйхатини тозалайми?': ['Очистить список инвентаризации?', 'Clear the stock count list?'],
+  'Инвентаризация рўйхати тозалансинми?': ['Очистить список инвентаризации?', 'Clear the stock count list?'],
   'Рўйхат бўш.': ['Список пуст.', 'The list is empty.'],
   'Сони': ['Кол-во', 'Qty'],
   'Биринчи скан': ['Первый скан', 'First scan'],
@@ -1422,11 +1461,11 @@ const I18N = {
   'Паролни унутдим': ['Забыли пароль', 'Forgot password'],
   'Бу email билан аллақачон рўйхатдан ўтилган. «Кириш»ни танланг.': ['Этот email уже зарегистрирован. Выберите «Вход».', 'This email is already registered. Choose «Sign in».'],
   'Email нотўғри ёзилган.': ['Email указан неверно.', 'The email is not valid.'],
-  'Бу ҳисоб админ томонидан ўчириб қўйилган.': ['Этот аккаунт отключён администратором.', 'This account was disabled by the admin.'],
-  'Рўйхатдан ўтиш ҳали ёқилмаган. Админга мурожаат қилинг.': ['Регистрация ещё не включена. Обратитесь к администратору.', 'Registration is not enabled yet. Contact the admin.'],
-  'Уринишлар кўп бўлди, бироздан кейин қайта уриниб кўринг.': ['Слишком много попыток, попробуйте позже.', 'Too many attempts, try again later.'],
+  'Бу ҳисоб администратор томонидан ўчириб қўйилган.': ['Этот аккаунт отключён администратором.', 'This account was disabled by the admin.'],
+  'Рўйхатдан ўтиш ҳали ёқилмаган. Администраторга мурожаат қилинг.': ['Регистрация ещё не включена. Обратитесь к администратору.', 'Registration is not enabled yet. Contact the admin.'],
+  'Уринишлар сони ошиб кетди. Бироз кутиб, қайта уриниб кўринг.': ['Слишком много попыток, попробуйте позже.', 'Too many attempts, try again later.'],
   'Парол камида 6 белгидан иборат бўлсин.': ['Пароль должен быть не короче 6 символов.', 'The password must be at least 6 characters.'],
-  'Хатолик юз берди. Интернетни текшириб, қайта уриниб кўринг.': ['Произошла ошибка. Проверьте интернет и попробуйте снова.', 'Something went wrong. Check the internet and try again.'],
+  'Хатолик юз берди. Интернет алоқасини текшириб, қайта уриниб кўринг.': ['Произошла ошибка. Проверьте интернет и попробуйте снова.', 'Something went wrong. Check the internet and try again.'],
   'Исм ва фамилияни ёзинг.': ['Введите имя и фамилию.', 'Enter your first and last name.'],
   'Пароллар бир хил эмас.': ['Пароли не совпадают.', 'The passwords do not match.'],
   'Паролни ёзинг.': ['Введите пароль.', 'Enter the password.'],
@@ -1434,7 +1473,7 @@ const I18N = {
   'Аввал email манзилингизни ёзинг.': ['Сначала введите ваш email.', 'Enter your email first.'],
   'Паролни тиклаш ҳаволаси email манзилингизга юборилди.': ['Ссылка для восстановления пароля отправлена на ваш email.', 'A password reset link was sent to your email.'],
   '⚠ Сайт тест режимида ишламоқда': ['⚠ Сайт работает в тестовом режиме', '⚠ The site is in test mode'],
-  'Маълумотлар бирламчи ва текширув босқичида': ['Данные предварительные и проходят проверку', 'Data is preliminary and under review'],
+  'Маълумотлар дастлабки бўлиб, текширув босқичида': ['Данные предварительные и проходят проверку', 'Data is preliminary and under review'],
   'Таклифларингизни «Чат ва изоҳлар» орқали юборинг': ['Присылайте предложения через «Чат и отзывы»', 'Send your suggestions via «Chat & feedback»'],
   '📲 Штрих кодни Telegram ботимиз орқали ҳам текширишингиз мумкин': ['📲 Штрих-код можно проверить и через наш Telegram-бот', '📲 You can also check a barcode with our Telegram bot'],
   'МЧЖ «BAYAN MEDICAL»': ['ООО «BAYAN MEDICAL»', 'BAYAN MEDICAL LLC'],
@@ -1470,7 +1509,7 @@ const I18N = {
   "tasnif «Отправить заявку» ойнаси учун маълумот:": ['Данные для окна tasnif «Отправить заявку»:', "Data for tasnif's «Отправить заявку» form:"],
   'Бу маҳсулотнинг РУ гувоҳномаси топилмади, «Описание товара»га маҳсулот тавсифи қўйилди.': ['Регистрационное удостоверение этого продукта не найдено, в «Описание товара» подставлено описание продукта.', 'No registration certificate found for this product; the product description is used for «Описание товара».'],
   'РУ расми': ['Изображение РУ', 'Certificate image'], 'Жадвалда:': ['В таблице:', 'In the table:'], 'Тозалаш': ['Очистить', 'Clear'],
-  'Жадвални тозалайми?': ['Очистить таблицу?', 'Clear the table?'], 'РУ расмини юклаб бўлмади. Интернетни текширинг.': ['Не удалось загрузить изображение РУ. Проверьте интернет.', 'Could not load the certificate image. Check the internet connection.'],
+  'Жадвал тозалансинми?': ['Очистить таблицу?', 'Clear the table?'], 'РУ расмини юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось загрузить изображение РУ. Проверьте интернет.', 'Could not load the certificate image. Check the internet connection.'],
   'Ўхшаш маҳсулот бўйича танланг:': ['Выберите как у похожего продукта:', 'Pick the same as the similar product:'],
   'Ўхшаш маҳсулотнинг МХИК коди топилмади, рўйхатдан мос позицияни танланг': ['ИКПУ похожего продукта не найден, выберите подходящую позицию из списка', 'No similar product with a PSCIC found; pick the matching position from the list'],
   'tasnif.soliq.uz ни очиш ↗': ['Открыть tasnif.soliq.uz ↗', 'Open tasnif.soliq.uz ↗'],
@@ -1487,19 +1526,19 @@ const I18N = {
   'Харитада кўриш': ['Показать на карте', 'View on map'],
   'Тошкент ш., Бўғишамол кўчаси, 160': ['г. Ташкент, ул. Богишамол, 160', '160 Bogishamol St., Tashkent'],
   'Мўлжал: Юнусобод кичик саноат зонаси': ['Ориентир: малая промзона Юнусабад', 'Landmark: Yunusabad small industrial zone'],
-  'Охирги излашлар': ['Последние поиски', 'Recent searches'],
+  'Сўнгги қидирувлар': ['Последние поиски', 'Recent searches'],
   'Реакция': ['Реакция', 'Reaction'],
   '🛠 Админ асбоблари': ['🛠 Инструменты админа', '🛠 Admin tools'],
   '🎨 Фон': ['🎨 Фон', '🎨 Background'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Сайт мавзуси': ['Тема сайта', 'Site theme'], 'Стандарт': ['Стандарт', 'Standard'], 'Тунги': ['Ночная', 'Night'], 'Денгиз': ['Море', 'Sea'], 'Табиат': ['Природа', 'Nature'], 'Классик': ['Классика', 'Classic'], 'Шафақ': ['Закат', 'Sunset'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернетни текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Тортиб ўлчамини ўзгартиринг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Сайт мавзуси': ['Тема сайта', 'Site theme'], 'Стандарт': ['Стандарт', 'Standard'], 'Тунги': ['Ночная', 'Night'], 'Денгиз': ['Море', 'Sea'], 'Табиат': ['Природа', 'Nature'], 'Классик': ['Классика', 'Classic'], 'Шафақ': ['Закат', 'Sunset'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Ўлчамини ўзгартириш учун тортинг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
-  'Байрам ва бошқа': ['Праздник и другое', 'Celebration and more'], 'Охирги ишлатилганлар': ['Недавние', 'Recently used'],
+  'Байрам ва бошқалар': ['Праздник и другое', 'Celebration and more'], 'Сўнгги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
   'Смайлик': ['Смайлик', 'Smiley'],
   'ℹ Кодлар ҳақида': ['ℹ О кодах', 'ℹ About codes'],
   '▌▌▌ Штрих код (GTIN)': ['▌▌▌ Штрих-код (GTIN)', '▌▌▌ Barcode (GTIN)'],
   'Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.': ['Линейный код на упаковке из 8, 12, 13 или 14 цифр.', 'The striped code on the box, 8, 12, 13 or 14 digits long.'],
-  'Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.': ['Определяет товар и производителя во всём мире. Одинаков на всех упаковках одного товара.', 'Identifies the product and its maker worldwide. It is the same on every box of the same product.'],
+  'Маҳсулот тури ва ишлаб чиқарувчини бутун дунё миқёсида аниқлаш имконини беради. Бир хил маҳсулотнинг барча қутиларида бир хил бўлади.': ['Определяет товар и производителя во всём мире. Одинаков на всех упаковках одного товара.', 'Identifies the product and its maker worldwide. It is the same on every box of the same product.'],
   'Мисол: 4780090866873': ['Пример: 4780090866873', 'Example: 4780090866873'],
   '🧾 МХИК коди': ['🧾 Код ИКПУ', '🧾 PSCIC code'],
   'МХИК — Маҳсулотлар ва хизматларнинг идентификация коди, русчаси ИКПУ (идентификационный код продукции и услуг), инглизчаси PSCIC (Product and Service Classification Identification Code). 17 рақамдан иборат.': ['ИКПУ (идентификационный код продукции и услуг) — код из 17 цифр; по-узбекски МХИК, по-английски PSCIC.', 'PSCIC (Product and Service Classification Identification Code) is the 17-digit identification code of goods and services; in Uzbek it is MXIK, in Russian IKPU.'],
@@ -1508,7 +1547,7 @@ const I18N = {
   '▦ Маркировка коди': ['▦ Код маркировки', '▦ Marking code'],
   'Ҳар бир қутига алоҳида босиладиган квадрат DataMatrix код («Асл белгиси» тизими).': ['Квадратный код DataMatrix, наносимый на каждую упаковку отдельно (система «Asl Belgisi»).', 'A square DataMatrix code printed on each box separately (the «Asl Belgisi» system).'],
   'Ичида штрих код, ноёб серия рақами ва ҳимоя коди бор. Ҳар бир донани ишлаб чиқаришдан сотувгача кузатишга имкон беради, дорилар учун мажбурий.': ['Содержит штрих-код, уникальный серийный номер и код проверки. Позволяет отследить каждую упаковку от производства до продажи, для лекарств обязателен.', 'It holds the barcode, a unique serial number and a check code. It lets each box be traced from production to sale and is mandatory for medicines.'],
-  'Ҳар бир қутида бошқача бўлади': ['На каждой упаковке свой', 'Different on every box'],
+  'Ҳар бир қутида ўзига хос бўлади': ['На каждой упаковке свой', 'Different on every box'],
   'Фойдали ҳаволалар': ['Полезные ссылки', 'Useful links'],
   'МХИК классификатори': ['Классификатор ИКПУ', 'PSCIC classifier'],
   'Асл белгиси': ['Асл белгиси', 'Asl Belgisi'],
@@ -1528,7 +1567,7 @@ const I18N = {
   '⬇ Юклаб олиш': ['⬇ Скачать', '⬇ Download'],
   'Юкланмоқда…': ['Загрузка…', 'Loading…'],
   'Файлни очиб бўлмади. У ўчирилган бўлиши мумкин.': ['Не удалось открыть файл. Возможно, он удалён.', 'Could not open the file. It may have been deleted.'],
-  'Файл юборилмади. Интернетни текширинг.': ['Файл не отправлен. Проверьте интернет.', 'The file was not sent. Check your connection.'],
+  'Файл юборилмади. Интернет алоқасини текширинг.': ['Файл не отправлен. Проверьте интернет.', 'The file was not sent. Check your connection.'],
   'Саҳифа ҳақида': ['О странице', 'About this page'],
   'Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.':
     ['Эта страница создана для формирования базы данных и даёт только первичные сведения. В ней возможны отдельные недочёты. Если у вас есть предложения или замечания, оставьте комментарий администратору.',
@@ -1541,7 +1580,7 @@ const I18N = {
   'Блок': ['Блок', 'Block'],
   'Админ режимидан чиқиш': ['Выйти из режима админа', 'Leave admin mode'],
   'Чиқиш': ['Выйти', 'Sign out'],
-  'Исм-шарифингиз ёки никингиз': ['Ваше имя или ник', 'Your name or nickname'],
+  'Исм-шарифингиз ёки тахаллусингиз': ['Ваше имя или ник', 'Your name or nickname'],
   'Изоҳингизни ёзинг…': ['Напишите комментарий…', 'Write a comment…'],
   'Юбориш': ['Отправить', 'Send'],
   // Search result card
@@ -1596,7 +1635,7 @@ const I18N = {
   'Бу маҳсулотга ҳали МХИК олинмаган.': ['Для этого продукта ИКПУ ещё не получен.', 'No PSCIC has been obtained for this product yet.'],
   'Бу штрих код учун МХИК топилмади.': ['Для этого штрих-кода ИКПУ не найден.', 'No PSCIC found for this barcode.'],
   'tasnif.soliq.uz билан боғланиб бўлмади.': ['Не удалось связаться с tasnif.soliq.uz.', 'Could not connect to tasnif.soliq.uz.'],
-  'Интернетни текширинг.': ['Проверьте интернет.', 'Check your internet connection.'],
+  'Интернет алоқасини текширинг.': ['Проверьте интернет.', 'Check your internet connection.'],
   'МХИК коди tasnif.soliq.uz’да изланмоқда…': ['Код ИКПУ ищется на tasnif.soliq.uz…', 'Searching the PSCIC code on tasnif.soliq.uz…'],
   'Бу МХИК коди tasnif.soliq.uz базасида топилмади.': ['Этот код ИКПУ не найден в базе tasnif.soliq.uz.', 'This PSCIC code was not found on tasnif.soliq.uz.'],
   'кўриш': ['показать', 'show'],
@@ -1658,15 +1697,15 @@ const I18N = {
   'Блоклаб бўлмади.': ['Не удалось заблокировать.', 'Could not block.'],
   'Ўчириб бўлмади.': ['Не удалось удалить.', 'Could not delete.'],
   'Шу хабар ўчирилсинми?': ['Удалить это сообщение?', 'Delete this message?'],
-  'Хабар юборилмади. Интернетни текширинг.': ['Сообщение не отправлено. Проверьте интернет.', 'Message not sent. Check your internet connection.'],
-  'Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!': ['Комментариев пока нет. Напишите первым!', 'No comments yet. Be the first to write!'],
+  'Хабар юборилмади. Интернет алоқасини текширинг.': ['Сообщение не отправлено. Проверьте интернет.', 'Message not sent. Check your internet connection.'],
+  'Ҳозирча изоҳлар йўқ. Биринчи бўлиб сиз ёзинг!': ['Комментариев пока нет. Напишите первым!', 'No comments yet. Be the first to write!'],
   'Танлаш': ['Выбрать', 'Select'],
   'Блоклаш': ['Заблокировать', 'Block'],
-  'Сиз админ томонидан блоклангансиз': ['Вы заблокированы админом', 'You have been blocked by the admin'],
+  'Сиз администратор томонидан блоклангансиз': ['Вы заблокированы админом', 'You have been blocked by the admin'],
   'Чат вақтинча ёпиқ': ['Чат временно закрыт', 'Chat is temporarily closed'],
   'Админ режими': ['Режим админа', 'Admin mode'],
   'Алоқа йўқ, қайта уринилмоқда…': ['Нет связи, повторная попытка…', 'No connection, retrying…'],
-  'Кимлар онлайн — кўриш учун босинг': ['Кто онлайн: нажмите, чтобы посмотреть', 'Who is online: click to see'],
+  'Ким онлайн эканини кўриш учун босинг': ['Кто онлайн: нажмите, чтобы посмотреть', 'Who is online: click to see'],
   // Exports
   'Сана': ['Дата', 'Date'], 'Жами': ['Всего', 'Total'], 'Манба': ['Источник', 'Source'],
   'фарқ бор': ['с расхождениями', 'with differences'],
@@ -2096,12 +2135,12 @@ const appXlsBar = () => { const n = appList().length; return n ? `Жадвалд
 const APP_COLS = ['Название товара', 'Бренд', 'Описание товара', 'Код ТНВЭД', 'Штрих код', 'Единица измерения', 'Упаковка товара', 'Похожий ИКПУ'];
 document.addEventListener('click', async e => {
   const x = e.target.closest('[data-appxls], [data-appclr], .rupng'); if (!x) return;
-  if (x.matches('[data-appclr]')) { if (confirm('Жадвални тозалайми?')) { try { localStorage.removeItem(APPS); } catch {} document.querySelectorAll('.appx').forEach(el => el.innerHTML = ''); } return; }
+  if (x.matches('[data-appclr]')) { if (confirm('Жадвал тозалансинми?')) { try { localStorage.removeItem(APPS); } catch {} document.querySelectorAll('.appx').forEach(el => el.innerHTML = ''); } return; }
   if (x.matches('.rupng')) {
     const img = new Image(); img.crossOrigin = 'anonymous';
     img.onload = () => { const cv = document.createElement('canvas'); cv.width = img.naturalWidth; cv.height = img.naturalHeight; cv.getContext('2d').drawImage(img, 0, 0);
       cv.toBlob(blob => { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `${x.dataset.name}.png`; document.body.append(a); a.click(); a.remove(); }, 'image/png'); };
-    img.onerror = () => alert('РУ расмини юклаб бўлмади. Интернетни текширинг.');
+    img.onerror = () => alert('РУ расмини юклаб бўлмади. Интернет алоқасини текширинг.');
     img.src = x.dataset.src; return;
   }
   const wb = new ExcelJS.Workbook(), ws = wb.addWorksheet('Ариза');
@@ -2343,7 +2382,7 @@ document.getElementById('f').addEventListener('submit', async e => {
       out.innerHTML = rows.length
         ? status('ok', '✓', `${rows.length} та маҳсулот топилди. Кераклисини танланг.`) + `<div class="mobpick">${rows.map(([g, name, brand, desc, pack]) => { const it = results.get(g)?.items?.[0];
           return `<button type="button" data-g="${g}"><b>${esc(name || brand)}${brand && brand !== name ? ` <em>(${esc(brand)})</em>` : ''}${(n => n ? ` <i>№${n}</i>` : '')(packMatch(pack)?.[1])}</b><small>${esc(desc)}</small><small>${esc(pack)}</small><span>${g}${it ? ` · МХИК ${esc(it.mxikCode)}` : ''}</span></button>`; }).join('')}</div>`
-        : status('warn', '!', 'Бундай маҳсулот топилмади.', 'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.');
+        : status('warn', '!', 'Бундай маҳсулот топилмади.', 'Номини бошқача ёзиб кўринг ёки штрих кодни сканерланг.');
       return;
     }
     const n = filtered().length;
@@ -2378,7 +2417,7 @@ document.getElementById('f').addEventListener('submit', async e => {
       (own ? compareBlock(own, Object.assign({}, items[0], cards[0] || {})) : '') +
       items.map((it, i) => render(it, shown[i])).join('');
   } catch (err) {
-    out.innerHTML = status('bad', '✕', 'tasnif.soliq.uz билан боғланиб бўлмади.', `Интернетни текширинг. ${esc(err.message)}`);
+    out.innerHTML = status('bad', '✕', 'tasnif.soliq.uz билан боғланиб бўлмади.', `Интернет алоқасини текширинг. ${esc(err.message)}`);
   } finally {
     btn.disabled = false;
   }
@@ -3172,12 +3211,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
     ['👋', 'Қўллар', '👋 🤚 🖐️ ✋ 🖖 👌 🤌 🤏 ✌️ 🤞 🫰 🤟 🤘 🤙 👈 👉 👆 👇 ☝️ 🫵 👍 👎 ✊ 👊 🤛 🤜 👏 🙌 🫶 👐 🤲 🤝 🙏 ✍️ 💪 🦾 👀 🧠 🫀 🦷 👶 🧑 👨 👩 🧓 👨‍⚕️ 👩‍⚕️ 👨‍💼 👩‍💼 🕺 💃 🤷 🙋 🙅 🙆 🤦'],
     ['❤️', 'Юраклар', '❤️ 🧡 💛 💚 💙 🩵 💜 🤎 🖤 🩶 🤍 💔 ❤️‍🔥 ❤️‍🩹 ❣️ 💕 💞 💓 💗 💖 💘 💝 💟 💯 💢 💥 💫 💦 💨 🕳️ 💬 💭 💤 ✨ ⭐ 🌟 🔥 ⚡ 🌈 ☀️ 🌙 ❄️ 🌸 🌹 🌷 🌻 🍀'],
     ['💊', 'Иш ва тиббиёт', '💊 💉 🩺 🩹 🩻 🧪 🧫 🧬 🔬 🌡️ 🏥 🚑 ⚕️ 🧴 🧼 😷 📦 🚚 🏭 🏬 🏪 🧾 📋 📊 📈 📉 🗂️ 📁 📄 📝 ✏️ 🖊️ 📌 📎 🔍 🔎 💻 🖥️ 🖨️ 📱 📞 ☎️ ✉️ 📧 📨 📅 ⏰ ⏳ ⌛ 💰 💵 💳 🏷️ 🔑 🔒 🔓 ⚙️ 🛠️ ✅ ☑️ ✔️ ❌ ❎ ⚠️ 🚫 ⛔ ❓ ❗ ‼️ ⁉️ 🆗 🆕 🆘 🔴 🟠 🟡 🟢 🔵 🟣'],
-    ['🎉', 'Байрам ва бошқа', '🎉 🎊 🎁 🎈 🎂 🍰 🧁 🍫 🍬 ☕ 🍵 🍎 🍊 🍋 🍉 🍇 🍓 🍒 🍞 🍕 🍔 🍟 🌮 🍜 🍲 🍚 🥗 🏆 🥇 🥈 🥉 🏅 🎯 ⚽ 🏀 🎮 🎵 🎶 🎤 📷 🚗 🚕 ✈️ 🚀 🏠 🏢 🌍 🇺🇿 🕌 ⏱️ 🧭']
+    ['🎉', 'Байрам ва бошқалар', '🎉 🎊 🎁 🎈 🎂 🍰 🧁 🍫 🍬 ☕ 🍵 🍎 🍊 🍋 🍉 🍇 🍓 🍒 🍞 🍕 🍔 🍟 🌮 🍜 🍲 🍚 🥗 🏆 🥇 🥈 🥉 🏅 🎯 ⚽ 🏀 🎮 🎵 🎶 🎤 📷 🚗 🚕 ✈️ 🚀 🏠 🏢 🌍 🇺🇿 🕌 ⏱️ 🧭']
   ].map(([icon, title, list]) => ({ icon, title, list: list.split(' ') }));
   const emoPick = document.getElementById('emopick');
   let emoRecent = getLS('bayan-emo-recent', []);
   const drawEmo = () => {
-    const sets = emoRecent.length ? [{ icon: '🕘', title: 'Охирги ишлатилганлар', list: emoRecent }, ...EMO_SETS] : EMO_SETS;
+    const sets = emoRecent.length ? [{ icon: '🕘', title: 'Сўнгги ишлатилганлар', list: emoRecent }, ...EMO_SETS] : EMO_SETS;
     emoPick.innerHTML = `<div class="emotabs">${sets.map((x, n) => `<button type="button" data-tab="${n}" title="${x.title}"${n ? '' : ' class="on"'}>${x.icon}</button>`).join('')}</div>
       <div class="emogrid">${sets.map((x, n) => `<h6 data-sec="${n}">${x.title}</h6><div>${x.list.map(e => `<button type="button" data-e="${e}">${e}</button>`).join('')}</div>`).join('')}</div>`;
     const grid = emoPick.querySelector('.emogrid');
@@ -3455,7 +3494,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const tools = adm ? `<span class="mtools">${ed}<button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>`
         : ed ? `<span class="mtools">${ed}</span>` : '';
       return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${esc(initials(m.name))}</span><div class="msg"><i style="color:${c}"${adm && meta[m.key] ? ` title="${esc(metaText(m.key))}"` : ''}>${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${attHtml(m)}${m.file && m.text === autoText(m.file) ? '' : esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
-      : '<div class="sys">Ҳали изоҳ йўқ. Биринчи бўлиб ёзинг!</div>';
+      : '<div class="sys">Ҳозирча изоҳлар йўқ. Биринчи бўлиб сиз ёзинг!</div>';
     loadThumbs();
     if ((atEnd && !rxOpen) || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
     const rb = msgs.querySelector('.rxbar');
@@ -3475,7 +3514,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     box.dataset.drawn = 1;
     const me = !!blocked[myId] && !adm;
     form.classList.toggle('blocked', me);
-    textIn.placeholder = me ? 'Сиз админ томонидан блоклангансиз' : 'Изоҳингизни ёзинг…';
+    textIn.placeholder = me ? 'Сиз администратор томонидан блоклангансиз' : 'Изоҳингизни ёзинг…';
     textIn.disabled = me; form.querySelector('[type=submit]').disabled = me || !CHAT_DB;
   };
   const unread = () => {
@@ -3756,14 +3795,14 @@ document.querySelectorAll('.tglnk').forEach(a => {
           if (!r2.ok) throw new Error(r2.status);
         }
         setEdit(null); await load();
-      } catch (err) { alert(String(err.message) === 'late' ? 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.' : 'Таҳрирлаб бўлмади. Интернетни текширинг.'); }
+      } catch (err) { alert(String(err.message) === 'late' ? 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.' : 'Таҳрирлаб бўлмади. Интернет алоқасини текширинг.'); }
       send.disabled = false; draw(); return;
     }
     let file = null;
     try {
       const adm = isAdmin(), q = adm ? `?auth=${await idToken()}` : '';
       if (attFile) {
-        try { file = await upload(attFile, q, send); } catch { send.textContent = '➤'; send.disabled = false; alert('Файл юборилмади. Интернетни текширинг.'); return; }
+        try { file = await upload(attFile, q, send); } catch { send.textContent = '➤'; send.disabled = false; alert('Файл юборилмади. Интернет алоқасини текширинг.'); return; }
       }
       const body = { name, text: text || autoText(file), uid: myId, admin: adm, ts: { '.sv': 'timestamp' } };
       if (file) body.file = file;
@@ -3771,7 +3810,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       if (!r.ok) throw new Error(r.status);
       r.json().then(j => { if (j?.name) saveMeta(j.name, q); }).catch(() => {});
       textIn.value = ''; setAtt(null); await load(); msgs.scrollTop = msgs.scrollHeight;
-    } catch { await load(); if (!blocked[myId]) alert('Хабар юборилмади. Интернетни текширинг.'); }
+    } catch { await load(); if (!blocked[myId]) alert('Хабар юборилмади. Интернет алоқасини текширинг.'); }
     send.textContent = '➤'; send.disabled = false; draw();
   });
   textIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
@@ -3890,6 +3929,74 @@ document.addEventListener('click', e => {
     const n = l.filter(x => x.gtin === code).length;
     return own ? { ok: true, msg: `✓ ${own[2] || own[1]} — ${n}` } : { ok: true, msg: `✓ ${code} — ${tr('базада топилмади')} — ${n}` };
   };
+  // Book stock: a file from the company's accounting (barcode + quantity rows, or a list of marking codes from Asl Belgisi)
+  // that the count is compared with. Marking codes are matched on GTIN + serial, so a missing GS separator does not matter.
+  const BOOK = 'bayan-inv-book', book = () => { try { return JSON.parse(localStorage.getItem(BOOK)); } catch { return null; } };
+  const saveBook = b => { try { b ? localStorage.setItem(BOOK, JSON.stringify(b)) : localStorage.removeItem(BOOK); return true; } catch { return false; } };
+  const mkey = t => { const m = String(t).replace(/\s/g, '').match(/^01(\d{14})21([^\x1d]+)/); return m ? m[1] + (m[2].length > 13 && !String(t).includes('\x1d') ? m[2].slice(0, 13) : m[2]) : ''; };
+  const cellText = v => v == null ? '' : typeof v === 'object' ? (v.richText ? v.richText.map(r => r.text).join('') : v.text ?? v.result ?? (v instanceof Date ? '' : '')) : String(v);
+  const parseRows = rows => {
+    const qty = new Map(), names = new Map(), codes = new Set();
+    for (const r of rows) {
+      const cells = r.map(c => cellText(c).trim()).filter(Boolean);
+      const mk = cells.find(c => mkey(c));
+      if (mk) { const k = mkey(mk); codes.add(k); const g = scanCode(mk); qty.set(g, (qty.get(g) || 0) + 1); continue; }
+      const bi = cells.findIndex(c => /^\d{8,14}$/.test(c));
+      if (bi < 0) continue;
+      const g = scanCode(cells[bi]);
+      const n = cells.filter((c, i) => i !== bi && /^\d+([.,]\d+)?$/.test(c) && +c.replace(',', '.') < 1e6).map(c => +c.replace(',', '.'));
+      qty.set(g, (qty.get(g) || 0) + (n.length ? n[n.length - 1] : 1));
+      const nm = cells.find(c => /[A-Za-zА-Яа-яЎўҚқҒғҲҳ]{3}/.test(c)); if (nm && !names.has(g)) names.set(g, nm);
+    }
+    return { rows: [...qty].map(([gtin, q]) => ({ gtin, qty: q, name: names.get(gtin) || '' })), codes: [...codes] };
+  };
+  const readBook = async f => {
+    if (/\.xls$/i.test(f.name)) throw new Error('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.');
+    let rows = [];
+    if (/\.xlsx$/i.test(f.name)) {
+      const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
+      wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1))));
+    } else rows = (await f.text()).split(/\r?\n/).map(l => l.split(/[;\t,](?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"')));
+    const b = parseRows(rows);
+    if (!b.rows.length) throw new Error('Файлдан штрих код ёки маркировка коди топилмади. Excel (.xlsx), CSV ёки TXT файл танланг.');
+    return { file: f.name, loaded: now(), ...b };
+  };
+  // Book against fact per product, plus code-by-code differences when the book lists marking codes.
+  const compare = (l, b) => {
+    const fact = new Map(); for (const x of l) fact.set(x.gtin, (fact.get(x.gtin) || 0) + 1);
+    const bq = new Map(b.rows.map(r => [r.gtin, r]));
+    const rows = [...new Set([...bq.keys(), ...fact.keys()])].map(g => {
+      const own = ownOf(g), bk = bq.get(g)?.qty || 0, ft = fact.get(g) || 0;
+      return { gtin: g, name: own ? (own[2] || own[1]) : bq.get(g)?.name || l.find(x => x.gtin === g)?.name || '', book: bk, fact: ft, diff: ft - bk };
+    }).sort((a, b2) => (a.diff === 0) - (b2.diff === 0) || a.diff - b2.diff || a.name.localeCompare(b2.name));
+    let miss = [], extra = [];
+    if (b.codes?.length) {
+      const bs = new Set(b.codes), fs = new Map(l.map(x => [mkey(x.raw), x]));
+      miss = b.codes.filter(k => !fs.has(k));
+      extra = l.filter(x => !bs.has(mkey(x.raw)));
+    }
+    return { rows, miss, extra, codes: !!b.codes?.length };
+  };
+  const cmpEl = document.getElementById('invcmp'), fileEl = document.getElementById('invfile');
+  const drawCmp = l => {
+    const b = book(); cmpEl.hidden = !b;
+    if (!b) return;
+    const c = compare(l, b), sum = k => c.rows.reduce((s2, r) => s2 + r[k], 0);
+    const ok = c.rows.filter(r => !r.diff).length, lo = c.rows.filter(r => r.diff < 0).length, hi = c.rows.filter(r => r.diff > 0).length;
+    cmpEl.innerHTML = `<div class="hd"><span>📊 <span>Ҳисоб билан солиштириш</span> <small>${esc(b.file)}</small></span><button type="button" data-x title="Ҳисоб файлини олиб ташлаш">✕</button></div>`
+      + `<div class="ch"><span><span>Ҳисобда:</span> <b>${sum('book')}</b></span><span><span>Фактда:</span> <b>${sum('fact')}</b></span><span class="ok"><span>Мос:</span> <b>${ok}</b></span><span class="lo"><span>Камомад:</span> <b>${lo}</b></span><span class="hi"><span>Ортиқча:</span> <b>${hi}</b></span>`
+      + (c.codes ? `<span class="lo"><span>Сканерланмаган кодлар:</span> <b>${c.miss.length}</b></span><span class="hi"><span>Ҳисобда йўқ кодлар:</span> <b>${c.extra.length}</b></span>` : '') + `</div>`
+      + `<div class="tb"><table><thead><tr><th>Маҳсулот</th><th>Ҳисобда</th><th>Фактда</th><th>Фарқ</th></tr></thead><tbody>`
+      + c.rows.map(r => `<tr class="${r.diff < 0 ? 'lo' : r.diff > 0 ? 'hi' : 'ok'}"><td>${r.name ? esc(r.name) : '✕ Базада топилмади'}<small>${esc(r.gtin)}</small></td><td class="n">${r.book}</td><td class="n">${r.fact}</td><td class="n d">${r.diff > 0 ? '+' : ''}${r.diff || '✓'}</td></tr>`).join('')
+      + `</tbody></table></div>`;
+  };
+  document.getElementById('invbk').addEventListener('click', () => fileEl.click());
+  fileEl.addEventListener('change', async () => {
+    const f = fileEl.files[0]; fileEl.value = ''; if (!f) return;
+    try { const b = await readBook(f); if (!saveBook(b)) throw new Error('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.'); draw(); }
+    catch (e) { alert(tr(e.message || 'Файлни очиб бўлмади.')); }
+  });
+  cmpEl.addEventListener('click', e => { if (e.target.closest('[data-x]') && confirm(tr('Ҳисоб файлини олиб ташлаш') + '?')) { saveBook(null); draw(); } });
   const groups = l => { const m = new Map(); for (const x of l) { const g = m.get(x.gtin) || { ...x, n: 0, last: '' }; g.n++; g.last = x.ts; m.set(x.gtin, g); } return [...m.values()]; };
   let draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
@@ -3903,6 +4010,7 @@ document.addEventListener('click', e => {
     }
     document.getElementById('invmeta').innerHTML = `<span>📅 ${esc(m.date)}</span><span>🏬 ${esc(m.wh)}</span><span>👤 ${esc(m.who)}</span>`;
     document.getElementById('invsum').textContent = tr(`${l.length} та скан · ${g.length} та маҳсулот`);
+    drawCmp(l);
     listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])} · ${esc(x.last.slice(11))}</small></span><b class="n">${x.n} та</b></div>`).join('');
     i18nApply(work);
   };
@@ -3918,14 +4026,14 @@ document.addEventListener('click', e => {
   document.getElementById('invclr').addEventListener('click', () => {
     const l = load(), m = meta();
     if (l.length && !confirm('Жорий инвентаризация тугатилиб, тарихга сақлансинми?')) return;
-    if (l.length && m && !saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l }, ...hist()])) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
-    save([]); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
+    if (l.length && m && !saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l, book: book() }, ...hist()])) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
+    save([]); saveBook(null); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
   });
-  document.getElementById('invxls').addEventListener('click', () => { const l = load(); if (!l.length) return alert('Рўйхат бўш.'); exportXls(l, meta() || {}, now()); });
-  async function exportXls(l, m, made) {
+  document.getElementById('invxls').addEventListener('click', () => { const l = load(); if (!l.length) return alert('Рўйхат бўш.'); exportXls(l, meta() || {}, now(), book()); });
+  async function exportXls(l, m, made, bk) {
     const wb = new ExcelJS.Workbook(), RED = 'FFFDE2E2', GREEN = 'FFDCFCE7';
     // Each sheet: the count's details on top, then the table with a coloured header.
-    const sheet = (title, cols, rows) => {
+    const sheet = (title, cols, rows, color = v => v === tr('Базада бор') ? GREEN : RED) => {
       const ws = wb.addWorksheet(title);
       ws.columns = cols.map(([, w]) => ({ width: w }));
       ws.addRow([tr('Инвентаризация') + ' (Хатлов · Inventory) — BAYAN MEDICAL']).font = { bold: true, size: 14 };
@@ -3935,7 +4043,7 @@ document.addEventListener('click', e => {
       h.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
       const st = cols.findIndex(([c]) => c === 'Ҳолат') + 1;
       rows.forEach(v => { const r = ws.addRow(v); r.eachCell(c => { c.alignment = { vertical: 'top', wrapText: true }; });
-        if (st) r.getCell(st).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: v[st - 1] === tr('Базада бор') ? GREEN : RED } }; });
+        if (st) r.getCell(st).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: color(v[st - 1]) } }; });
       ws.views = [{ state: 'frozen', ySplit: h.number }];
       return ws;
     };
@@ -3944,6 +4052,16 @@ document.addEventListener('click', e => {
       groups(l).map((x, i) => [i + 1, x.gtin, x.name || tr('Топилмади'), x.pack || '', x.n, results.get(x.gtin)?.items?.[0]?.mxikCode || '', stat(x), x.ts, x.last]));
     sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 13], ['Маркировка коди', 70]],
       l.map((x, i) => [i + 1, x.ts, x.gtin, x.name || tr('Топилмади'), stat(x), x.raw.replace(/\x1d/g, ' ')]));
+    if (bk) {
+      const c = compare(l, bk), YEL = 'FFFEF3C7', col = v => v === tr('Мос') ? GREEN : v === tr('Ортиқча') ? YEL : RED;
+      const ws = sheet(tr('Солиштириш'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 34], ['Ҳисобда', 10], ['Фактда', 10], ['Фарқ', 9], ['Ҳолат', 13]],
+        c.rows.map((r, i) => [i + 1, r.gtin, r.name || tr('Топилмади'), r.book, r.fact, r.diff, tr(r.diff < 0 ? 'Камомад' : r.diff > 0 ? 'Ортиқча' : 'Мос')]), col);
+      ws.addRow([]); ws.addRow([tr('Ҳисоб файли') + ':', bk.file, '', tr('Юкланган') + ':', bk.loaded]);
+      if (c.codes) sheet(tr('Кодлар фарқи'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 30], ['Маркировка коди', 60]],
+        [...c.miss.map(k => { const g = scanCode('01' + k.slice(0, 14)), o = ownOf(g); return [g, o ? (o[2] || o[1]) : '', tr('Ҳисобда бор, сканерланмаган'), '01' + k.slice(0, 14) + '21' + k.slice(14)]; }),
+         ...c.extra.map(x => [x.gtin, x.name || '', tr('Сканерланган, ҳисобда йўқ'), x.raw.replace(/\x1d/g, ' ')])].map((r, i) => [i + 1, ...r]),
+        v => v === tr('Ҳисобда бор, сканерланмаган') ? RED : YEL);
+    }
     const buf = await wb.xlsx.writeBuffer(), a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     const safe = t => String(t || '').replace(/[\\/:*?"<>|\s]+/g, '-').slice(0, 30);
@@ -3958,7 +4076,7 @@ document.addEventListener('click', e => {
   };
   histEl.addEventListener('click', e => {
     const x = e.target.closest('[data-hx]'), d = e.target.closest('[data-hd]');
-    if (x) { const r = hist().find(h => h.id === x.dataset.hx); if (r) exportXls(r.list, r.meta, r.ended); }
+    if (x) { const r = hist().find(h => h.id === x.dataset.hx); if (r) exportXls(r.list, r.meta, r.ended, r.book); }
     if (d && confirm('Бу инвентаризация тарихдан ўчирилсинми?')) { saveHist(hist().filter(h => h.id !== d.dataset.hd)); drawHist(); }
   });
   const draw0 = draw; draw = () => { draw0(); drawHist(); };
