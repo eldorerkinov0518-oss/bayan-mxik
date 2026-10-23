@@ -1298,7 +1298,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2510</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2520</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -4118,6 +4118,13 @@ document.addEventListener('click', e => {
   const PICK = () => L('Аввал дорини, сериясини ва битта қутидаги қадоқлар сонини танлаб, «Бошлаш»ни босинг.', 'Сначала выберите препарат, серию и количество упаковок в коробе и нажмите «Начать».', 'First pick the medicine, its series and the packs per box, then press «Start».');
   const dupMsg = x => { const who = [x?.by, x?.ts && x.ts.slice(11, 16)].filter(Boolean).join(', ');
     return L(`Бу код аллақачон саналган${who ? ` (${who})` : ''}. Қайта қўшилмади.`, `Этот код уже посчитан${who ? ` (${who})` : ''}. Повторно не добавлен.`, `This code is already counted${who ? ` (${who})` : ''}. Not added again.`); };
+  const boxOwner = async box => {
+    if (!srv) return null;
+    const k = fk('S' + box), v = await db(`codes/${k}`).catch(() => null);
+    if (typeof v === 'string' && /^\d{8,14}$/.test(v)) return { gtin: v };
+    const l = await db(`links/${k}`).catch(() => null);
+    return l?.gtin ? l : null;
+  };
   const total = c => load().filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser).reduce((t, x) => t + units(x), 0);
   // Saves one scan: checked against the admin's code base, then written to the shared count, where a code already
   // taken by anyone is refused by the database itself, so two people scanning the same box at once count it once.
@@ -4148,9 +4155,23 @@ document.addEventListener('click', e => {
     const box = ssccOf(text);
     if (box) {
       if (!meta()) return { ok: false, msg: START() };
-      const c = cur(); if (!c) return { ok: false, msg: PICK() };
-      return commit({ ts: now(), k: 'S' + box, raw: box, gtin: c.gtin, name: c.name, pack: c.pack, ser: c.ser, found: true, box: true, qty: c.qty })
-        .then(r => done(r, `✓ ${c.name}: +${c.qty} (📦) — ${total(c)}`));
+      return (async () => {
+        // A box code does not say which medicine is inside. The code base (the GTIN in the same file row) or an earlier
+        // count that linked the box tells it; then the medicine is picked by itself, or a box of another medicine is refused.
+        let c = cur(), auto = false;
+        const o = await boxOwner(box), or = o && ownOf(o.gtin);
+        if (or && c && strip0(or[0]) !== strip0(c.gtin)) return { ok: false, msg: L(`Бу қути бошқа дорига тегишли (${or[2] || or[1]}). Ҳозир «${c.name}» саналмоқда.`, `Этот короб другого препарата (${or[2] || or[1]}). Сейчас считается «${c.name}».`, `This box is another medicine (${or[2] || or[1]}). Now counting «${c.name}».`) };
+        if (!c && or) {
+          const q = +o.qty || boxCaps()[or[0]];
+          if (!q) { ibFill(or[0]); return { ok: true, msg: L('Дори қути кодидан аниқланди. Битта қутидаги қадоқлар сонини киритиб, «Бошлаш»ни босинг.', 'Препарат определён по коду короба. Укажите количество упаковок в коробе и нажмите «Начать».', 'Medicine found from the box code. Enter the packs per box and press «Start».') }; }
+          c = { gtin: scanCode(or[0]), name: or[2] || or[1], pack: or[4], ser: o.ser || sers()[or[0]] || '', qty: q, started: now() };
+          setCur(c); draw(); auto = true;
+        }
+        if (!c) return { ok: false, msg: PICK() };
+        const r = await commit({ ts: now(), k: 'S' + box, raw: box, gtin: c.gtin, name: c.name, pack: c.pack, ser: c.ser, found: true, box: true, qty: c.qty });
+        if (r.ok && srv && !o) db(`links/${fk('S' + box)}`, 'PUT', { gtin: c.gtin, ser: c.ser || '', qty: c.qty, by: me(), t: { '.sv': 'timestamp' } }).catch(() => {});
+        return done(r, (auto ? L('Дори қути кодидан аниқланди. ', 'Препарат определён по коду короба. ', 'Medicine found from the box code. ') : '') + `✓ ${c.name}: +${c.qty} (📦) — ${total(c)}`);
+      })();
     }
     const code = scanCode(text);
     if (!/^\d{8,14}$/.test(code)) return null;
@@ -4368,13 +4389,18 @@ document.addEventListener('click', e => {
   const codeOf = v => cellText(v).trim().replace(/^"|"$/g, '').replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/<GS>|\\x1d|\\u001d/gi, '\x1d').replace(/\((\d{2,4})\)/g, '$1');
   const readCodes = async f => {
     if (/\.xls$/i.test(f.name)) throw new Error(L('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.', 'Сохраните старый файл .xls в Excel как .xlsx и загрузите снова.', 'Save the old .xls file as .xlsx in Excel and upload it again.'));
-    const cells = [];
+    const rows = [];
     if (/\.xlsx$/i.test(f.name)) {
       const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
-      wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => cells.push(...(r.values || []).slice(1))));
-    } else for (const line of (await f.text()).split(/\r?\n/)) { const t = codeOf(line); if (mkey(t) || ssccOf(t)) cells.push(t); else cells.push(...line.split(/[;\t,]/)); }
+      wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1))));
+    } else for (const line of (await f.text()).split(/\r?\n/)) { const t = codeOf(line); rows.push(mkey(t) || ssccOf(t) ? [t] : line.split(/[;\t,]/)); }
+    // A box code (SSCC) keeps the medicine of its row: a GTIN cell or the GTIN inside a marking code next to it.
     const m = new Map();
-    for (const v of cells) { const c = codeOf(v), b = ssccOf(c); if (b) { m.set('S' + b, 1); continue; } const k = mkey(c); if (k) m.set(k, k.slice(0, 14)); }
+    for (const r of rows) {
+      const cs = r.map(codeOf), ks = cs.map(mkey), bs = cs.map(c => ssccOf(c));
+      const g = ks.find(Boolean)?.slice(0, 14) || cs.find((c, i) => !bs[i] && /^\d{13,14}$/.test(c) && ownOf(c)) || '';
+      cs.forEach((c, i) => { if (bs[i]) m.set('S' + bs[i], g || m.get('S' + bs[i]) || 1); else if (ks[i]) m.set(ks[i], ks[i].slice(0, 14)); });
+    }
     return m;
   };
   admBtn.addEventListener('click', () => { admEl.hidden = !admEl.hidden; admBtn.classList.toggle('on', !admEl.hidden); if (!admEl.hidden) drawAdm(); });
