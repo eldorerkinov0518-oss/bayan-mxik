@@ -979,7 +979,7 @@
   .mobpick { display: grid; gap: 8px; margin-top: 12px; }
   .mobpick button { text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 14px; padding: 12px 14px; font: inherit; cursor: pointer; display: grid; gap: 2px; }
   .mobpick b { font-size: 16px; } .mobpick b i { font-style: normal; font-size: 12px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; margin-left: 4px; }
-  .mobpick small { color: var(--muted); font-size: 13px; } .mobpick span { font: 600 13px ui-monospace, Consolas, monospace; color: var(--muted); }
+  .mobpick small { color: var(--muted); font-size: 13px; } .mobpick em { font-style: normal; font-weight: 500; color: var(--muted); font-size: 14px; } .mobpick span { font: 600 13px ui-monospace, Consolas, monospace; color: var(--muted); }
   html.mob .list { margin-top: 14px; } html.mob .list h2 { font-size: 16px; }
   html.mob .tbl { border: 0; } html.mob .tbl td { border-left: 0; border-right: 0; }
   html.mob .topbar .langs .thm { display: none; }
@@ -1211,7 +1211,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2340</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2350</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2307,8 +2307,8 @@ document.getElementById('f').addEventListener('submit', async e => {
       const rows = filtered();
       if (rows.length === 1) { q.value = rows[0][0]; q.dispatchEvent(new Event('input')); return document.getElementById('f').requestSubmit(); }
       out.innerHTML = rows.length
-        ? status('ok', '✓', `${rows.length} та маҳсулот топилди. Кераклисини танланг.`) + `<div class="mobpick">${rows.slice(0, 50).map(([g, name, brand, desc, pack]) =>
-          `<button type="button" data-g="${g}"><b>${esc(name || brand)}${(n => n ? ` <i>№${n}</i>` : '')(packMatch(pack)?.[1])}</b><small>${esc(desc)}</small><span>${g}</span></button>`).join('')}</div>`
+        ? status('ok', '✓', `${rows.length} та маҳсулот топилди. Кераклисини танланг.`) + `<div class="mobpick">${rows.map(([g, name, brand, desc, pack]) => { const it = results.get(g)?.items?.[0];
+          return `<button type="button" data-g="${g}"><b>${esc(name || brand)}${brand && brand !== name ? ` <em>(${esc(brand)})</em>` : ''}${(n => n ? ` <i>№${n}</i>` : '')(packMatch(pack)?.[1])}</b><small>${esc(desc)}</small><small>${esc(pack)}</small><span>${g}${it ? ` · МХИК ${esc(it.mxikCode)}` : ''}</span></button>`; }).join('')}</div>`
         : status('warn', '!', 'Бундай маҳсулот топилмади.', 'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.');
       return;
     }
