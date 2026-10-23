@@ -1217,11 +1217,14 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .mobpick small { color: var(--muted); font-size: 13px; } .mobpick em { font-style: normal; font-weight: 500; color: var(--muted); font-size: 14px; } .mobpick span { font: 600 13px ui-monospace, Consolas, monospace; color: var(--muted); }
   html.mob .list { margin-top: 14px; } html.mob .list h2 { font-size: 16px; }
   html.mob .tbl { border: 0; } html.mob .tbl td { border-left: 0; border-right: 0; }
-  /* Phone top bar: logo on the left, the profile tab in the right corner, the languages on their own row in the middle. */
-  html.mob .topbar-in { flex-wrap: wrap; row-gap: 6px; } html.mob .topbar-in > div:last-child { display: contents; }
-  html.mob .topbar-in::before { content: ''; order: 3; flex-basis: 100%; height: 0; }
-  html.mob .topbar .userout { order: 2; margin: 0 0 0 auto; } html.mob .topbar .langs { order: 4; margin: 0 auto; }
-  html.mob .topbar .langs .thm { width: 30px; font-size: 15px; } @media (max-width: 350px) { html.mob .topbar .langs { gap: 3px; padding: 3px 4px; } html.mob .topbar .langs button:not(.thm) { min-width: 40px; padding: 3px 7px; } }
+  /* Phone top bar in one row: logo on the left, the languages in the middle, the profile tab in the right corner with the 🎨 theme button under it. */
+  html.mob .topbar { padding-bottom: 40px !important; }
+  html.mob .topbar-in { flex-wrap: nowrap; gap: 6px; } html.mob .topbar-in > div:last-child { display: contents; }
+  html.mob .topbar .userout { order: 3; margin: 0; flex: none; } html.mob .topbar .langs { order: 2; margin: 0 auto; flex: none; gap: 4px; padding: 3px 4px; position: static !important; transform: none; }
+  html.mob .topbar .langs button:not(.thm) { min-width: 40px; padding: 4px 7px; font-size: 11px; }
+  html.mob .topbar .langs .thm { position: absolute; right: 12px; bottom: 6px; width: 34px; height: 28px; font-size: 15px; box-shadow: 0 2px 8px rgba(40, 18, 116, .15); }
+  html.mob .topbar .langs .thpop { right: 8px; top: calc(100% + 6px); }
+  @media (max-width: 370px) { html.mob .topbar .blogo { --lh: 30px; } html.mob .topbar .langs button:not(.thm) { min-width: 34px; padding: 3px 5px; font-size: 10.5px; } html.mob .topbar .langs { gap: 3px; padding: 2px 3px; } }
   html.mob .tile.empty { display: none; }
   html.mob .codes { flex-wrap: nowrap; gap: 8px; } html.mob .cimg { flex: 1; min-width: 0; padding: 8px; } html.mob .cimg .cbox { height: 96px; max-width: 100%; } html.mob .cimg svg { max-width: 100%; }
   html.mob .cimg .dl { font-size: 12px; padding: 6px 8px; }
@@ -1502,7 +1505,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2870</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2880</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
