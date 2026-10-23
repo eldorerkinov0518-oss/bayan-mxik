@@ -975,13 +975,23 @@
   .scanov .last { color: #86efac; font-weight: 700; min-height: 22px; text-align: center; }
   /* Phone view: the product list appears only as name-search results, without its tools; no counters or extra blocks. */
   html.mob .hint, html.mob .credit, html.mob #prog, html.mob .list .tools, html.mob .list thead, html.mob .tip { display: none !important; }
-  html.mob:not(.hasq) .list { display: none; }
+  html.mob .list { display: none !important; }
+  .mobpick { display: grid; gap: 8px; margin-top: 12px; }
+  .mobpick button { text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 14px; padding: 12px 14px; font: inherit; cursor: pointer; display: grid; gap: 2px; }
+  .mobpick b { font-size: 16px; } .mobpick b i { font-style: normal; font-size: 12px; color: var(--brand); border: 1px solid var(--line); border-radius: 999px; padding: 1px 7px; margin-left: 4px; }
+  .mobpick small { color: var(--muted); font-size: 13px; } .mobpick span { font: 600 13px ui-monospace, Consolas, monospace; color: var(--muted); }
   html.mob .list { margin-top: 14px; } html.mob .list h2 { font-size: 16px; }
   html.mob .tbl { border: 0; } html.mob .tbl td { border-left: 0; border-right: 0; }
   html.mob .topbar .langs .thm { display: none; }
   html.mob .tile.empty { display: none; }
   html.mob .codes { flex-wrap: nowrap; gap: 8px; } html.mob .cimg { flex: 1; min-width: 0; padding: 8px; } html.mob .cimg .cbox { height: 96px; max-width: 100%; } html.mob .cimg svg { max-width: 100%; }
   html.mob .cimg .dl { font-size: 12px; padding: 6px 8px; }
+  .invstart { display: grid; gap: 10px; margin-top: 10px; } .invstart[hidden] { display: none; }
+  .invstart label { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
+  .invstart input { padding: 10px 12px; font: 500 15px var(--font), sans-serif; letter-spacing: 0; border-width: 1px; }
+  .invstart .go { padding: 12px; font-size: 15px; }
+  .invmeta { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; } .invmeta span { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; }
+  .invlist div.nf span { color: var(--bad, #b91c1c); }
 </style>
 </head>
 <body>
@@ -1164,9 +1174,18 @@
     <div class="invbar"><button type="button" class="invbtn" id="invbtn">📦 Инвентаризация</button></div>
     <div class="inv" id="inv" hidden>
       <div class="invh"><b>📦 Инвентаризация</b><span id="invsum"></span></div>
-      <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.</p>
-      <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">Тозалаш</button><button type="button" class="copy" id="invoff">Тугатиш</button></div>
-      <div class="invlist" id="invlist"></div>
+      <form class="invstart" id="invstart">
+        <label><span>Сана</span><input type="date" name="date" required></label>
+        <label><span>Омбор</span><input name="wh" maxlength="60" placeholder="Масалан: Асосий омбор" required></label>
+        <label><span>Масъул шахс</span><input name="who" maxlength="60" placeholder="Исм ва фамилия" required></label>
+        <button class="go" type="submit">Бошлаш</button>
+      </form>
+      <div id="invwork" hidden>
+        <div class="invmeta" id="invmeta"></div>
+        <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.</p>
+        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">Янги инвентаризация</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <div class="invlist" id="invlist"></div>
+      </div>
     </div>
     <div class="codeinfo" id="codeinfo" hidden>
       <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
@@ -1192,7 +1211,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2330</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2340</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1321,6 +1340,22 @@ const UI = (() => { try { return ['uz', 'ru', 'en'].includes(localStorage.getIte
 const LI = UI === 'ru' ? 0 : 1;
 // Whole texts and phrases: Uzbek → [Russian, English].
 const I18N = {
+  'Бундай маҳсулот топилмади.': ['Такой продукт не найден.', 'No such product found.'],
+  'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.': ['Попробуйте написать название иначе или отсканировать штрих-код.', 'Try another spelling or scan the barcode.'],
+  'Омбор': ['Склад', 'Warehouse'],
+  'Масъул шахс': ['Ответственное лицо', 'Responsible person'],
+  'Масалан: Асосий омбор': ['Например: Основной склад', 'For example: Main warehouse'],
+  'Бошлаш': ['Начать', 'Start'],
+  'Янги инвентаризация': ['Новая инвентаризация', 'New stock count'],
+  'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.': ['Сначала укажите дату, склад и ответственное лицо и нажмите «Начать».', 'First enter the date, warehouse and responsible person, then press «Start».'],
+  'базада топилмади': ['нет в базе', 'not in the database'],
+  '✕ Базада топилмади': ['✕ Нет в базе', '✕ Not in the database'],
+  'Жорий инвентаризация ёпилиб, рўйхат тозалансинми? Аввал Excel’га юклаб олишни унутманг.': ['Закрыть текущую инвентаризацию и очистить список? Не забудьте сначала скачать Excel.', 'Close the current stock count and clear the list? Download the Excel file first.'],
+  'Инвентаризация': ['Инвентаризация', 'Stock count'],
+  'Файл тузилган': ['Файл создан', 'File created'],
+  'Ҳолат': ['Статус', 'Status'],
+  'Базада бор': ['Есть в базе', 'In database'],
+  'Топилмади': ['Не найден', 'Not found'],
   'Фақат BAYAN MEDICAL ходимлари учун': ['Только для сотрудников BAYAN MEDICAL', 'For BAYAN MEDICAL staff only'],
   'Бу ички платформа. Кириш ва рўйхатдан ўтиш фақат компания ходимларига мўлжалланган.': ['Это внутренняя платформа. Вход и регистрация предназначены только для сотрудников компании.', 'This is an internal platform. Sign-in and registration are for company employees only.'],
   'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.': ['Это не код маркировки. Сканируйте квадратный DataMatrix на коробке.', 'This is not a marking code. Scan the square DataMatrix on the box.'],
@@ -1611,6 +1646,7 @@ const I18N = {
 };
 // Texts with numbers or names inside: [pattern, Russian, English]. Checked in order, before the phrases above.
 const I18N_RE = [
+  [/(\d+) та маҳсулот топилди\. Кераклисини танланг\./g, 'Найдено продуктов: $1. Выберите нужный.', '$1 products found. Pick one.'],
   [/(\d+) та скан · (\d+) та маҳсулот/g, '$1 сканов · $2 продуктов', '$1 scans · $2 products'],
   [/tasnif'да «(.+?)» номи билан қидирилмоқда…/g, 'Поиск в tasnif по названию «$1»…', 'Searching tasnif for the name «$1»…'],
   [/tasnif'да «(.+?)» номи билан (\d+) та МХИК бор, лекин уларда (\d+) штрих коди ёзилмаган/g, 'В tasnif есть $2 ИКПУ с названием «$1», но штрих-код $3 в них не указан', 'tasnif has $2 PSCIC named «$1», but none lists barcode $3'],
@@ -2266,6 +2302,16 @@ document.getElementById('f').addEventListener('submit', async e => {
   }
   { const sc = scanCode(q.value); if (sc !== q.value.trim()) { q.value = sc; q.dispatchEvent(new Event('input')); } }
   if (!/^[\d\s]+$/.test(q.value.trim())) {
+    // Phone view: only what was searched. One match opens its card; several are listed to pick from.
+    if (MOB && q.value.trim()) {
+      const rows = filtered();
+      if (rows.length === 1) { q.value = rows[0][0]; q.dispatchEvent(new Event('input')); return document.getElementById('f').requestSubmit(); }
+      out.innerHTML = rows.length
+        ? status('ok', '✓', `${rows.length} та маҳсулот топилди. Кераклисини танланг.`) + `<div class="mobpick">${rows.slice(0, 50).map(([g, name, brand, desc, pack]) =>
+          `<button type="button" data-g="${g}"><b>${esc(name || brand)}${(n => n ? ` <i>№${n}</i>` : '')(packMatch(pack)?.[1])}</b><small>${esc(desc)}</small><span>${g}</span></button>`).join('')}</div>`
+        : status('warn', '!', 'Бундай маҳсулот топилмади.', 'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.');
+      return;
+    }
     const n = filtered().length;
     out.innerHTML = q.value.trim() ? status(n ? 'ok' : 'warn', n ? '✓' : '!', n ? `Рўйхатда ${n} та маҳсулот топилди.` : 'Рўйхатда бундай маҳсулот топилмади.', 'tasnif\'дан текшириш учун штрих код ёки МХИК кодини киритинг.') : '';
     fitLayout?.();
@@ -3639,6 +3685,10 @@ if (!MOB) setTimeout(() => runCheck(true), 600);
   let rq = null; try { rq = sessionStorage.getItem('bayan-relang-q'); sessionStorage.removeItem('bayan-relang-q'); } catch {}
   if (rq) { q.value = rq; q.dispatchEvent(new Event('input')); if (/^\d{8,17}$/.test(rq.trim())) document.getElementById('f').requestSubmit(); }
 }
+document.addEventListener('click', e => {
+  const b = e.target.closest('.mobpick [data-g]'); if (!b) return;
+  q.value = b.dataset.g; q.dispatchEvent(new Event('input')); document.getElementById('f').requestSubmit(); scrollTo(0, 0);
+});
 // Camera scanning: the browser's own BarcodeDetector where it reads every format we need, otherwise ZXing.
 {
   const ov = document.getElementById('scanov'), video = document.getElementById('scanv'), msg = document.getElementById('scanmsg');
@@ -3701,13 +3751,17 @@ if (!MOB) setTimeout(() => runCheck(true), 600);
   document.addEventListener('visibilitychange', () => { if (document.hidden && !ov.hidden) stop(); });
 }
 
-// Stock count (inventory): every scanned code is kept with its date and time in this browser
-// until the list is cleared; Excel gives a per-product total and every single scan.
+// Stock count (inventory): it starts with a date, a warehouse and the person responsible; every marking code
+// scanned after that is kept once, with its time, in this browser. Excel gives per-product totals and every scan,
+// with products that are not in the catalog marked «Топилмади».
 {
-  const KEY = 'bayan-inv', panel = document.getElementById('inv'), btn = document.getElementById('invbtn'), listEl = document.getElementById('invlist');
+  const KEY = 'bayan-inv', META = 'bayan-inv-meta', panel = document.getElementById('inv'), btn = document.getElementById('invbtn'), listEl = document.getElementById('invlist');
+  const startF = document.getElementById('invstart'), work = document.getElementById('invwork');
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
   const save = l => { try { localStorage.setItem(KEY, JSON.stringify(l)); } catch {} };
-  const now = () => { const d = new Date(), z = n => String(n).padStart(2, '0'); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`; };
+  const meta = () => { try { return JSON.parse(localStorage.getItem(META)); } catch { return null; } };
+  const z = n => String(n).padStart(2, '0');
+  const now = () => { const d = new Date(); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`; };
   let on = sessionStorage.getItem('bayan-inv-on') === '1', fresh = '';
   window.invMode = () => on;
   // Returns {ok, msg} for a code, or null when the text is not a code at all (a name search goes on as usual).
@@ -3715,43 +3769,74 @@ if (!MOB) setTimeout(() => runCheck(true), 600);
     const text = unLayout(String(raw || '').trim()); if (!text) return null;
     const code = scanCode(text);
     if (!/^\d{8,14}$/.test(code)) return null;
+    if (!meta()) return { ok: false, msg: 'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.' };
     const marked = text.replace(/\s/g, '').length > 16 && !/^\d{17}$/.test(text);
-    // Only marking codes (DataMatrix with GTIN + serial) are counted, so every pack is counted once.
+    // Only marking codes (DataMatrix with GTIN + serial) are counted, and each one only once in this count.
     if (!marked) return { ok: false, msg: 'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.' };
-    const l = load();
-    if (l.some(x => x.raw === text)) return { ok: false, msg: 'Бу код аллақачон саналган' };
+    const key = text.replace(/[\s\x1d]/g, ''), l = load();
+    if (l.some(x => x.raw.replace(/[\s\x1d]/g, '') === key)) return { ok: false, msg: 'Бу код аллақачон саналган' };
     const own = ownOf(code);
-    l.push({ ts: now(), raw: text, gtin: code, name: own ? (own[2] || own[1]) : '', pack: own ? own[4] : '' });
+    l.push({ ts: now(), raw: text, gtin: code, name: own ? (own[2] || own[1]) : '', pack: own ? own[4] : '', found: !!own });
     save(l); fresh = code; draw();
     const n = l.filter(x => x.gtin === code).length;
-    return { ok: true, msg: `✓ ${own ? (own[2] || own[1]) : code} — ${n}` };
+    return own ? { ok: true, msg: `✓ ${own[2] || own[1]} — ${n}` } : { ok: true, msg: `✓ ${code} — ${tr('базада топилмади')} — ${n}` };
   };
   const groups = l => { const m = new Map(); for (const x of l) { const g = m.get(x.gtin) || { ...x, n: 0, last: '' }; g.n++; g.last = x.ts; m.set(x.gtin, g); } return [...m.values()]; };
   const draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
     if (!on) return;
-    const l = load(), g = groups(l).sort((a, b) => b.last.localeCompare(a.last));
+    const m = meta(), l = load(), g = groups(l).sort((a, b) => b.last.localeCompare(a.last));
+    startF.hidden = !!m; work.hidden = !m;
+    if (!m) {
+      startF.date.value ||= now().slice(0, 10);
+      if (!startF.who.value) { try { startF.who.value = JSON.parse(localStorage.getItem('bayan-user-name')) || ''; } catch {} }
+      document.getElementById('invsum').textContent = ''; return;
+    }
+    document.getElementById('invmeta').innerHTML = `<span>📅 ${esc(m.date)}</span><span>🏬 ${esc(m.wh)}</span><span>👤 ${esc(m.who)}</span>`;
     document.getElementById('invsum').textContent = tr(`${l.length} та скан · ${g.length} та маҳсулот`);
-    listEl.innerHTML = g.map(x => `<div${x.gtin === fresh ? ' class="new"' : ''}><span>${esc(x.name || 'Каталогда йўқ')}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])} · ${esc(x.last)}</small></span><b class="n">${x.n} та</b></div>`).join('');
-    i18nApply(listEl);
+    listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])} · ${esc(x.last.slice(11))}</small></span><b class="n">${x.n} та</b></div>`).join('');
+    i18nApply(work);
   };
-  btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-inv-on', on ? '1' : ''); draw(); if (on) q.focus(); });
+  startF.addEventListener('submit', e => {
+    e.preventDefault();
+    const m = { date: startF.date.value, wh: startF.wh.value.trim(), who: startF.who.value.trim(), started: now() };
+    if (!m.date || !m.wh || !m.who) return;
+    try { localStorage.setItem(META, JSON.stringify(m)); } catch {}
+    save([]); draw(); q.focus();
+  });
+  btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-inv-on', on ? '1' : ''); draw(); if (on && meta()) q.focus(); });
   document.getElementById('invoff').addEventListener('click', () => { on = false; sessionStorage.setItem('bayan-inv-on', ''); draw(); });
-  document.getElementById('invclr').addEventListener('click', () => { if (confirm('Инвентаризация рўйхатини тозалайми?')) { save([]); draw(); } });
+  document.getElementById('invclr').addEventListener('click', () => {
+    if (load().length && !confirm('Жорий инвентаризация ёпилиб, рўйхат тозалансинми? Аввал Excel’га юклаб олишни унутманг.')) return;
+    save([]); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
+  });
   document.getElementById('invxls').addEventListener('click', async () => {
-    const l = load(); if (!l.length) return alert('Рўйхат бўш.');
-    const wb = new ExcelJS.Workbook(), head = ws => { ws.getRow(1).eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; }); ws.views = [{ state: 'frozen', ySplit: 1 }]; };
-    const s1 = wb.addWorksheet(tr('Жами'));
-    s1.columns = [{ header: '№', width: 5 }, { header: tr('Штрих код'), width: 16 }, { header: tr('Маҳсулот'), width: 30 }, { header: tr('Қадоқ'), width: 50 }, { header: tr('Сони'), width: 8 }, { header: tr('МХИК'), width: 20 }, { header: tr('Биринчи скан'), width: 20 }, { header: tr('Охирги скан'), width: 20 }];
-    groups(l).forEach((x, i) => s1.addRow([i + 1, x.gtin, x.name || tr('Каталогда йўқ'), x.pack, x.n, results.get(x.gtin)?.items?.[0]?.mxikCode || '', x.ts, x.last]));
-    head(s1);
-    const s2 = wb.addWorksheet(tr('Ҳар бир скан'));
-    s2.columns = [{ header: '№', width: 5 }, { header: tr('Сана ва вақт'), width: 20 }, { header: tr('Штрих код'), width: 16 }, { header: tr('Маҳсулот'), width: 30 }, { header: tr('Маркировка коди'), width: 70 }];
-    l.forEach((x, i) => s2.addRow([i + 1, x.ts, x.gtin, x.name || tr('Каталогда йўқ'), x.raw.replace(/\x1d/g, ' ')]));
-    head(s2);
+    const l = load(), m = meta() || {}; if (!l.length) return alert('Рўйхат бўш.');
+    const wb = new ExcelJS.Workbook(), RED = 'FFFDE2E2', GREEN = 'FFDCFCE7';
+    // Each sheet: the count's details on top, then the table with a coloured header.
+    const sheet = (title, cols, rows) => {
+      const ws = wb.addWorksheet(title);
+      ws.columns = cols.map(([, w]) => ({ width: w }));
+      ws.addRow([tr('Инвентаризация') + ' — BAYAN MEDICAL']).font = { bold: true, size: 14 };
+      [['Сана', m.date], ['Омбор', m.wh], ['Масъул шахс', m.who], ['Файл тузилган', now()]].forEach(([k, v]) => { const r = ws.addRow([tr(k), v || '']); r.getCell(1).font = { bold: true }; });
+      ws.addRow([]);
+      const h = ws.addRow(cols.map(([c]) => tr(c)));
+      h.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
+      const st = cols.findIndex(([c]) => c === 'Ҳолат') + 1;
+      rows.forEach(v => { const r = ws.addRow(v); r.eachCell(c => { c.alignment = { vertical: 'top', wrapText: true }; });
+        if (st) r.getCell(st).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: v[st - 1] === tr('Базада бор') ? GREEN : RED } }; });
+      ws.views = [{ state: 'frozen', ySplit: h.number }];
+      return ws;
+    };
+    const stat = x => tr(x.name ? 'Базада бор' : 'Топилмади');
+    sheet(tr('Жами'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Қадоқ', 46], ['Сони', 8], ['МХИК', 20], ['Ҳолат', 13], ['Биринчи скан', 20], ['Охирги скан', 20]],
+      groups(l).map((x, i) => [i + 1, x.gtin, x.name || tr('Топилмади'), x.pack || '', x.n, results.get(x.gtin)?.items?.[0]?.mxikCode || '', stat(x), x.ts, x.last]));
+    sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 13], ['Маркировка коди', 70]],
+      l.map((x, i) => [i + 1, x.ts, x.gtin, x.name || tr('Топилмади'), stat(x), x.raw.replace(/\x1d/g, ' ')]));
     const buf = await wb.xlsx.writeBuffer(), a = document.createElement('a');
     a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-    a.download = `Inventarizatsiya-${now().slice(0, 16).replace(' ', '_').replace(':', '-')}.xlsx`; document.body.append(a); a.click(); a.remove();
+    const safe = t => String(t || '').replace(/[\\/:*?"<>|\s]+/g, '-').slice(0, 30);
+    a.download = `Inventarizatsiya-${m.date || now().slice(0, 10)}-${safe(m.wh)}.xlsx`; document.body.append(a); a.click(); a.remove();
   });
   draw();
 }
