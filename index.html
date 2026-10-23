@@ -1070,6 +1070,11 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   @media (prefers-reduced-motion: reduce) { html.mob #mamp { display: none; } }
   /* Phone view works like an app: the page keeps the device width, it cannot be pinched or double-tapped bigger,
      text is not inflated by the browser, and nothing sticks out sideways. */
+  /* Phone view: pull the page down from the very top to reload it. */
+  #ptr { position: fixed; top: 0; left: 50%; z-index: 95; width: 42px; height: 42px; margin-left: -21px; border-radius: 50%; display: grid; place-items: center; pointer-events: none;
+    background: #fff; color: var(--b1, #281274); box-shadow: 0 4px 16px rgba(40, 18, 116, .3); font: 800 22px var(--font), sans-serif; opacity: 0; transform: translateY(-50px); }
+  #ptr.go { background: linear-gradient(135deg, var(--b1, #281274), var(--b2, #2f80ed)); color: #fff; }
+  #ptr.spin span { animation: ptrspin .7s linear infinite; } @keyframes ptrspin { to { transform: rotate(360deg); } }
   html.mob { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: pan-x pan-y; overscroll-behavior-y: none; }
   html.mob body { overflow-x: hidden !important; max-width: 100vw; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); -webkit-tap-highlight-color: transparent; }
   html.mob img, html.mob svg, html.mob video, html.mob table { max-width: 100%; }
@@ -1467,7 +1472,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2780</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2790</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -5267,6 +5272,22 @@ document.addEventListener('click', e => {
     i.form?.addEventListener('submit', () => { if (i.type === 'text') b.click(); }, true);
   });
 }
+</script>
+<script>
+// Phone view: pulling down from the top of the page past the mark reloads it, in the browser and in the installed app alike.
+(() => {
+  const el = document.createElement('div'); el.id = 'ptr'; el.setAttribute('aria-hidden', 'true'); el.innerHTML = '<span>↻</span>'; document.body.append(el);
+  const MAX = 110, GO = 75; let y0 = null, d = 0;
+  const free = t => { for (let n = t; n && n !== document.body; n = n.parentElement) { if (n.scrollTop > 0) return false; const p = getComputedStyle(n).position; if (p === 'fixed' || p === 'sticky') return false; } return true; };
+  const show = () => { el.style.opacity = Math.min(1, d / GO); el.style.transform = `translateY(${d - 50}px) rotate(${d * 3}deg)`; el.classList.toggle('go', d >= GO); };
+  addEventListener('touchstart', e => { y0 = null; d = 0; if (!document.documentElement.classList.contains('mob') || e.touches.length !== 1 || scrollY > 0 || !free(e.target)) return; y0 = e.touches[0].clientY; }, { passive: true });
+  addEventListener('touchmove', e => { if (y0 == null) return; const dy = e.touches[0].clientY - y0; if (dy <= 0 || scrollY > 0) { d = 0; show(); return; } d = Math.min(MAX, dy * .5); show(); if (e.cancelable) e.preventDefault(); }, { passive: false });
+  addEventListener('touchend', () => {
+    if (y0 == null) return; y0 = null;
+    if (d >= GO) { el.classList.add('spin'); el.style.transform = 'translateY(24px)'; setTimeout(() => location.reload(), 250); return; }
+    el.style.transition = 'transform .2s, opacity .2s'; d = 0; show(); setTimeout(() => { el.style.transition = ''; }, 220);
+  });
+})();
 </script>
 </body>
 </html>
