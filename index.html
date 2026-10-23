@@ -1298,7 +1298,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2550</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2560</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -4278,7 +4278,14 @@ document.addEventListener('click', e => {
   };
   ibF.ser.addEventListener('focus', serList);
   ibF.ser.addEventListener('change', () => {
-    const x = bookSer(ibF.ser.value, ibGtin()); if (!x) return;
+    // A series shared by several medicines fills nothing until the medicine is chosen, unless only one of them is in stock.
+    const g = ibGtin(), same = allSers().filter(y => nser(y.ser) === nser(ibF.ser.value));
+    const names = [...new Set(same.map(y => y.name))], inStock = new Set(same.filter(y => y.qty > 0).map(y => y.name));
+    if (!g && names.length > 1 && inStock.size !== 1) {
+      out.innerHTML = status('warn', '!', esc(L(`${same[0].ser} серияси бир нечта дорида бор: ${names.join(', ')}. Аввал дорини танланг.`, `Серия ${same[0].ser} есть у нескольких препаратов: ${names.join(', ')}. Сначала выберите препарат.`, `Series ${same[0].ser} belongs to several medicines: ${names.join(', ')}. Pick the medicine first.`)));
+      ibF.prod.focus(); return;
+    }
+    const x = bookSer(ibF.ser.value, g); if (!x) return;
     ibF.ser.value = x.ser;
     if (x.cap) ibF.qty.value = x.cap;
     if (!ibGtin()) { const r = (x.gtin && ownOf(x.gtin)) || ledgerProd(x.name); if (r) ibF.prod.value = optOf(r); }
