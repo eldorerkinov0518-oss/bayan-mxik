@@ -973,6 +973,15 @@
   .invlist div small { display: block; color: var(--muted); font-size: 12px; } .invlist div b.n { font-size: 16px; white-space: nowrap; }
   .invlist div.new { background: var(--accent-soft, #e0f2fe); }
   .scanov .last { color: #86efac; font-weight: 700; min-height: 22px; text-align: center; }
+  /* Phone view: the product list appears only as name-search results, without its tools; no counters or extra blocks. */
+  html.mob .hint, html.mob .credit, html.mob #prog, html.mob .list .tools, html.mob .list thead, html.mob .tip { display: none !important; }
+  html.mob:not(.hasq) .list { display: none; }
+  html.mob .list { margin-top: 14px; } html.mob .list h2 { font-size: 16px; }
+  html.mob .tbl { border: 0; } html.mob .tbl td { border-left: 0; border-right: 0; }
+  html.mob .topbar .langs .thm { display: none; }
+  html.mob .tile.empty { display: none; }
+  html.mob .codes { flex-wrap: nowrap; gap: 8px; } html.mob .cimg { flex: 1; min-width: 0; padding: 8px; } html.mob .cimg .cbox { height: 96px; max-width: 100%; } html.mob .cimg svg { max-width: 100%; }
+  html.mob .cimg .dl { font-size: 12px; padding: 6px 8px; }
 </style>
 </head>
 <body>
@@ -1183,7 +1192,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2320</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2330</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1717,6 +1726,8 @@ document.querySelectorAll('#langs [data-lang]').forEach(b => {
 // opened as a file it calls tasnif.soliq.uz directly.
 const DIRECT = 'https://tasnif.soliq.uz/api/cls-api';
 const BASES = location.protocol.startsWith('http') ? ['/api/cls-api', DIRECT] : [DIRECT];
+// Phone view: the page only searches and shows results, so background work and decorations are skipped.
+const MOB = document.documentElement.classList.contains('mob');
 const LANG = 'uz';
 
 const out = document.getElementById('out');
@@ -2089,7 +2100,7 @@ function row(label, value) {
 }
 
 function tile(label, value) {
-  return `<div class="tile"><div class="label">${esc(label)}</div><div class="v">${has(value) ? esc(value) : '—'}</div></div>`;
+  return `<div class="tile${has(value) ? '' : ' empty'}"><div class="label">${esc(label)}</div><div class="v">${has(value) ? esc(value) : '—'}</div></div>`;
 }
 
 // Find a scalar field anywhere in the record whose key matches re (price, prescription, …).
@@ -2224,6 +2235,7 @@ const cBar = document.getElementById('cBar'), cIkpu = document.getElementById('c
 q.addEventListener('input', () => {
   const raw = q.value.trim(), isNum = /^[\d\s]+$/.test(raw), digits = isNum ? raw.replace(/\s+/g, '') : '';
   document.getElementById('qx').hidden = !raw;
+  document.documentElement.classList.toggle('hasq', !!raw && !isNum);
   cnt.textContent = raw && !isNum ? `рўйхатда ${filtered().length} та` : `${digits.length} рақам`;
   cBar.classList.toggle('on', [8, 12, 13, 14].includes(digits.length));
   cIkpu.classList.toggle('on', digits.length === 17);
@@ -2710,7 +2722,7 @@ calpop.addEventListener('click', e => {
 });
 document.addEventListener('click', () => { calpop.hidden = true; });
 tickClock(); setInterval(tickClock, 1000);
-drawWxNow(); loadWx(); setInterval(loadWx, 30 * 60 * 1000);
+if (!MOB) { drawWxNow(); loadWx(); setInterval(loadWx, 30 * 60 * 1000); }
 
 // Side panels on wide screens: catalog status (left), company card, recent searches, links and tips (right).
 const LAST_CHECK = 'bayan-last-check', RECENT = 'bayan-recent';
@@ -2767,7 +2779,7 @@ document.getElementById('stats').addEventListener('click', e => {
     el.textContent = t;
     if (t.startsWith('Телеграм бот')) el.insertAdjacentHTML('beforeend', ' <a class="tiplnk" href="https://t.me/bayan_mxik_bot" target="_blank" rel="noopener">@bayan_mxik_bot</a>');
   };
-  showTip(); setInterval(showTip, 15000);
+  if (!MOB) { showTip(); setInterval(showTip, 15000); }
 }
 function drawRecent() {
   const list = getLS(RECENT, []).map(r => r.t === 'ИКПУ коди' ? { ...r, t: 'МХИК коди' } : r);  // saved before the per-language rename
@@ -2803,7 +2815,7 @@ drawRecent();
     svg.innerHTML = h;
     if (gtins.length) lbl.textContent = '010' + gtins[Math.floor(Math.random() * gtins.length)];
   };
-  draw(); setInterval(draw, 2400);
+  if (!MOB) { draw(); setInterval(draw, 2400); }
 }
 // 3D BAYAN logo (navy-and-blue tile with three white ampoules): draw it several times, stacked along Z, for thickness.
 {
@@ -2873,7 +2885,7 @@ drawRecent();
     try { if (rates) localStorage.setItem('bayan-fx', JSON.stringify(rates)); } catch {}
     show();
   };
-  show(); load(); setInterval(show, 4000); setInterval(load, 60 * 60 * 1000);
+  if (!MOB) { show(); load(); setInterval(show, 4000); setInterval(load, 60 * 60 * 1000); }
 }
 
 // Slogan of the day: about medicine making, quality and health; changes at Tashkent midnight.
@@ -2899,7 +2911,7 @@ drawRecent();
     const n = nowTk(), day = Math.floor(Date.UTC(n.y, n.m, n.d) / 864e5);
     document.getElementById('motto').textContent = MOTTOS[day % MOTTOS.length];
   };
-  showMotto(); setInterval(showMotto, 60000);
+  if (!MOB) { showMotto(); setInterval(showMotto, 60000); }
 }
 
 // Desktop layout: size the middle column to the window and let the product list fill what is left.
@@ -2949,13 +2961,13 @@ addEventListener('load', fitLayout); document.fonts?.ready.then(fitLayout);
     '<svg viewBox="0 0 40 40" width="24" height="24"><circle cx="8" cy="20" r="4" fill="currentColor"/><circle cx="30" cy="9" r="4" fill="currentColor"/><circle cx="30" cy="31" r="4" fill="currentColor"/><path d="M8 20 30 9M8 20l22 11" stroke="currentColor" stroke-width="2"/></svg>'];
   // Page background floaters: larger and slower, in brand colours.
   const bg = document.getElementById('bgfloat');
-  bg.innerHTML = Array.from({ length: 30 }, (_, i) => {
+  if (!MOB) bg.innerHTML = Array.from({ length: 30 }, (_, i) => {
     const left = (i * 37 + 3) % 100, dur = 26 + (i * 11) % 22, delay = -((i * 5.3) % dur), sc = 1.2 + (i % 3) * 0.45;
     const amp = i % 2 === 0;
     return `<i class="${i % 3 ? '' : 'c'}" style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;--o:${(amp ? 0.22 : 0.1) + (i % 4) * 0.04};--r:${(i % 2 ? 1 : -1) * (amp ? 25 + i * 3 : 60 + i * 7)}deg;scale:${sc}">${amp ? AMPOULE(18 + (i % 3) * 6, 48 + (i % 3) * 16) : SHAPES[(i + 1) % SHAPES.length]}</i>`;
   }).join('');
   const fl = document.getElementById('floaters');
-  fl.innerHTML = Array.from({ length: 18 }, (_, i) => {
+  if (!MOB) fl.innerHTML = Array.from({ length: 18 }, (_, i) => {
     const left = (i * 53 + 7) % 100, dur = 14 + (i * 7) % 12, delay = -((i * 3.7) % dur);
     return `<i style="left:${left}%;animation-duration:${dur}s;animation-delay:${delay}s;--o:${(0.08 + (i % 4) * 0.04).toFixed(2)};--r:${(i % 2 ? 1 : -1) * (40 + i * 9)}deg">${SHAPES[i % SHAPES.length]}</i>`;
   }).join('');
@@ -3622,7 +3634,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
 }
 
 renderList();
-setTimeout(() => runCheck(true), 600);
+if (!MOB) setTimeout(() => runCheck(true), 600);
 {
   let rq = null; try { rq = sessionStorage.getItem('bayan-relang-q'); sessionStorage.removeItem('bayan-relang-q'); } catch {}
   if (rq) { q.value = rq; q.dispatchEvent(new Event('input')); if (/^\d{8,17}$/.test(rq.trim())) document.getElementById('f').requestSubmit(); }
