@@ -614,6 +614,21 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .topbar-in { max-width: var(--mw); margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
   .topbar img { height: 52px; display: block; }
   .calwrap { position: relative; display: inline-block; margin-top: 6px; }
+  /* Wide screens: the rate, the logo and the calendar sit together, larger, in the middle of the top bar. */
+  .topbar-in > .fx { display: none; }
+  @media (min-width: 1280px) and (max-width: 1699px) {
+    .topbar-in { max-width: min(var(--mw), calc(100vw - 540px)); } .deco.l { display: none; }
+    .topbar-in > .fx:not([hidden]) { display: flex; position: absolute; left: 16px; top: 50%; transform: translateY(-50%); }
+  }
+  @media (min-width: 1700px) {
+    .topbar { padding: 16px 16px; }
+    .topbar-in { max-width: none; justify-content: center; gap: 64px; }
+    .topbar-in > .fx:not([hidden]) { display: flex; } .deco { display: none; }
+    .topbar-in > img { height: 68px; }
+    .topbar-in > .fx .fxs { width: 52px; height: 52px; font-size: 24px; }
+    .topbar-in > .fx .fxt b { font-size: 20px; } .topbar-in > .fx .fxt span { font-size: 13px; }
+    .topbar-in .calwrap { margin-top: 0; } .topbar-in .clock { zoom: 1.22; }
+  }
   .clock { display: inline-flex; align-items: center; gap: 10px; padding: 6px 14px 6px 10px; border: 0; border-radius: 14px; cursor: pointer;
     background: linear-gradient(135deg, var(--b1), var(--b2)); color: #fff; font: 600 12px var(--font), sans-serif;
     box-shadow: 0 4px 14px rgba(40, 18, 116, .28); font-variant-numeric: tabular-nums; white-space: nowrap; }
@@ -939,7 +954,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .admsite .arow button { flex: none; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 10px; padding: 8px 12px; font: 600 13px var(--font), sans-serif; cursor: pointer; white-space: nowrap; }
   .admsite .arow button.on { background: var(--b1); color: #fff; border-color: var(--b1); }
   .admsite .thlist { padding: 4px 0 8px; }
-  #admC .ucard { box-shadow: none; padding: 0; background: none; } #admC .ulist { max-height: none; }
+  #admC .ucard { box-shadow: none; padding: 0; background: none; } #admC .ulist { max-height: max(220px, calc(100vh - 420px)); overflow-y: auto; overscroll-behavior: contain; padding-right: 4px; }
   html.mob .admsite .arow { flex-direction: column; align-items: stretch; }
   .ogrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
   .ogrid section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; align-content: start; }
@@ -1446,7 +1461,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2740</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2750</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -3238,6 +3253,7 @@ drawRecent();
 // Exchange rates in the top bar: the Central Bank of Uzbekistan's daily rates (cbu.uz), open.er-api.com if that is unreachable;
 // kept in this browser for when both are down.
 {
+  document.querySelector('.topbar-in').prepend(document.getElementById('fx'));
   const box = document.getElementById('fx'), sym = document.getElementById('fxs'), txt = box.querySelector('.fxt');
   const SYM = { USD: '$', EUR: '€', RUB: '₽' }, CUR = ['USD', 'EUR', 'RUB'];
   const fmt = v => (+v).toLocaleString('ru-RU', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
