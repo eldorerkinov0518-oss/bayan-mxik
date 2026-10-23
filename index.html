@@ -176,7 +176,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
     background: linear-gradient(135deg, rgba(255, 255, 255, .75) 0 2px, transparent 2px 5px, rgba(255, 255, 255, .55) 5px 7px, transparent 7px 10px, rgba(255, 255, 255, .35) 10px 12px, transparent 12px); border-top-left-radius: 22px; opacity: .6; }
   .chatrsz:hover { opacity: 1; }
   .chat.resizing { user-select: none; transition: none; }
-  #chatmax { margin-right: -4px; font-size: 16px; }
+  #chatmax { margin-right: -4px; font-size: 16px; } #chatsnd { margin-right: -6px; font-size: 15px; } #chatsnd.off { opacity: .7; }
   .chat header { display: flex; align-items: center; gap: 11px; padding: 13px 14px; color: #fff; background: linear-gradient(135deg, #0b8f7a, #14b8a6 60%, #22c55e); }
   .chat header .ava { position: relative; flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.22); font-size: 20px; }
   .chat header .ava::after { content: ''; position: absolute; right: 1px; bottom: 1px; width: 10px; height: 10px; border-radius: 50%; background: #a3ff7a; border: 2px solid #14b8a6; }
@@ -1498,7 +1498,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2850</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2860</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1563,7 +1563,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
 }</script>
 <button class="chatbtn" id="chatbtn" type="button"><span>💬</span> Чат ва изоҳлар<b id="chatbadge" hidden></b></button>
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
-    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Ўлчамини ўзгартириш учун тортинг"></span></header>
+    <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatsnd" title="Овозни ўчириш">🔔</button><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Ўлчамини ўзгартириш учун тортинг"></span></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<span class="ipnote">🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.</span><a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
     <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="histbtn" title="Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш">💾 Тарих</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="stillbtn" title="Сайтдаги ҳаракатланувчи эффектларни ҳамма учун қотириш ёки қайта юргизиш">⏸ Эффектлар</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
@@ -1840,6 +1840,8 @@ const I18N = {
   'Умумий чат': ['Общий чат', 'Group chat'],
   'Фойдаланувчилар ва админ': ['Пользователи и админ', 'Users and admin'],
   'Ёпиш': ['Закрыть', 'Close'],
+  'Овозни ўчириш': ['Выключить звук', 'Mute'],
+  'Овозни ёқиш': ['Включить звук', 'Unmute'],
   '▴ Йиғиш': ['▴ Свернуть', '▴ Fold'],
   'Йиғиб қўйиш': ['Свернуть', 'Fold away'],
   '🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.': ['🔒 Для порядка при отправке сообщения записываются IP-адрес и тип устройства; их видит только админ.', '🔒 To keep order, your IP address and device type are recorded when you send a message; only the admin sees them.'],
@@ -3582,6 +3584,34 @@ document.querySelectorAll('.tglnk').forEach(a => {
     emoRecent = [em, ...emoRecent.filter(x => x !== em)].slice(0, 16); setLS('bayan-emo-recent', emoRecent);
   });
   const nameIn = document.getElementById('chatname'), textIn = document.getElementById('chattext'), form = document.getElementById('chatf');
+  // Chat sounds, made on the spot (no files): sent, received, typing, reaction, open and close. 🔔/🔕 in the header mutes them in this browser.
+  const sndBtn = document.getElementById('chatsnd');
+  let sndOn = getLS('bayan-chat-snd', true) !== false, sac = null, lastTick = 0;
+  const tone = (f, t0, d, v = .12, type = 'sine', f2) => {
+    const o = sac.createOscillator(), g = sac.createGain(), t = sac.currentTime + t0;
+    o.type = type; o.frequency.setValueAtTime(f, t); if (f2) o.frequency.exponentialRampToValueAtTime(f2, t + d);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + .012); g.gain.exponentialRampToValueAtTime(.0005, t + d);
+    o.connect(g).connect(sac.destination); o.start(t); o.stop(t + d + .02);
+  };
+  const SND = {
+    out: () => { tone(520, 0, .09, .1, 'triangle', 900); tone(1040, .07, .14, .08) },
+    in: () => { tone(988, 0, .16, .13); tone(1319, .12, .28, .11) },
+    type: () => tone(1900 + Math.random() * 400, 0, .025, .025, 'square'),
+    rx: () => tone(700, 0, .1, .1, 'sine', 1400),
+    open: () => tone(440, 0, .16, .07, 'sine', 880),
+    close: () => tone(880, 0, .14, .06, 'sine', 440),
+    del: () => tone(300, 0, .18, .09, 'triangle', 150),
+  };
+  const play = k => {
+    if (!sndOn) return;
+    try { sac ||= new (window.AudioContext || window.webkitAudioContext)(); if (sac.state === 'suspended') sac.resume(); SND[k](); } catch {}
+  };
+  const showSnd = () => { sndBtn.textContent = sndOn ? '🔔' : '🔕'; sndBtn.classList.toggle('off', !sndOn); sndBtn.title = sndOn ? 'Овозни ўчириш' : 'Овозни ёқиш'; i18nApply(sndBtn); };
+  sndBtn.addEventListener('click', () => { sndOn = !sndOn; setLS('bayan-chat-snd', sndOn); showSnd(); play('rx'); });
+  showSnd();
+  // Browsers only allow sound after the first touch or key press on the page.
+  ['pointerdown', 'keydown'].forEach(t => addEventListener(t, () => { if (sndOn && !sac) try { sac = new (window.AudioContext || window.webkitAudioContext)(); } catch {} }, { once: true, capture: true }));
+  let heard = null;
   const badge = document.getElementById('chatbadge'), state = document.getElementById('chatstate');
   const bar = document.getElementById('adminbar'), blkBox = document.getElementById('blklist');
   const myId = getLS('bayan-chat-id', null) || (() => { const id = Math.random().toString(36).slice(2, 10); setLS('bayan-chat-id', id); return id; })();
@@ -3672,7 +3702,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   document.getElementById('delsel').addEventListener('click', async () => {
     if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
     try { await archive(list.filter(m => picked.has(m.key))); } catch { noArchive(); return; }
-    try { for (const k of picked) { await adminReq(`chat/${k}`, 'DELETE'); adminReq(`reactions/${k}`, 'DELETE').catch(() => {}); } picked.clear(); await load(); }
+    try { for (const k of picked) { await adminReq(`chat/${k}`, 'DELETE'); adminReq(`reactions/${k}`, 'DELETE').catch(() => {}); } picked.clear(); play('del'); await load(); }
     catch { alert('Ўчириб бўлмади. Админ сифатида қайта киринг.'); }
   });
   // Admin tools stay folded under one arrow; they close again on a second click, when the cursor leaves, or after 20 s untouched.
@@ -3745,7 +3775,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       on ? delete node[myId] : node[myId] = true;
       rxOpen = null; draw();
       if (!on) rxBurst(k, i, from);
-      fetch(`${CHAT_DB}/reactions/${k}/${i}/${myId}.json`, on ? { method: 'DELETE' } : { method: 'PUT', body: 'true' }).catch(() => {});
+      fetch(`${CHAT_DB}/reactions/${k}/${i}/${myId}.json`, on ? { method: 'DELETE' } : { method: 'PUT', body: 'true' }).catch(() => {}); if (!on) play('rx');
       return;
     }
     // A tap on the message opens the reaction bar (like in Telegram); a second tap or a tap elsewhere closes it.
@@ -3796,7 +3826,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     } else if (e.target.closest('.del')) {
       if (!confirm('Шу хабар ўчирилсинми?')) return;
       try { await archive([m]); } catch { noArchive(); return; }
-      try { await adminReq(`chat/${m.key}`, 'DELETE'); adminReq(`reactions/${m.key}`, 'DELETE').catch(() => {}); picked.delete(m.key); await load(); } catch { alert('Ўчириб бўлмади.'); }
+      try { await adminReq(`chat/${m.key}`, 'DELETE'); adminReq(`reactions/${m.key}`, 'DELETE').catch(() => {}); picked.delete(m.key); play('del'); await load(); } catch { alert('Ўчириб бўлмади.'); }
     } else if (e.target.closest('.pick')) {
       picked.has(m.key) ? picked.delete(m.key) : picked.add(m.key); row.classList.toggle('sel', picked.has(m.key)); drawBar();
     }
@@ -3871,6 +3901,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       blocked = (b.ok && await b.json()) || {};
       list = Object.entries(data).map(([key, m]) => Object.assign({ key }, m)).filter(m => m.text).sort((a, b) => (a.ts || 0) - (b.ts || 0));
       picked.forEach(k => { if (!data[k]) picked.delete(k); });
+      { const top = Math.max(0, ...list.map(m => m.ts || 0)); if (heard != null && list.some(m => (m.ts || 0) > heard && m.uid !== myId)) play('in'); heard = top; }
       notify(); readOnline(); await loadMeta();
       state.textContent = isAdmin() ? 'Админ режими' : 'Фойдаланувчилар ва админ';
       if (!box.hidden) { if (!rxOpen) draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
@@ -3944,6 +3975,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
     box.style.setProperty('--gy', ((b.top + b.height / 2 - c.top) / c.height * 100).toFixed(1) + '%');
   };
   const openChat = () => {
+    play('open');
     box.classList.remove('genie-out'); box.hidden = false; genieAim(); msgs.scrollTop = msgs.scrollHeight;
     box.classList.add('genie-in');
     const end = e => { if (e.target !== box) return; box.removeEventListener('animationend', end); box.classList.remove('genie-in'); };
@@ -3951,7 +3983,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   };
   const closeChat = () => {
     if (box.hidden || box.classList.contains('genie-out')) return;
-    rxOpen = null; genieAim(); box.classList.remove('genie-in'); box.classList.add('genie-out');
+    play('close'); rxOpen = null; genieAim(); box.classList.remove('genie-in'); box.classList.add('genie-out');
     const done = () => { if (!box.classList.contains('genie-out')) return; box.classList.remove('genie-out'); box.hidden = true; unread(); poll(); };
     const end = e => { if (e.target !== box) return; box.removeEventListener('animationend', end); done(); };
     box.addEventListener('animationend', end);
@@ -4149,11 +4181,12 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const r = await fetch(`${CHAT_DB}/chat.json${q}`, { method: 'POST', body: JSON.stringify(body) });
       if (!r.ok) throw new Error(r.status);
       r.json().then(j => { if (j?.name) saveMeta(j.name, q); }).catch(() => {});
-      textIn.value = ''; setAtt(null); await load(); msgs.scrollTop = msgs.scrollHeight;
+      textIn.value = ''; setAtt(null); play('out'); await load(); msgs.scrollTop = msgs.scrollHeight;
     } catch { await load(); if (!blocked[myId]) alert('Хабар юборилмади. Интернет алоқасини текширинг.'); }
     send.textContent = '➤'; send.disabled = false; draw();
   });
   textIn.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); form.requestSubmit(); } });
+  textIn.addEventListener('input', () => { const n = Date.now(); if (n - lastTick > 55) { lastTick = n; play('type'); } });
   form.querySelector('[type=submit]').disabled = !CHAT_DB;
   // The notice is open on the first visit; once someone folds it, it stays folded.
   const note = document.getElementById('chatnote');
