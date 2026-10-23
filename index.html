@@ -2,7 +2,7 @@
 <html lang="uz">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <!-- Security: scripts only from this page, network only to tasnif and the chat database. -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: blob: https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://*.soliq.uz; connect-src 'self' https://eldorerkinov0518-oss.github.io https://tasnif.soliq.uz https://bayan-chat-1b132-default-rtdb.europe-west1.firebasedatabase.app wss://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://api.open-meteo.com https://ipapi.co https://api.ipify.org https://cbu.uz https://open.er-api.com; frame-src 'self' about: blob:; object-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="strict-origin-when-cross-origin">
@@ -12,9 +12,15 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@600;700&family=Noto+Color+Emoji&family=Nunito:wght@400;600;700;800&family=Montserrat:wght@400;500;600;700;800&family=Merriweather:wght@400;700;900&family=Rubik:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>try { const t = JSON.parse(localStorage.getItem('bayan-theme')); if (t && t !== 'std') document.documentElement.dataset.theme = t; } catch {}</script>
+<script>
+// Pinch and double-tap zoom stay off on phones (iOS Safari ignores user-scalable=no, so its gestures are stopped here).
+['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault(), { passive: false }));
+document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preventDefault(); }, { passive: false });
+{ let last = 0; document.addEventListener('touchend', e => { const n = Date.now(); if (n - last < 300 && !e.target.closest('input, textarea, select')) e.preventDefault(); last = n; }, { passive: false }); }
+</script>
 <script>if ('serviceWorker' in navigator && location.protocol === 'https:') addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));</script>
 <script>try { if (localStorage.getItem('bayan-still') === '1') document.documentElement.classList.add('still'); if (localStorage.getItem('bayan-list-shut') === '1') document.documentElement.classList.add('lshut'); } catch {}</script>
-<script>try { const v = localStorage.getItem('bayan-view'); if (v === 'm' || (v !== 'pc' && matchMedia('(max-width: 760px)').matches)) document.documentElement.classList.add('mob'); } catch {}</script>
+<script>try { const v = localStorage.getItem('bayan-view'); if (v === 'm' || (v !== 'pc' && (matchMedia('(max-width: 760px)').matches || matchMedia('(pointer: coarse) and (max-height: 500px)').matches))) document.documentElement.classList.add('mob'); } catch {}</script>
 <script>try { if (!JSON.parse(localStorage.getItem('bayan-user-rt') || 'null') && !JSON.parse(localStorage.getItem('bayan-admin-rt') || 'null')) document.documentElement.classList.add('locked'); } catch { document.documentElement.classList.add('locked'); }</script>
 <style>
   :root {
@@ -915,6 +921,14 @@
   .admsite .thlist { padding: 4px 0 8px; }
   #admC .ucard { box-shadow: none; padding: 0; background: none; } #admC .ulist { max-height: none; }
   html.mob .admsite .arow { flex-direction: column; align-items: stretch; }
+  .ogrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; }
+  .ogrid section { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; align-content: start; }
+  .ogrid h4 { margin: 0; display: flex; justify-content: space-between; align-items: baseline; } .ogrid h4 small { color: var(--muted); font-weight: 500; font-size: 12px; }
+  .otls { display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 6px; }
+  .otl { background: var(--soft, #f1f5fb); border-radius: 10px; padding: 7px 6px; text-align: center; display: grid; gap: 1px; } .otl b { font-size: 17px; color: var(--b1); white-space: nowrap; } .otl span { font-size: 11px; color: var(--muted); line-height: 1.2; }
+  .otl.d b { font-size: 13px; white-space: normal; } .otl.g b { color: #0b7a55; } .otl.r b { color: #c0362c; }
+  .ogrid .olive { margin: 0; font-size: 13px; } .ogrid .obt { display: flex; gap: 6px; flex-wrap: wrap; } .ogrid .obt button { padding: 6px 12px; font-size: 13px; }
+  :root[data-theme="night"] .otl { background: rgba(255, 255, 255, .06); }
   .list h2 .lshut:hover { color: var(--text); border-color: var(--b2); }
   html.lshut .list > :not(h2) { display: none !important; }
   /* The admin can freeze every moving effect for everyone (settings/still); the camera scanner keeps its beam. */
@@ -1001,6 +1015,12 @@
   html.mob .calwrap, html.mob .hint .chips, html.mob footer { display: none !important; }
   html.mob *, html.mob *::before, html.mob *::after { animation: none !important; transition: none !important; }
   html.mob, html.mob body { height: auto !important; overflow: visible !important; }
+  /* Phone view works like an app: the page keeps the device width, it cannot be pinched or double-tapped bigger,
+     text is not inflated by the browser, and nothing sticks out sideways. */
+  html.mob { -webkit-text-size-adjust: 100%; text-size-adjust: 100%; touch-action: pan-x pan-y; overscroll-behavior-y: none; }
+  html.mob body { overflow-x: hidden !important; max-width: 100vw; padding-left: env(safe-area-inset-left); padding-right: env(safe-area-inset-right); -webkit-tap-highlight-color: transparent; }
+  html.mob img, html.mob svg, html.mob video, html.mob table { max-width: 100%; }
+  html.mob button, html.mob .chip, html.mob summary { -webkit-user-select: none; user-select: none; }
   html.mob body { background: var(--bg) !important; }
   html.mob .topbar { padding: 8px 12px !important; }
   html.mob .topbar-in { max-width: 560px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
@@ -1307,8 +1327,9 @@
     </div>
     <div class="invbar"><button type="button" class="invbtn" id="invbtn" hidden>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button> <button type="button" class="invbtn" id="invadmbtn" hidden></button></div>
     <div class="invadm" id="invadm" hidden>
-      <div class="atabs" role="tablist"><button type="button" data-tab="admA" class="on">📦 Хатлов ва базалар</button><button type="button" data-tab="admB">🌐 Сайт ва чат</button><button type="button" data-tab="admC">👥 Фойдаланувчилар</button></div>
-      <div class="apane" id="admA"></div>
+      <div class="atabs" role="tablist"><button type="button" data-tab="admO" class="on">📊 Умумий</button><button type="button" data-tab="admA">📦 Хатлов ва базалар</button><button type="button" data-tab="admB">🌐 Сайт ва чат</button><button type="button" data-tab="admC">👥 Фойдаланувчилар</button></div>
+      <div class="apane" id="admO"></div>
+      <div class="apane" id="admA" hidden></div>
       <div class="apane admsite" id="admB" hidden>
         <p class="s">Бу созламалар ҳамма фойдаланувчилар учун бирдан ўзгаради.</p>
         <div class="arow" data-slot="testbtn"><span><b>Тест режими</b><small>Сайт тепасидаги сариқ «тест режими» ёзуви.</small></span></div>
@@ -1372,7 +1393,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2610</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2620</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1675,7 +1696,7 @@ const I18N = {
   '🎨 Фон': ['🎨 Фон', '🎨 Background'],
   '⏸ Эффектлар: ҳаракатда': ['⏸ Эффекты: в движении', '⏸ Effects: moving'], '▶ Эффектлар: қотирилган': ['▶ Эффекты: остановлены', '▶ Effects: frozen'],
   'Сайтдаги ҳаракатланувчи эффектларни ҳамма учун қотириш ёки қайта юргизиш': ['Остановить или снова запустить движущиеся эффекты сайта для всех', 'Freeze or restart the site’s moving effects for everyone'],
-  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📦 Хатлов ва базалар': ['📦 Инвентаризация и базы', '📦 Inventory and bases'], '🌐 Сайт ва чат': ['🌐 Сайт и чат', '🌐 Site and chat'], '👥 Фойдаланувчилар': ['👥 Пользователи', '👥 Users'],
+  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📦 Хатлов ва базалар': ['📦 Инвентаризация и базы', '📦 Inventory and bases'], '📊 Умумий': ['📊 Обзор', '📊 Overview'], '🌐 Сайт ва чат': ['🌐 Сайт и чат', '🌐 Site and chat'], '👥 Фойдаланувчилар': ['👥 Пользователи', '👥 Users'],
   'Бу созламалар ҳамма фойдаланувчилар учун бирдан ўзгаради.': ['Эти настройки меняются сразу для всех пользователей.', 'These settings change at once for every user.'],
   'Тест режими': ['Тестовый режим', 'Test mode'], 'Сайт тепасидаги сариқ «тест режими» ёзуви.': ['Жёлтая надпись «тестовый режим» вверху сайта.', 'The yellow «test mode» line at the top of the site.'],
   'Ҳаракатли эффектлар': ['Движущиеся эффекты', 'Moving effects'], 'Безакли анимацияларни тўхтатиш ёки қайта юргизиш. Мавзуга тегмайди.': ['Остановить или снова запустить декоративные анимации. Тема не меняется.', 'Stop or restart the decorative animations. The theme stays as it is.'],
@@ -3029,6 +3050,7 @@ function updateSide() {
       if (x.state === 'yes') { const iss = issuesOf(r, x.items); if (iss.some(isMain)) c.main++; else if (iss.length) c.diff++; }
     }
     const done = CATALOG.length - c.wait, pct = Math.round(done / CATALOG.length * 100);
+    window.catStats = { ...c, total: CATALOG.length, pct };
     document.getElementById('ringp').textContent = pct + '%';
     document.getElementById('ringf').style.strokeDashoffset = 314.16 * (1 - done / CATALOG.length);
     const row = (f, color, label, n) => `<button type="button" data-f="${f}"><i style="background:${color}"></i>${label}<b>${n}</b></button>`;
@@ -4221,7 +4243,7 @@ document.addEventListener('click', e => {
       const l = full ? [] : load(), have = new Set(l.map(skey));
       let add = 0;
       for (const [k, v] of Object.entries(s || {})) { const x = row(k, v); lastT = Math.max(lastT, x.t || 0); if (have.has(x.k)) continue; have.add(x.k); l.push(x); add++; }
-      if (full || add) { l.sort((a, b) => (a.t || 0) - (b.t || 0) || a.ts.localeCompare(b.ts)); save(l); }
+      if (full || add) { l.sort((a, b) => (a.t || 0) - (b.t || 0) || String(a.ts || '').localeCompare(String(b.ts || ''))); save(l); }
     } catch {} finally { busy = false; if (on) draw(); }
   };
   setInterval(() => { if (on && allowed && !document.hidden) sync(++tick % 10 === 0); }, 3000);
@@ -4486,7 +4508,7 @@ document.addEventListener('click', e => {
   let draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
     if (!on) return;
-    const m = meta(), l = load(), g = groups(l).sort((a, b) => b.last.localeCompare(a.last));
+    const m = meta(), l = load(), g = groups(l).sort((a, b) => String(b.last || '').localeCompare(String(a.last || '')));
     startF.hidden = !!m; work.hidden = !m;
     if (!m) {
       startF.date.value ||= now().slice(0, 10);
@@ -4698,6 +4720,31 @@ document.addEventListener('click', e => {
   const admEl = document.getElementById('invadm'), codesF = document.createElement('input');
   codesF.type = 'file'; codesF.accept = '.xlsx,.csv,.txt,.xls'; codesF.hidden = true; admEl.after(codesF);
   admBtn.textContent = '🛠 ' + L('Админ панели', 'Панель админа', 'Admin panel');
+  // Overview: the main numbers of the whole site on one screen, each block with a button to the place where it is managed.
+  const admO = document.getElementById('admO');
+  const drawOver = async () => {
+    const tile = (n, t, c = '') => `<div class="otl ${c}"><b>${n}</b><span>${esc(t)}</span></div>`;
+    const go = (a, t) => `<button type="button" class="copy" data-go="${a}">${esc(t)}</button>`;
+    let im = null, sc = 0, hi = {}, ci = null, si = null;
+    try { [im, sc, hi, ci, si] = await Promise.all([db('inv/meta'), db('inv/scans?shallow=true').then(v => Object.keys(v || {}).length).catch(() => 0), db('invHist/idx').catch(() => ({})), db('settings/codes').catch(() => null), db('stock/info').catch(() => null)]); } catch {}
+    const cs = window.catStats || {}, us = window.userStats || {}, h = Object.values(hi || {}).sort((a, b) => String(b.ended).localeCompare(String(a.ended)));
+    const st = id => document.getElementById(id)?.textContent.trim() || '';
+    const hm = m => m >= 60 ? L(`${Math.floor(m / 60)} соат ${m % 60} дақ`, `${Math.floor(m / 60)} ч ${m % 60} мин`, `${Math.floor(m / 60)} h ${m % 60} min`) : L(`${m} дақ`, `${m} мин`, `${m} min`);
+    admO.innerHTML = `<div class="ogrid">`
+      + `<section><h4>📋 ${esc(L('Каталог', 'Каталог', 'Catalog'))} <small>${cs.pct ?? 0}% ${esc(L('текширилди', 'проверено', 'checked'))}</small></h4><div class="otls">${tile(cs.total ?? 0, L('маҳсулот', 'товаров', 'products'))}${tile(cs.yes ?? 0, L('МХИК бор', 'ИКПУ есть', 'have a code'), 'g')}${tile(cs.no ?? 0, L('МХИК йўқ', 'ИКПУ нет', 'no code'), 'r')}${tile(cs.main ?? 0, L('асосий хато', 'главная ошибка', 'main error'), 'r')}</div><div class="obt">${go('list', L('📋 Рўйхатни очиш', '📋 Открыть список', '📋 Open the list'))}</div></section>`
+      + `<section><h4>📦 ${esc(L('Хатлов', 'Инвентаризация', 'Inventory'))}</h4>${im ? `<p class="olive">🟢 ${esc(L('Ҳозир давом этмоқда', 'Идёт сейчас', 'Running now'))}: <b>${esc(im.wh || '')}</b> · ${esc(im.date || '')} · 👤 ${esc(im.who || '')}</p>` : `<p class="s">${esc(L('Ҳозир очиқ хатлов йўқ.', 'Сейчас открытой инвентаризации нет.', 'No count is open now.'))}</p>`}<div class="otls">${tile(sc, L('скан ҳозир', 'сканов сейчас', 'scans now'))}${tile(h.length, L('тугатилган хатлов', 'завершено', 'finished counts'))}${tile(h[0] ? esc(String(h[0].ended).slice(0, 10)) : '—', L('охиргиси', 'последняя', 'last one'), 'd')}</div><div class="obt">${go('inv', L('📦 Хатловни очиш', '📦 Открыть', '📦 Open the count'))}${go('hist', L('🕘 Тарих', '🕘 История', '🕘 History'))}</div></section>`
+      + `<section><h4>🗄 ${esc(L('Базалар', 'Базы', 'Bases'))}</h4><div class="otls">${tile(ci?.n ?? 0, L('маркировка коди', 'кодов маркировки', 'marking codes'))}${tile(si?.n ?? 0, L('серия (Склад)', 'серий (склад)', 'series (warehouse)'))}${tile(si?.at ? esc(String(si.at).slice(0, 10)) : '—', L('Склад янгиланган', 'склад обновлён', 'warehouse updated'), 'd')}</div><div class="obt">${go('admA', L('📥 Базаларни бошқариш', '📥 Управление базами', '📥 Manage the bases'))}</div></section>`
+      + `<section><h4>👥 ${esc(L('Ходимлар', 'Сотрудники', 'Staff'))}</h4><div class="otls">${tile(us.n ?? 0, L('жами', 'всего', 'total'))}${tile(us.on ?? 0, L('онлайн', 'онлайн', 'online'), 'g')}${tile(us.act ?? 0, L('бугун фаол', 'активны сегодня', 'active today'))}${tile(hm(us.min || 0), L('бугун жами', 'всего сегодня', 'today in all'), 'd')}</div><div class="obt">${go('admC', L('👥 Рўйхат', '👥 Список', '👥 The list'))}</div></section>`
+      + `<section><h4>🌐 ${esc(L('Сайт', 'Сайт', 'Site'))}</h4><p class="s">${esc(st('testbtn'))} · ${esc(st('stillbtn'))} · ${esc(document.querySelector('.credit')?.textContent.split('·').pop().trim() || '')}</p><div class="obt">${go('admB', L('⚙ Сайт созламалари', '⚙ Настройки сайта', '⚙ Site settings'))}</div></section>`
+      + `</div>`;
+    i18nApply(admO);
+  };
+  admO.addEventListener('click', e => {
+    const g = e.target.closest('[data-go]')?.dataset.go; if (!g) return;
+    if (g.startsWith('adm')) return admEl.querySelector(`[data-tab="${g}"]`).click();
+    if (g === 'list') { document.documentElement.classList.remove('lshut'); document.querySelector('.list').scrollIntoView({ behavior: 'smooth' }); }
+    if (g === 'inv' || g === 'hist') { if (!on) btn.click(); setTimeout(() => { const hd = document.getElementById('invhist'); if (g === 'hist' && !hd.hidden) hd.open = true; (g === 'hist' && !hd.hidden ? hd : panel).scrollIntoView({ behavior: 'smooth' }); }, 300); }
+  });
   // One admin panel with three tabs; the site-wide chat buttons are moved here from the chat's admin tools.
   const admA = document.getElementById('admA');
   admEl.querySelectorAll('[data-slot]').forEach(r => { const b = document.getElementById(r.dataset.slot); if (b) { r.append(b); if (b.id === 'thbtn') r.after(document.getElementById('thlist')); } });
@@ -4705,6 +4752,7 @@ document.addEventListener('click', e => {
     const t = e.target.closest('[data-tab]'); if (!t) return;
     admEl.querySelectorAll('[data-tab]').forEach(x => x.classList.toggle('on', x === t));
     admEl.querySelectorAll('.apane').forEach(x => { x.hidden = x.id !== t.dataset.tab; });
+    if (t.dataset.tab === 'admO') drawOver();
     try { localStorage.setItem('bayan-adm-tab', t.dataset.tab); } catch {}
   });
   try { const t = localStorage.getItem('bayan-adm-tab'); if (t) admEl.querySelector(`[data-tab="${t}"]`)?.click(); } catch {}
@@ -4755,7 +4803,7 @@ document.addEventListener('click', e => {
     }
     return m;
   };
-  admBtn.addEventListener('click', () => { admEl.hidden = !admEl.hidden; admBtn.classList.toggle('on', !admEl.hidden); if (!admEl.hidden) drawAdm(); });
+  admBtn.addEventListener('click', () => { admEl.hidden = !admEl.hidden; admBtn.classList.toggle('on', !admEl.hidden); if (!admEl.hidden) { drawAdm(); if (!document.getElementById('admO').hidden) drawOver(); } });
   admEl.addEventListener('change', async e => {
     const c = e.target.closest('[data-u]'); if (!c) return;
     c.disabled = true;
@@ -5033,7 +5081,7 @@ document.addEventListener('click', e => {
           + `<div class="ui"><b>${esc(r.name)}${r.inv ? ' <em title="' + esc(L('Хатловга рухсат берилган', 'Допущен к инвентаризации', 'Allowed to count')) + '">📦</em>' : ''}</b><small>${r.st === 'on' ? '🟢 ' + esc(L('онлайн', 'онлайн', 'online')) + (r.kind ? ' ' + r.kind : '') : r.st === 'idle' ? '🟡 ' + esc(L('сайт очиқ, фаол эмас', 'сайт открыт, неактивен', 'site open, idle')) : r.last ? '⚪ ' + esc(ago(r.last)) : '⚪ ' + esc(L('ҳали кирмаган', 'ещё не заходил', 'not yet signed in'))}</small></div>`
           + `<div class="ut"><b>${r.today ? hm(r.today) : '—'}</b><span class="uwk">${r.week.map((m, i) => `<i style="height:${Math.max(2, Math.round(m / mx * 18))}px" title="${esc(r.days[i])}: ${esc(hm(m))}"></i>`).join('')}</span></div></div>`; }).join('') || `<p class="unone">${esc(L('Ҳали ҳеч ким рўйхатдан ўтмаган.', 'Пока никто не зарегистрирован.', 'Nobody has signed up yet.'))}</p>`}</div>` : '');
   };
-  const draw = () => { card.innerHTML = build(open, true); pc.innerHTML = build(true, false); try { fitSides(); } catch {} };
+  const draw = () => { window.userStats = { n: rows.length, on: rows.filter(r => r.st === 'on').length, act: rows.filter(r => r.today > 0).length, min: rows.reduce((a, r) => a + r.today, 0) }; card.innerHTML = build(open, true); pc.innerHTML = build(true, false); try { fitSides(); } catch {} };
   card.addEventListener('click', e => { if (e.target.closest('[data-ut]')) { open = !open; ls('bayan-ucard-open', open); draw(); } });
   const load = async () => {
     if (document.hidden) return;
