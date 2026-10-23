@@ -1217,6 +1217,10 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .mobpick small { color: var(--muted); font-size: 13px; } .mobpick em { font-style: normal; font-weight: 500; color: var(--muted); font-size: 14px; } .mobpick span { font: 600 13px ui-monospace, Consolas, monospace; color: var(--muted); }
   html.mob .list { margin-top: 14px; } html.mob .list h2 { font-size: 16px; }
   html.mob .tbl { border: 0; } html.mob .tbl td { border-left: 0; border-right: 0; }
+  /* Phone top bar: logo on the left, the profile tab in the right corner, the languages on their own row in the middle. */
+  html.mob .topbar-in { flex-wrap: wrap; row-gap: 6px; } html.mob .topbar-in > div:last-child { display: contents; }
+  html.mob .topbar-in::before { content: ''; order: 3; flex-basis: 100%; height: 0; }
+  html.mob .topbar .userout { order: 2; margin: 0 0 0 auto; } html.mob .topbar .langs { order: 4; margin: 0 auto; }
   html.mob .topbar .langs .thm { width: 30px; font-size: 15px; } @media (max-width: 350px) { html.mob .topbar .langs { gap: 3px; padding: 3px 4px; } html.mob .topbar .langs button:not(.thm) { min-width: 40px; padding: 3px 7px; } }
   html.mob .tile.empty { display: none; }
   html.mob .codes { flex-wrap: nowrap; gap: 8px; } html.mob .cimg { flex: 1; min-width: 0; padding: 8px; } html.mob .cimg .cbox { height: 96px; max-width: 100%; } html.mob .cimg svg { max-width: 100%; }
@@ -1498,7 +1502,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2860</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2870</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
