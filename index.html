@@ -1254,7 +1254,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2440</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2450</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1313,7 +1313,6 @@
   <section class="chat" id="chat" hidden aria-label="Умумий чат">
     <header><span class="ava">💬</span><div><b>Умумий чат <button type="button" class="onl" id="onl" hidden></button></b><small id="chatstate">Фойдаланувчилар ва админ</small></div><button type="button" id="chatmax" title="Катталаштириш">⤢</button><button type="button" id="chatx" aria-label="Ёпиш">✕</button><span class="chatrsz" id="chatrsz" title="Ўлчамини ўзгартириш учун тортинг"></span></header>
     <details class="chatnote" id="chatnote" open><summary>ℹ️ Саҳифа ҳақида</summary><p>Ушбу саҳифа маълумотлар базасини шакллантириш мақсадида тузилган бўлиб, фақат бирламчи маълумотларни олиш имконини беради. Унда айрим камчиликлар бўлиши мумкин. Таклиф ва фикр-мулоҳазаларингиз бўлса, администраторга изоҳ қолдиришингиз мумкин.<span class="ipnote">🔒 Тартибни сақлаш учун хабар юборилганда IP манзил ва қурилма тури ёзиб олинади, уларни фақат админ кўради.</span><a class="tglnk tgline" href="#" target="_blank" rel="noopener">📲 Маҳсулотни Telegram бот орқали ҳам текшириш мумкин</a></p></details>
-    <form class="adminlogin" id="adminlogin" hidden><b>🛡 Админ кириши</b><input name="email" type="email" placeholder="Email" required><input name="pass" type="password" placeholder="Парол" required><button type="submit">Кириш</button><small></small></form>
     <div class="adminbar" id="adminbar" hidden><button type="button" class="admtog" id="admtog" aria-expanded="false">🛠 Админ асбоблари <span>▾</span></button><div class="admtools" id="admtools" hidden><button type="button" id="delsel" disabled>🗑 Ўчириш (0)</button><button type="button" id="clearall">🧹 Тозалаш</button><button type="button" id="blkbtn">⛔ Блок (0)</button><button type="button" id="testbtn" title="Сайт тепасидаги «тест режими» ёзувини ҳамма учун ёқиш ёки ўчириш">🧪 Тест: ёқиқ</button><button type="button" id="histbtn" title="Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш">💾 Тарих</button><button type="button" id="thbtn" title="Чат фонини ҳамма учун танлаш">🎨 Фон</button><button type="button" id="adminout" title="Админ режимидан чиқиш">Чиқиш</button><div class="blklist" id="blklist" hidden></div><div class="thlist" id="thlist" hidden></div></div></div>
     <div class="onlist" id="onlist" hidden></div>
     <div class="msgs" id="msgs"></div>
@@ -3246,7 +3245,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
   });
   const nameIn = document.getElementById('chatname'), textIn = document.getElementById('chattext'), form = document.getElementById('chatf');
   const badge = document.getElementById('chatbadge'), state = document.getElementById('chatstate');
-  const bar = document.getElementById('adminbar'), login = document.getElementById('adminlogin'), blkBox = document.getElementById('blklist');
+  const bar = document.getElementById('adminbar'), blkBox = document.getElementById('blklist');
   const myId = getLS('bayan-chat-id', null) || (() => { const id = Math.random().toString(36).slice(2, 10); setLS('bayan-chat-id', id); return id; })();
   // Reactions: /reactions/<message>/<emoji index>/<person id> = true; anyone can toggle their own, the admin can clear them.
   const EMO = ['👍', '❤️', '😂', '😮', '🙏', '🔥', '👏', '🎉', '😢', '😡', '🤔', '👎', '✅', '💯', '😍', '🤝'];
@@ -3304,7 +3303,6 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const showAdmin = () => {
     if (typeof acceptRedraw === 'function' && showAdmin.was !== isAdmin()) { if (showAdmin.was !== undefined) acceptRedraw(); showAdmin.was = isAdmin(); }
     bar.hidden = !isAdmin();
-    login.hidden = isAdmin() || location.hash !== '#admin';
     if (isAdmin() && !nameIn.value) nameIn.value = 'Админ';
     box.classList.toggle('adm', isAdmin());
     if (isAdmin()) document.getElementById('chatnote').open = false;
@@ -3319,20 +3317,8 @@ document.querySelectorAll('.tglnk').forEach(a => {
     blkBox.innerHTML = ids.length ? ids.map(id => `<div><span>${esc(blocked[id].name || id)}</span><button type="button" data-unblock="${esc(id)}">Блокдан чиқариш</button></div>`).join('')
       : '<div><span>Блокланган фойдаланувчи йўқ</span></div>';
   };
-  login.addEventListener('submit', async e => {
-    e.preventDefault();
-    const st = login.querySelector('small');
-    if (!FB_KEY) { st.textContent = 'Админ кириши ҳали созланмаган.'; return; }
-    st.textContent = 'Текширилмоқда…';
-    const r = await fetch(`https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${FB_KEY}`, { method: 'POST',
-      headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email: login.email.value.trim(), password: login.pass.value, returnSecureToken: true }) }).catch(() => null);
-    if (!r || !r.ok) { st.textContent = 'Email ёки парол нотўғри.'; return; }
-    const d = await r.json();
-    setLS('bayan-admin-rt', d.refreshToken); tok = d.idToken; tokExp = Date.now() + (d.expiresIn - 60) * 1000;
-    login.reset(); st.textContent = ''; showAdmin(); draw();
-    if ('Notification' in window && Notification.permission === 'default') Notification.requestPermission().catch(() => {});
-  });
-  document.getElementById('adminout').addEventListener('click', () => { setLS('bayan-admin-rt', ''); tok = null; picked.clear(); showAdmin(); draw(); });
+  // Admin mode comes only from signing in on the start screen, so leaving it signs out of the site.
+  document.getElementById('adminout').addEventListener('click', () => document.getElementById('logout').click());
   document.getElementById('blkbtn').addEventListener('click', () => { blkBox.hidden = !blkBox.hidden; });
   document.getElementById('delsel').addEventListener('click', async () => {
     if (!picked.size || !confirm(`${picked.size} та хабар ўчирилсинми?`)) return;
@@ -3824,7 +3810,6 @@ document.querySelectorAll('.tglnk').forEach(a => {
   if (getLS('bayan-chat-note', '') === 'closed') note.open = false;
   note.addEventListener('toggle', () => setLS('bayan-chat-note', note.open ? 'open' : 'closed'));
   addEventListener('hashchange', showAdmin);
-  if (location.hash === '#admin' && !isAdmin()) { box.hidden = false; }
   showAdmin(); load(); poll();
 }
 
