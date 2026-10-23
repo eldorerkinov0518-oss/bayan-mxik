@@ -1298,7 +1298,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2540</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2550</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -4026,7 +4026,7 @@ document.addEventListener('click', e => {
     if (!m) return;
     if (!c) { ibList(); i18nApply(ibF); return; }
     const mine = l.filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser), total = mine.reduce((t, x) => t + units(x), 0), boxes = mine.filter(x => x.box).length;
-    const bs = c.ser && bookSer(c.ser);
+    const bs = c.ser && bookSer(c.ser, c.gtin);
     curEl.innerHTML = `<span>💊 <b>${esc(c.name)}</b><br><small>${c.ser ? `${esc(L('Серия', 'Серия', 'Series'))} ${esc(c.ser)} · ` : ''}${bs ? `${esc(L('ҳисобда', 'по учёту', 'in the ledger'))} ${bs.qty} · ` : ''}📦 1 ${esc(L('қути', 'короб', 'box'))} = ${c.qty} ${esc(L('та', 'шт', 'pcs'))}</small></span>`
       + `<span class="n">${total} ${esc(L('та', 'шт', 'pcs'))}<br><small>${boxes} ${esc(L('қути', 'коробов', 'boxes'))}</small></span><button type="button" data-done>✓ ${esc(L('Бу дори тугади', 'Этот препарат закончен', 'This medicine is done'))}</button>`;
   };
@@ -4076,7 +4076,7 @@ document.addEventListener('click', e => {
       let sm;
       try { sm = await db('inv/meta'); srv = true; srvErr = false; }
       catch (e) { if (e.status) { srv = false; srvErr = e.status === 401 || e.status === 403; } return; }
-      if (full) db('settings/codes').then(i => { codesN = i?.n || 0; }).catch(() => {});
+      if (full) { db('settings/codes').then(i => { codesN = i?.n || 0; }).catch(() => {}); loadStock(); }
       const lm = meta();
       if (!sm) {
         if (lm?.id) {
@@ -4199,7 +4199,22 @@ document.addEventListener('click', e => {
   window.invShow = (r, raw) => { out.innerHTML = status(r.ok && !r.warn ? 'ok' : 'warn', r.ok ? '✓' : '!', esc(r.msg), esc(String(raw || '').trim().slice(0, 60))); };
   // Book stock: a file from the company's accounting (barcode + quantity rows, or a list of marking codes from Asl Belgisi)
   // that the count is compared with. Marking codes are matched on GTIN + serial, so a missing GS separator does not matter.
-  const BOOK = 'bayan-inv-book', book = () => { try { return JSON.parse(localStorage.getItem(BOOK)); } catch { return null; } };
+  const BOOK = 'bayan-inv-book', ownBook = () => { try { return JSON.parse(localStorage.getItem(BOOK)); } catch { return null; } };
+  // The shared series base the admin uploads (stock/): series, medicine, GTIN and packs per box for everyone who counts.
+  const STOCK = 'bayan-stock', stock = () => { try { return JSON.parse(localStorage.getItem(STOCK)); } catch { return null; } };
+  const loadStock = async () => {
+    try {
+      const i = await db('stock/info');
+      if (!i) { localStorage.removeItem(STOCK); return; }
+      if (stock()?.at === i.at) return;
+      const s = await db('stock/sers');
+      localStorage.setItem(STOCK, JSON.stringify({ ...i, sers: Object.values(s || {}) }));
+      if (on) draw();
+    } catch {}
+  };
+  const allSers = () => ownBook()?.sers || stock()?.sers || [];
+  const book = () => { const b = ownBook(); if (b) return b; const st = stock(), sers = (st?.sers || []).filter(x => x.qty);
+    return sers.length ? { file: `${L('Склад базаси', 'База склада', 'Warehouse base')} · ${st.at}`, loaded: st.at, shared: true, rows: [], codes: [], sers } : null; };
   const saveBook = b => { try { b ? localStorage.setItem(BOOK, JSON.stringify(b)) : localStorage.removeItem(BOOK); return true; } catch { return false; } };
   const mkey = t => { const m = String(t).replace(/\s/g, '').match(/^01(\d{14})21([^\x1d]+)/); return m ? m[1] + (m[2].length > 13 && !String(t).includes('\x1d') ? m[2].slice(0, 13) : m[2]) : ''; };
   const cellText = v => v == null ? '' : typeof v === 'object' ? (v.richText ? v.richText.map(r => r.text).join('') : v.text ?? v.result ?? (v instanceof Date ? '' : '')) : String(v);
@@ -4225,20 +4240,26 @@ document.addEventListener('click', e => {
   const nser = v => String(v || '').toUpperCase().replace(/[\s\-_.\/]/g, '');
   const nnum = v => +String(v ?? '').replace(/[\s\u00a0]/g, '').replace(',', '.') || 0;
   const ledger = rows => {
-    const hi = rows.findIndex(r => r.some(c => /^Серия$/i.test(cellText(c).trim())) && r.some(c => /остаток/i.test(cellText(c))));
+    const hi = rows.findIndex(r => r.some(c => /^серия$/i.test(cellText(c).trim())) && r.some(c => /остаток|қолдиқ|в коробке|қутидаги/i.test(cellText(c))));
     if (hi < 0) return null;
     const h = rows[hi].map(c => cellText(c).trim().toLowerCase()), col = re => h.findIndex(x => re.test(x));
-    const cs = col(/^серия$/), cn = col(/^название$/), cb = col(/в коробке/), cq = col(/текущий остаток|^остаток/), cst = col(/^статус$/);
-    if (cs < 0 || cq < 0) return null;
+    const cs = col(/^серия$/), cn = col(/^название|^номи|^дори/), cb = col(/в коробке|қутидаги/), cq = col(/остаток|қолдиқ/), cst = col(/^статус$/), cg = col(/gtin|штрих/);
+    if (cs < 0) return null;
     const sers = [];
     for (const r of rows.slice(hi + 1)) {
       const ser = cellText(r[cs]).trim(); if (!ser) continue;
-      const q = nnum(cellText(r[cq])); if (!q) continue;
-      sers.push({ ser, name: cellText(r[cn]).trim(), cap: nnum(cellText(r[cb])) || 0, qty: q, st: cst < 0 ? '' : cellText(r[cst]).trim() });
+      const x = { ser, name: cn < 0 ? '' : cellText(r[cn]).trim(), cap: cb < 0 ? 0 : nnum(cellText(r[cb])), qty: cq < 0 ? 0 : nnum(cellText(r[cq])) };
+      if (cst >= 0 && cellText(r[cst]).trim()) x.st = cellText(r[cst]).trim();
+      const g = cg < 0 ? '' : cellText(r[cg]).replace(/\D/g, ''); if (/^\d{8,14}$/.test(g)) x.gtin = g;
+      sers.push(x);
     }
-    return sers.length ? { sers, date: cellText(rows[hi][1]).trim() } : null;
+    const d = cellText(rows[hi][1]).trim();
+    return sers.length ? { sers, date: /^\d{2}\.\d{2}\.\d{4}$/.test(d) ? d : '' } : null;
   };
-  const bookSer = s => book()?.sers?.find(x => nser(x.ser) === nser(s));
+  // Old series numbers were reused by different medicines, so a series is looked up together with the medicine when it is known.
+  const serOf = (x, g) => { const r = g && ownOf(g); return !r || (x.gtin ? strip0(x.gtin) === strip0(r[0]) : nrm(x.name).startsWith(nrm(r[2]))); };
+  const bookSer = (s, g) => { const c = allSers().filter(x => nser(x.ser) === nser(s)), m = c.filter(x => serOf(x, g)), a = m.length ? m : g ? [] : c;
+    return a.find(x => x.qty > 0) || a[a.length - 1]; };
   // The medicine of a ledger name: the catalog brand it starts with and the same №, when only one product fits.
   const nrm = t => String(t || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, '');
   const ledgerProd = name => {
@@ -4249,16 +4270,18 @@ document.addEventListener('click', e => {
     return hit.length === 1 ? hit[0] : null;
   };
   const serList = () => {
-    const dl = document.getElementById('ibsers'), b = book(), g = ibGtin(), r = g && ownOf(g);
-    const all = (b?.sers || []).filter(x => x.qty > 0), mine = r ? all.filter(x => nrm(x.name).startsWith(nrm(r[2]))) : [];
-    dl.innerHTML = (mine.length ? mine : all).map(x => `<option value="${esc(x.ser)}" label="${esc(`${x.name} · ${x.cap ? `1 қути = ${x.cap} · ` : ''}қолдиқ ${x.qty}`)}">`).join('');
+    const dl = document.getElementById('ibsers'), g = ibGtin(), r = g && ownOf(g), sers = allSers(), stocked = sers.some(x => x.qty);
+    // With stock in the ledger only series still on hand are offered; the newest series come first.
+    const all = sers.filter(x => !stocked || x.qty > 0).slice().reverse();
+    const mine = r ? all.filter(x => x.gtin ? strip0(x.gtin) === strip0(r[0]) : nrm(x.name).startsWith(nrm(r[2]))) : [];
+    dl.innerHTML = (mine.length ? mine : all).slice(0, 400).map(x => `<option value="${esc(x.ser)}" label="${esc([x.name, x.cap ? `1 қути = ${x.cap}` : '', x.qty ? `қолдиқ ${x.qty}` : ''].filter(Boolean).join(' · '))}">`).join('');
   };
   ibF.ser.addEventListener('focus', serList);
   ibF.ser.addEventListener('change', () => {
-    const x = bookSer(ibF.ser.value); if (!x) return;
+    const x = bookSer(ibF.ser.value, ibGtin()); if (!x) return;
     ibF.ser.value = x.ser;
     if (x.cap) ibF.qty.value = x.cap;
-    if (!ibGtin()) { const r = ledgerProd(x.name); if (r) ibF.prod.value = optOf(r); }
+    if (!ibGtin()) { const r = (x.gtin && ownOf(x.gtin)) || ledgerProd(x.name); if (r) ibF.prod.value = optOf(r); }
   });
   const readBook = async f => {
     if (/\.xls$/i.test(f.name)) throw new Error('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.');
@@ -4276,9 +4299,15 @@ document.addEventListener('click', e => {
   const ckey = x => x.box ? 'S' + x.raw : mkey(x.raw);
   const compare = (all, b) => {
     if (b.sers) {
-      const l = all.filter(x => x.gtin !== 'SSCC'), fact = new Map(), fname = new Map();
-      for (const x of l) { const k = nser(x.ser); fact.set(k, (fact.get(k) || 0) + units(x)); if (!fname.has(k)) fname.set(k, [x.ser, x.name]); }
-      const bq = new Map(b.sers.map(r => [nser(r.ser), r]));
+      const l = all.filter(x => x.gtin !== 'SSCC'), fact = new Map(), fname = new Map(), bk0 = b.sers.filter(r => r.qty);
+      const bkey = r => nser(r.ser) + '|' + nrm(r.name);
+      // Each counted series goes to the ledger row of the same series and medicine.
+      for (const x of l) {
+        const c = bk0.filter(r => nser(r.ser) === nser(x.ser)), m = c.filter(r => serOf(r, x.gtin)), hit = m.length === 1 ? m[0] : c.length === 1 && !m.length ? null : m[0];
+        const k = hit ? bkey(hit) : nser(x.ser) + '|' + x.gtin;
+        fact.set(k, (fact.get(k) || 0) + units(x)); if (!fname.has(k)) fname.set(k, [x.ser, x.name]);
+      }
+      const bq = new Map(bk0.map(r => [bkey(r), r]));
       const rows = [...new Set([...bq.keys(), ...fact.keys()])].map(k => {
         const r = bq.get(k), bk = r?.qty || 0, ft = fact.get(k) || 0;
         return { gtin: r?.ser || fname.get(k)?.[0] || '', label: `${L('Серия', 'Серия', 'Series')} ${r?.ser || fname.get(k)?.[0] || '—'}`, name: r?.name || fname.get(k)?.[1] || '', book: bk, fact: ft, diff: ft - bk };
@@ -4306,7 +4335,7 @@ document.addEventListener('click', e => {
     if (!b) return;
     const c = compare(l, b), sum = k => c.rows.reduce((s2, r) => s2 + r[k], 0);
     const ok = c.rows.filter(r => !r.diff).length, lo = c.rows.filter(r => r.diff < 0).length, hi = c.rows.filter(r => r.diff > 0).length;
-    cmpEl.innerHTML = `<div class="hd"><span>📊 <span>Ҳисоб билан солиштириш</span> <small>${esc(b.file)}</small></span><button type="button" data-x title="Ҳисоб файлини олиб ташлаш">✕</button></div>`
+    cmpEl.innerHTML = `<div class="hd"><span>📊 <span>Ҳисоб билан солиштириш</span> <small>${esc(b.file)}</small></span>${b.shared ? '' : '<button type="button" data-x title="Ҳисоб файлини олиб ташлаш">✕</button>'}</div>`
       + `<div class="ch"><span><span>Ҳисобда:</span> <b>${sum('book')}</b></span><span><span>Фактда:</span> <b>${sum('fact')}</b></span><span class="ok"><span>Мос:</span> <b>${ok}</b></span><span class="lo"><span>Камомад:</span> <b>${lo}</b></span><span class="hi"><span>Ортиқча:</span> <b>${hi}</b></span>`
       + (c.codes ? `<span class="lo"><span>Сканерланмаган кодлар:</span> <b>${c.miss.length}</b></span><span class="hi"><span>Ҳисобда йўқ кодлар:</span> <b>${c.extra.length}</b></span>` : '') + `</div>`
       + `<div class="tb"><table><thead><tr><th>Маҳсулот</th><th>Ҳисобда</th><th>Фактда</th><th>Фарқ</th></tr></thead><tbody>`
@@ -4424,8 +4453,8 @@ document.addEventListener('click', e => {
   admBtn.textContent = '⚙ ' + L('Хатлов созламалари', 'Настройки инвентаризации', 'Inventory settings');
   const drawAdm = async () => {
     admEl.innerHTML = `<p class="s">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
-    let users = {}, perm = {}, info = null, err = '';
-    try { [users, perm, info] = await Promise.all([db('users'), db('invUsers'), db('settings/codes')]); }
+    let users = {}, perm = {}, info = null, sinfo = null, err = '';
+    try { [users, perm, info, sinfo] = await Promise.all([db('users'), db('invUsers'), db('settings/codes'), db('stock/info').catch(() => null)]); }
     catch (e) { err = e.status ? L('Маълумотни ўқиб бўлмади. Firebase’да янги қоидаларни (firebase-rules.json) Publish қилинг.', 'Не удалось прочитать данные. Опубликуйте новые правила Firebase (firebase-rules.json → Publish).', 'Could not read the data. Publish the new Firebase rules (firebase-rules.json).') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.'); }
     users ||= {}; perm ||= {}; codesN = info?.n || 0;
     const ul = Object.entries(users).filter(([id]) => id !== ADMIN_ID).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name)));
@@ -4438,7 +4467,12 @@ document.addEventListener('click', e => {
       + `<p class="s"><b>${esc(info?.n ? L(`Базада ${info.n} та код`, `В базе ${info.n} кодов`, `${info.n} codes in the base`) : L('База ҳозирча бўш.', 'База пока пуста.', 'The base is empty.'))}</b>${info?.n ? ` · ${esc(L('охирги юклаш', 'последняя загрузка', 'last upload'))}: ${esc(info.file || '')}, ${esc(info.at || '')}` : ''}</p>`
       + `<p class="s">${esc(L('Excel (.xlsx), CSV ёки TXT файлдаги маркировка кодлари (DataMatrix) ва қути кодлари (SSCC) базага қўшилади, бор кодлар такрорланмайди. Янги кодлар чиққанда файлни яна юклайверинг. Сканерланган код базада бўлмаса, бу ҳақда огоҳлантирилади.', 'Коды маркировки (DataMatrix) и коды коробов (SSCC) из файла Excel (.xlsx), CSV или TXT добавляются в базу без повторов. Когда появятся новые коды, просто загрузите файл ещё раз. Если отсканированного кода нет в базе, появится предупреждение.', 'Marking codes (DataMatrix) and box codes (SSCC) from an Excel (.xlsx), CSV or TXT file are added to the base without repeats. When new codes come out, upload the file again. A scanned code that is not in the base gets a warning.'))}</p>`
       + `<div class="bt"><button type="button" class="go" data-up>📥 ${esc(L('Файлдан кодлар юклаш', 'Загрузить коды из файла', 'Upload codes from a file'))}</button>`
-      + (info?.n ? `<button type="button" class="copy" data-wipe>🗑 ${esc(L('Базани тозалаш', 'Очистить базу', 'Clear the base'))}</button>` : '') + `<span class="pr"></span></div>`;
+      + (info?.n ? `<button type="button" class="copy" data-wipe>🗑 ${esc(L('Базани тозалаш', 'Очистить базу', 'Clear the base'))}</button>` : '') + `<span class="pr"></span></div>`
+      + `<h4>🏬 ${esc(L('Склад базаси: серия ва қутидаги қадоқлар сони', 'База склада: серии и количество в коробке', 'Warehouse base: series and packs per box'))}</h4>`
+      + `<p class="s"><b>${esc(sinfo?.n ? L(`Базада ${sinfo.n} та серия`, `В базе ${sinfo.n} серий`, `${sinfo.n} series in the base`) : L('База ҳозирча бўш.', 'База пока пуста.', 'The base is empty.'))}</b>${sinfo?.n ? ` · ${esc(L('охирги юклаш', 'последняя загрузка', 'last upload'))}: ${esc(sinfo.file || '')}, ${esc(sinfo.at || '')}` : ''}</p>`
+      + `<p class="s">${esc(L('Янги дори ёки серия чиққанда уни шаблонга ёзиб, шу ерга юкланг. Бор сериялар янгиланади, янгилари қўшилади. «Склад ГП» ҳисоботини ҳам шундайлигича юклаш мумкин. Инвентаризацияда серия ёзилганда дори ва битта қутидаги қадоқлар сони ҳамма ходимларда ўзи қўйилади.', 'Когда появляется новый препарат или серия, впишите его в шаблон и загрузите сюда. Существующие серии обновятся, новые добавятся. Отчёт «Склад ГП» можно загрузить как есть. При инвентаризации после ввода серии препарат и количество в коробке подставятся сами у всех сотрудников.', 'When a new medicine or series comes out, add it to the template and upload it here. Existing series are updated and new ones added. The «Склад ГП» report can be uploaded as it is. During the inventory, typing a series fills the medicine and packs per box for every staff member.'))}</p>`
+      + `<div class="bt"><button type="button" class="go" data-sup>📥 ${esc(L('Склад файлини юклаш', 'Загрузить файл склада', 'Upload the warehouse file'))}</button><button type="button" class="copy" data-stpl>⬇ ${esc(L('Шаблонни юклаб олиш', 'Скачать шаблон', 'Download the template'))}</button>`
+      + (sinfo?.n ? `<button type="button" class="copy" data-swipe>🗑 ${esc(L('Склад базасини тозалаш', 'Очистить базу склада', 'Clear the warehouse base'))}</button>` : '') + `<span class="pr2"></span></div>`;
   };
   const codeOf = v => cellText(v).trim().replace(/^"|"$/g, '').replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/<GS>|\\x1d|\\u001d/gi, '\x1d').replace(/\((\d{2,4})\)/g, '$1');
   const readCodes = async f => {
@@ -4465,7 +4499,56 @@ document.addEventListener('click', e => {
     catch { c.checked = !c.checked; alert(L('Сақлаб бўлмади. Firebase қоидаларини текширинг.', 'Не удалось сохранить. Проверьте правила Firebase.', 'Could not save. Check the Firebase rules.')); }
     c.disabled = false;
   });
+  const stockF = document.createElement('input');
+  stockF.type = 'file'; stockF.accept = '.xlsx,.csv,.txt,.xls'; stockF.hidden = true; admEl.after(stockF);
+  const fileRows = async f => {
+    if (/\.xls$/i.test(f.name)) throw new Error(L('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.', 'Сохраните старый файл .xls в Excel как .xlsx и загрузите снова.', 'Save the old .xls file as .xlsx in Excel and upload it again.'));
+    const rows = [];
+    if (/\.xlsx$/i.test(f.name)) { const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer()); wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1)))); }
+    else for (const l of (await f.text()).split(/\r?\n/)) rows.push(l.split(/[;\t,](?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"')));
+    return rows;
+  };
+  // The template: one row per series; the column names are the ones the warehouse report uses, so both files read alike.
+  const stockTpl = async () => {
+    const wb = new ExcelJS.Workbook(), ws = wb.addWorksheet('Склад'), hd = ws.addRow(['Серия', 'Название', 'GTIN (штрих код)', 'Кол-во в коробке']);
+    ws.columns = [{ width: 16, style: { numFmt: '@' } }, { width: 40 }, { width: 18, style: { numFmt: '@' } }, { width: 16 }];
+    hd.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
+    hd.height = 30; ws.views = [{ state: 'frozen', ySplit: 1 }];
+    const hw = wb.addWorksheet('Йўриқнома'); hw.getColumn(1).width = 110;
+    ['Склад базасини тўлдириш', '', '1. «Склад» варағида ҳар бир серия алоҳида қаторга ёзилади.',
+      '2. Серия — қадоқдаги серия рақами, складдагидек ёзилади (масалан: 307 10 26F).',
+      '3. Название — дори номи, масалан: Дексап 2мл №5.',
+      '4. GTIN — қадоқдаги 13 хонали штрих код (ихтиёрий). Ёзилса, дори номдан эмас, шу коддан аниқланади.',
+      '5. Кол-во в коробке — битта гофрокаробкадаги қадоқлар сони, масалан: 132.',
+      '6. Сайтда: «⚙ Хатлов созламалари» → «📥 Склад файлини юклаш». Бор сериялар янгиланади, янгилари қўшилади.',
+      '«Склад ГП» ҳисоботини (CSV ёки Excel) ҳам ўзгартирмай юклаш мумкин.'].forEach((t, i) => { const r = hw.addRow([t]); if (!i) r.font = { bold: true, size: 14 }; });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([await wb.xlsx.writeBuffer()], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+    a.download = 'Sklad-bazasi-shablon.xlsx'; document.body.append(a); a.click(); a.remove();
+  };
+  stockF.addEventListener('change', async () => {
+    const f = stockF.files[0]; stockF.value = ''; if (!f) return;
+    const pr = admEl.querySelector('.pr2'); admEl.querySelectorAll('.bt button').forEach(b => { b.disabled = true; });
+    try {
+      pr.textContent = L('Файл ўқилмоқда…', 'Чтение файла…', 'Reading the file…');
+      const lg = ledger(await fileRows(f));
+      if (!lg) throw new Error(L('Файлда «Серия» ва «Кол-во в коробке» устунлари топилмади. Шаблондан фойдаланинг.', 'В файле не найдены столбцы «Серия» и «Кол-во в коробке». Используйте шаблон.', 'The file has no «Серия» and «Кол-во в коробке» columns. Use the template.'));
+      const ents = [...new Map(lg.sers.map(x => [fk(nser(x.ser) + '_' + nrm(x.name).slice(0, 40)), x]))], N = 1000;
+      for (let i = 0; i < ents.length; i += N) { await db('stock/sers', 'PATCH', Object.fromEntries(ents.slice(i, i + N))); pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`; }
+      const n = Object.keys(await db('stock/sers?shallow=true') || {}).length;
+      await db('stock/info', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
+      try { localStorage.removeItem(STOCK); } catch {} await loadStock();
+      alert(L(`Файлдан ${ents.length} та серия ўқилди. Базада жами ${n} та серия.`, `Из файла прочитано серий: ${ents.length}. Всего в базе: ${n}.`, `${ents.length} series read from the file. ${n} series in the base in all.`));
+    } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
+    drawAdm();
+  });
   admEl.addEventListener('click', async e => {
+    if (e.target.closest('[data-sup]')) stockF.click();
+    if (e.target.closest('[data-stpl]')) stockTpl();
+    if (e.target.closest('[data-swipe]') && confirm(L('Склад базаси бутунлай тозалансинми?', 'Полностью очистить базу склада?', 'Clear the whole warehouse base?'))) {
+      try { await db('stock', 'DELETE'); localStorage.removeItem(STOCK); } catch { alert(L('Тозалаб бўлмади.', 'Не удалось очистить.', 'Could not clear.')); }
+      drawAdm();
+    }
     if (e.target.closest('[data-up]')) codesF.click();
     if (e.target.closest('[data-wipe]') && confirm(L('Маркировка кодлари базаси бутунлай тозалансинми?', 'Полностью очистить базу кодов маркировки?', 'Clear the whole marking code base?'))) {
       try { await db('codes', 'DELETE'); await db('settings/codes', 'DELETE'); codesN = 0; } catch { alert(L('Тозалаб бўлмади.', 'Не удалось очистить.', 'Could not clear.')); }
