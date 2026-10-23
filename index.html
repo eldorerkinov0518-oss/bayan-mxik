@@ -992,6 +992,11 @@
   .invstart .go { padding: 12px; font-size: 15px; }
   .invmeta { margin: 8px 0 0; display: flex; flex-wrap: wrap; gap: 6px; } .invmeta span { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 3px 10px; font-size: 12.5px; }
   .invlist div.nf span { color: var(--bad, #b91c1c); }
+  .invhist { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 8px; } .invhist summary { cursor: pointer; font-weight: 700; padding: 4px 0; }
+  .invhist summary span { color: var(--muted); font-weight: 500; font-size: 13px; }
+  .invhist .hrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 2px; border-top: 1px solid var(--line); font-size: 14px; }
+  .invhist .hrow small { display: block; color: var(--muted); font-size: 12px; } .invhist .hrow div:last-child { display: flex; gap: 6px; flex: none; }
+  .invhist .hrow button { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 8px; padding: 6px 9px; cursor: pointer; font: inherit; font-size: 13px; }
 </style>
 </head>
 <body>
@@ -1183,9 +1188,10 @@
       <div id="invwork" hidden>
         <div class="invmeta" id="invmeta"></div>
         <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.</p>
-        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">Янги инвентаризация</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
         <div class="invlist" id="invlist"></div>
       </div>
+      <details class="invhist" id="invhist" hidden><summary>🕘 Тарих <span id="invhn"></span></summary><div id="invhl"></div></details>
     </div>
     <div class="codeinfo" id="codeinfo" hidden>
       <div class="ci"><b>▌▌▌ Штрих код (GTIN)</b><p>Қутидаги чизиқли код, 8, 12, 13 ёки 14 рақамдан иборат.</p><p>Маҳсулот турини ва ишлаб чиқарувчини дунё бўйича аниқлайди. Бир хил маҳсулотнинг ҳамма қутисида бир хил бўлади.</p><small>Мисол: 4780090866873</small></div>
@@ -1211,7 +1217,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2350</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2400</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1340,13 +1346,20 @@ const UI = (() => { try { return ['uz', 'ru', 'en'].includes(localStorage.getIte
 const LI = UI === 'ru' ? 0 : 1;
 // Whole texts and phrases: Uzbek → [Russian, English].
 const I18N = {
+  '✓ Тугатиш': ['✓ Завершить', '✓ Finish'],
+  'Тугатилган': ['Завершена', 'Finished'],
+  'Бошланган': ['Начата', 'Started'],
+  'Бу инвентаризация тарихдан ўчирилсинми?': ['Удалить эту инвентаризацию из истории?', 'Delete this stock count from history?'],
+  'Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.': ['Не удалось сохранить в историю: память браузера заполнена. Скачайте Excel и удалите старую историю.', 'Could not save to history: browser storage is full. Download the Excel file and delete old history.'],
+  'Жорий инвентаризация тугатилиб, тарихга сақлансинми?': ['Завершить текущую инвентаризацию и сохранить в историю?', 'Finish the current stock count and save it to history?'],
+  '🕘 Тарих': ['🕘 История', '🕘 History'],
   'Бундай маҳсулот топилмади.': ['Такой продукт не найден.', 'No such product found.'],
   'Номини бошқача ёзиб ёки штрих кодни сканерлаб кўринг.': ['Попробуйте написать название иначе или отсканировать штрих-код.', 'Try another spelling or scan the barcode.'],
   'Омбор': ['Склад', 'Warehouse'],
   'Масъул шахс': ['Ответственное лицо', 'Responsible person'],
   'Масалан: Асосий омбор': ['Например: Основной склад', 'For example: Main warehouse'],
   'Бошлаш': ['Начать', 'Start'],
-  'Янги инвентаризация': ['Новая инвентаризация', 'New stock count'],
+  'Янги инвентаризация': ['Завершить и начать новую', 'Finish and start new'],
   'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.': ['Сначала укажите дату, склад и ответственное лицо и нажмите «Начать».', 'First enter the date, warehouse and responsible person, then press «Start».'],
   'базада топилмади': ['нет в базе', 'not in the database'],
   '✕ Базада топилмади': ['✕ Нет в базе', '✕ Not in the database'],
@@ -1646,6 +1659,7 @@ const I18N = {
 };
 // Texts with numbers or names inside: [pattern, Russian, English]. Checked in order, before the phrases above.
 const I18N_RE = [
+  [/(\d+) та скан · (\d+) та маҳсулот · ✕ (\d+) та топилмади/g, '$1 сканов · $2 продуктов · ✕ $3 не найдено', '$1 scans · $2 products · ✕ $3 not found'],
   [/(\d+) та маҳсулот топилди\. Кераклисини танланг\./g, 'Найдено продуктов: $1. Выберите нужный.', '$1 products found. Pick one.'],
   [/(\d+) та скан · (\d+) та маҳсулот/g, '$1 сканов · $2 продуктов', '$1 scans · $2 products'],
   [/tasnif'да «(.+?)» номи билан қидирилмоқда…/g, 'Поиск в tasnif по названию «$1»…', 'Searching tasnif for the name «$1»…'],
@@ -3757,6 +3771,9 @@ document.addEventListener('click', e => {
 {
   const KEY = 'bayan-inv', META = 'bayan-inv-meta', panel = document.getElementById('inv'), btn = document.getElementById('invbtn'), listEl = document.getElementById('invlist');
   const startF = document.getElementById('invstart'), work = document.getElementById('invwork');
+  // Finished counts are kept in this browser's history (newest first) with their details, so each can be downloaded again.
+  const HIST = 'bayan-inv-hist', hist = () => { try { return JSON.parse(localStorage.getItem(HIST)) || []; } catch { return []; } };
+  const saveHist = h => { try { localStorage.setItem(HIST, JSON.stringify(h)); return true; } catch { return false; } };
   const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
   const save = l => { try { localStorage.setItem(KEY, JSON.stringify(l)); } catch {} };
   const meta = () => { try { return JSON.parse(localStorage.getItem(META)); } catch { return null; } };
@@ -3782,7 +3799,7 @@ document.addEventListener('click', e => {
     return own ? { ok: true, msg: `✓ ${own[2] || own[1]} — ${n}` } : { ok: true, msg: `✓ ${code} — ${tr('базада топилмади')} — ${n}` };
   };
   const groups = l => { const m = new Map(); for (const x of l) { const g = m.get(x.gtin) || { ...x, n: 0, last: '' }; g.n++; g.last = x.ts; m.set(x.gtin, g); } return [...m.values()]; };
-  const draw = () => {
+  let draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
     if (!on) return;
     const m = meta(), l = load(), g = groups(l).sort((a, b) => b.last.localeCompare(a.last));
@@ -3807,18 +3824,20 @@ document.addEventListener('click', e => {
   btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-inv-on', on ? '1' : ''); draw(); if (on && meta()) q.focus(); });
   document.getElementById('invoff').addEventListener('click', () => { on = false; sessionStorage.setItem('bayan-inv-on', ''); draw(); });
   document.getElementById('invclr').addEventListener('click', () => {
-    if (load().length && !confirm('Жорий инвентаризация ёпилиб, рўйхат тозалансинми? Аввал Excel’га юклаб олишни унутманг.')) return;
+    const l = load(), m = meta();
+    if (l.length && !confirm('Жорий инвентаризация тугатилиб, тарихга сақлансинми?')) return;
+    if (l.length && m && !saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l }, ...hist()])) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
     save([]); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
   });
-  document.getElementById('invxls').addEventListener('click', async () => {
-    const l = load(), m = meta() || {}; if (!l.length) return alert('Рўйхат бўш.');
+  document.getElementById('invxls').addEventListener('click', () => { const l = load(); if (!l.length) return alert('Рўйхат бўш.'); exportXls(l, meta() || {}, now()); });
+  async function exportXls(l, m, made) {
     const wb = new ExcelJS.Workbook(), RED = 'FFFDE2E2', GREEN = 'FFDCFCE7';
     // Each sheet: the count's details on top, then the table with a coloured header.
     const sheet = (title, cols, rows) => {
       const ws = wb.addWorksheet(title);
       ws.columns = cols.map(([, w]) => ({ width: w }));
       ws.addRow([tr('Инвентаризация') + ' — BAYAN MEDICAL']).font = { bold: true, size: 14 };
-      [['Сана', m.date], ['Омбор', m.wh], ['Масъул шахс', m.who], ['Файл тузилган', now()]].forEach(([k, v]) => { const r = ws.addRow([tr(k), v || '']); r.getCell(1).font = { bold: true }; });
+      [['Сана', m.date], ['Омбор', m.wh], ['Масъул шахс', m.who], ['Бошланган', m.started], ['Тугатилган', made]].forEach(([k, v]) => { const r = ws.addRow([tr(k), v || '']); r.getCell(1).font = { bold: true }; });
       ws.addRow([]);
       const h = ws.addRow(cols.map(([c]) => tr(c)));
       h.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
@@ -3837,7 +3856,20 @@ document.addEventListener('click', e => {
     a.href = URL.createObjectURL(new Blob([buf], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
     const safe = t => String(t || '').replace(/[\\/:*?"<>|\s]+/g, '-').slice(0, 30);
     a.download = `Inventarizatsiya-${m.date || now().slice(0, 10)}-${safe(m.wh)}.xlsx`; document.body.append(a); a.click(); a.remove();
+  }
+  const histEl = document.getElementById('invhist');
+  const drawHist = () => {
+    const h = hist(); histEl.hidden = !h.length || panel.hidden;
+    document.getElementById('invhn').textContent = h.length ? `(${h.length})` : '';
+    document.getElementById('invhl').innerHTML = h.map(x => `<div class="hrow"><div>📅 ${esc(x.meta.date)} · 🏬 ${esc(x.meta.wh)}<small>👤 ${esc(x.meta.who)} · ${x.list.length} та скан · ${groups(x.list).length} та маҳсулот${x.list.some(r => !r.name) ? ' · ✕ ' + groups(x.list).filter(r => !r.name).length + ' та топилмади' : ''}</small></div><div><button type="button" data-hx="${x.id}">⬇ Excel</button><button type="button" data-hd="${x.id}" title="Ўчириш">🗑</button></div></div>`).join('');
+    i18nApply(histEl);
+  };
+  histEl.addEventListener('click', e => {
+    const x = e.target.closest('[data-hx]'), d = e.target.closest('[data-hd]');
+    if (x) { const r = hist().find(h => h.id === x.dataset.hx); if (r) exportXls(r.list, r.meta, r.ended); }
+    if (d && confirm('Бу инвентаризация тарихдан ўчирилсинми?')) { saveHist(hist().filter(h => h.id !== d.dataset.hd)); drawHist(); }
   });
+  const draw0 = draw; draw = () => { draw0(); drawHist(); };
   draw();
 }
 
