@@ -1137,7 +1137,7 @@
     <form id="f">
       <div class="field">
         <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
-        <input id="q" maxlength="200" autocomplete="off" placeholder="Номи, штрих код ёки МХИК коди" autofocus>
+        <input id="q" maxlength="200" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Номи, штрих код ёки МХИК коди" autofocus>
         <button type="button" class="qx" id="qx" title="Тозалаш" hidden>✕</button>
         <button type="button" class="qcam" id="qcam" title="Камера билан сканерлаш" aria-label="Камера билан сканерлаш"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 8v8M10 8v8M13 8v8M17 8v8"/></svg></button>
       </div>
@@ -1178,7 +1178,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2300</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2310</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2224,8 +2224,13 @@ q.addEventListener('input', () => {
 
 // What a camera or a 2D scanner reads, turned into something the search understands:
 // a marking DataMatrix (GS1: 01 + 14-digit GTIN + 21 serial…) gives its GTIN, a tasnif QR gives the bare MXIK code.
+// A keyboard-type 2D scanner on a computer set to the Russian/Uzbek layout types Cyrillic letters for the code's Latin ones;
+// when the text otherwise looks like a marking code, the keys are mapped back to the US layout.
+const RU_KEYS = 'йцукенгшщзхъфывапролджэячсмитьбюё', US_KEYS = "qwertyuiop[]asdfghjkl;'zxcvbnm,.`";
+const unLayout = t => /^\(?01\)?\d{14}/.test(t) && /[а-яё]/i.test(t)
+  ? t.replace(/[а-яё]/gi, c => { const i = RU_KEYS.indexOf(c.toLowerCase()); if (i < 0) return c; const u = US_KEYS[i]; return c === c.toLowerCase() ? u : u.toUpperCase(); }) : t;
 function scanCode(raw) {
-  let t = String(raw || '').replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/[\x1d\u241d]/g, '\x1d').trim();
+  let t = unLayout(String(raw || '')).replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/[\x1d\u241d]/g, '\x1d').trim();
   const d = t.replace(/\s+/g, '');
   if (/^\d{17}$/.test(d) || /^\d{8}$|^\d{12,14}$/.test(d)) return d;
   const g = d.match(/^\(?01\)?(\d{14})(?=\(?21\)?|\x1d|\(|$)/) || (d.length > 17 && d.match(/^01(\d{14})/));
@@ -3688,7 +3693,7 @@ setTimeout(() => runCheck(true), 600);
   window.invMode = () => on;
   // Returns {ok, msg} for a code, or null when the text is not a code at all (a name search goes on as usual).
   window.invAdd = raw => {
-    const text = String(raw || '').trim(); if (!text) return '';
+    const text = unLayout(String(raw || '').trim()); if (!text) return null;
     const code = scanCode(text);
     if (!/^\d{8,14}$/.test(code)) return null;
     const marked = text.replace(/\s/g, '').length > 16 && !/^\d{17}$/.test(text);
