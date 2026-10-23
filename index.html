@@ -820,6 +820,7 @@
   .status.ok { background: var(--okbg); color: var(--ok); } .status.ok .ic { background: var(--ok); color: var(--okbg); }
   .status.bad { background: var(--badbg); color: var(--bad); } .status.bad .ic { background: var(--bad); color: var(--badbg); }
   .status.warn { background: var(--warnbg); color: var(--warn); } .status.warn .ic { background: var(--warn); color: var(--warnbg); }
+  .status.info { background: #e0f2fe; color: #075985; } .status.info .ic { background: #bae6fd; }
   .status small { display: block; font-weight: 400; opacity: .8; }
   .skel { margin-top: 16px; background: var(--card); border-radius: 18px; padding: 22px; box-shadow: var(--shadow); }
   .skel i { display: block; height: 14px; border-radius: 7px; margin: 10px 0;
@@ -992,6 +993,11 @@
   .invh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; } .invh span { color: var(--muted); font-size: 13px; }
   .invhelp { margin: 6px 0 10px; font-size: 13px; color: var(--muted); }
   .invtools { display: flex; gap: 8px; flex-wrap: wrap; } .invtools .go { padding: 10px 16px; font-size: 14px; }
+  .invbox { margin-top: 10px; padding: 12px; border: 2px solid var(--b2, #2f80ed); border-radius: 12px; background: #eff6ff; display: grid; grid-template-columns: 2fr 1fr; gap: 8px 10px; align-items: end; }
+  .invbox[hidden] { display: none; } .invbox b { grid-column: 1 / -1; color: #1e3a8a; } .invbox code { font-size: 12.5px; color: #475569; }
+  .invbox label { display: grid; gap: 4px; font-size: 12.5px; color: #334155; } .invbox input { padding: 9px 10px; border: 1px solid #bfdbfe; border-radius: 9px; font: inherit; min-width: 0; }
+  .invbox > div { grid-column: 1 / -1; display: flex; gap: 8px; } .invbox .go { padding: 9px 16px; }
+  html.mob .invbox { grid-template-columns: 1fr; }
   .invcmp { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
   .invcmp .hd { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; }
   .invcmp .hd small { font-weight: 500; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
@@ -1222,8 +1228,15 @@
       </form>
       <div id="invwork" hidden>
         <div class="invmeta" id="invmeta"></div>
-        <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.</p>
+        <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади. Гофрокаробкадаги 18 хонали транспорт кодини (SSCC) сканерласангиз, қайси дори ва ичида нечта қадоқ борлиги сўралади.</p>
         <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invbk" title="Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш">📥 Ҳисоб файли</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <form class="invbox" id="invbox" hidden>
+          <b>📦 <span>Гофрокаробка</span> <code id="ibsscc"></code></b>
+          <label><span>Қайси дори?</span><input name="prod" list="ibprods" autocomplete="off" placeholder="Номини ёзинг ёки қутидаги битта қадоқни сканерланг" required></label>
+          <label><span>Қутида нечта қадоқ бор?</span><input name="qty" type="number" min="1" step="1" inputmode="numeric" required></label>
+          <div><button class="go" type="submit">Сақлаш</button><button type="button" class="copy" id="ibskip">Кейинроқ</button></div>
+          <datalist id="ibprods"></datalist>
+        </form>
         <input type="file" id="invfile" accept=".xlsx,.csv,.txt,.xls" hidden>
         <div class="invcmp" id="invcmp" hidden></div>
         <div class="invlist" id="invlist"></div>
@@ -1254,7 +1267,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2450</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2470</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1382,6 +1395,16 @@ const UI = (() => { try { return ['uz', 'ru', 'en'].includes(localStorage.getIte
 const LI = UI === 'ru' ? 0 : 1;
 // Whole texts and phrases: Uzbek → [Russian, English].
 const I18N = {
+  'Гофрокаробка': ['Гофрокороб', 'Shipping box'],
+  'Қайси дори?': ['Какой препарат?', 'Which medicine?'],
+  'Қутида нечта қадоқ бор?': ['Сколько упаковок в коробе?', 'How many packs are in the box?'],
+  'Номини ёзинг ёки қутидаги битта қадоқни сканерланг': ['Введите название или отсканируйте одну упаковку из короба', 'Type the name or scan one pack from the box'],
+  'Сақлаш': ['Сохранить', 'Save'],
+  'Кейинроқ': ['Позже', 'Later'],
+  'Транспорт қадоғи коди (SSCC)': ['Код транспортной упаковки (SSCC)', 'Transport package code (SSCC)'],
+  'Бу гофрокаробка (агрегация) коди. Ичидаги қадоқлар рўйхати «Асл белгиси» тизимида сақланади. Маҳсулотни топиш учун қутидаги қадоқнинг штрих коди ёки маркировка кодини сканерланг.': ['Это код гофрокороба (агрегации). Список упаковок внутри хранится в системе «Asl Belgisi». Чтобы найти продукт, отсканируйте штрих-код или код маркировки упаковки из короба.', 'This is a shipping box (aggregation) code. The list of packs inside is kept in Asl Belgisi. To find the product, scan the barcode or marking code of a pack from the box.'],
+  'Транспорт қути (SSCC)': ['Транспортный короб (SSCC)', 'Shipping box (SSCC)'],
+  'Транспорт қути': ['Транспортный короб', 'Shipping box'],
   '📥 Ҳисоб файли': ['📥 Файл учёта', '📥 Book file'],
   'Ҳисоб файли': ['Файл учёта', 'Book file'],
   'Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш': ['Загрузить коды из учёта предприятия и сравнить с фактом', 'Load the codes from the company books and compare them with the count'],
@@ -1434,7 +1457,7 @@ const I18N = {
   'Фақат BAYAN MEDICAL ходимлари учун': ['Только для сотрудников BAYAN MEDICAL', 'For BAYAN MEDICAL staff only'],
   'Бу ички платформа. Кириш ва рўйхатдан ўтиш фақат компания ходимларига мўлжалланган.': ['Это внутренняя платформа. Вход и регистрация предназначены только для сотрудников компании.', 'This is an internal platform. Sign-in and registration are for company employees only.'],
   'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.': ['Это не код маркировки. Сканируйте квадратный DataMatrix на коробке.', 'This is not a marking code. Scan the square DataMatrix on the box.'],
-  'Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.': ['Сканируйте подряд коды маркировки на коробках (квадратный DataMatrix) камерой (📷) или сканером. Каждая коробка добавляется в список один раз, с датой.', 'Scan the marking codes on the boxes (square DataMatrix) one after another with the camera (📷) or a scanner. Each box is added once, with its date.'],
+  'Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади. Гофрокаробкадаги 18 хонали транспорт кодини (SSCC) сканерласангиз, қайси дори ва ичида нечта қадоқ борлиги сўралади.': ['Сканируйте подряд коды маркировки на коробках (квадратный DataMatrix) камерой (📷) или сканером. Каждая коробка добавляется в список один раз, с датой. При сканировании 18-значного транспортного кода гофрокороба (SSCC) спрашивается, какой препарат и сколько упаковок внутри.', 'Scan the marking codes on the boxes (square DataMatrix) one after another with the camera (📷) or a scanner. Each box is added once, with its date. When you scan the 18-digit shipping-box code (SSCC), the page asks which medicine it holds and how many packs.'],
   '📦 Инвентаризация': ['📦 Инвентаризация', '📦 Inventory'],
   '📷 Сканерлаш': ['📷 Сканировать', '📷 Scan'],
   '⬇ Excel': ['⬇ Excel', '⬇ Excel'],
@@ -2370,12 +2393,22 @@ function scanCode(raw) {
   const gt = d.match(/(?:^|\D)(\d{13,14})(?:\D|$)/); if (gt && /^https?:/i.test(d)) return gt[1];
   return t;
 }
+// SSCC: the 18-digit code of a transport box (aggregation of consumer packs), alone or after the GS1 «00» prefix,
+// accepted only when its check digit is right so an 18-digit mistype is not taken for a box.
+function ssccOf(raw) {
+  const d = unLayout(String(raw || '')).replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/[\s()]/g, '');
+  const m = d.match(/^(?:00)?(\d{18})$/); if (!m) return '';
+  const c = m[1], sum = [...c.slice(0, 17)].reverse().reduce((t, x, i) => t + x * (i % 2 ? 1 : 3), 0);
+  return (10 - sum % 10) % 10 === +c[17] ? c : '';
+}
 document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
   if (window.invMode?.()) {
     const r = window.invAdd(q.value);
     if (r) { out.innerHTML = status(r.ok ? 'ok' : 'warn', r.ok ? '✓' : '!', esc(r.msg), esc(q.value.trim().slice(0, 60))); q.value = ''; q.dispatchEvent(new Event('input')); q.focus(); return; }
   }
+  { const ss = ssccOf(q.value);
+    if (ss) { out.innerHTML = status('info', '📦', `${esc(tr('Транспорт қадоғи коди (SSCC)'))}: ${esc(ss)}`, esc(tr('Бу гофрокаробка (агрегация) коди. Ичидаги қадоқлар рўйхати «Асл белгиси» тизимида сақланади. Маҳсулотни топиш учун қутидаги қадоқнинг штрих коди ёки маркировка кодини сканерланг.'))); return; } }
   { const sc = scanCode(q.value); if (sc !== q.value.trim()) { q.value = sc; q.dispatchEvent(new Event('input')); } }
   if (!/^[\d\s]+$/.test(q.value.trim())) {
     // Phone view: only what was searched. One match opens its card; several are listed to pick from.
@@ -3901,9 +3934,60 @@ document.addEventListener('click', e => {
   const now = () => { const d = new Date(); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`; };
   let on = sessionStorage.getItem('bayan-inv-on') === '1', fresh = '';
   window.invMode = () => on;
+  // Packs per shipping box for each product (GTIN), asked once and kept in this browser; Dexap 2 ml №5 holds 132 (Alex).
+  const CAPS = 'bayan-box-cap', boxCaps = () => { try { return { '4780090865883': 132, ...JSON.parse(localStorage.getItem(CAPS)) }; } catch { return { '4780090865883': 132 }; } };
+  const saveCaps = c => { try { localStorage.setItem(CAPS, JSON.stringify(c)); } catch {} };
+  const L = (uz, ru, en) => UI === 'ru' ? ru : UI === 'en' ? en : uz;
+  let pendingBox = '';
+  // A box linked to a product counts as its packs; a box still waiting for its product counts as one box.
+  const units = x => x.box ? (x.gtin === 'SSCC' ? 1 : x.qty || 0) : 1;
+  // Box form: asked after every box scan. The product is picked from the catalog by name, or found by scanning one pack
+  // from the box; the pack quantity is filled from the last answer for that product and can be changed.
+  const ibF = document.getElementById('invbox');
+  const optOf = r => `${r[2] || r[1]} · ${r[3]}${(n => n ? ` · №${n}` : '')(packMatch(r[4])?.[1])} — ${r[0]}`;
+  let ibProbe = '';
+  const ibGtin = () => { const v = ibF.prod.value.trim(), m = v.match(/(\d{8,14})\s*$/); if (m && ownOf(m[1])) return m[1];
+    const c = scanCode(v); if (/^\d{8,14}$/.test(c) && ownOf(c)) return c;
+    const hit = CATALOG.filter(r => (r[2] || r[1]).toLowerCase() === v.toLowerCase()); return hit.length === 1 ? hit[0][0] : ''; };
+  const ibFill = (code, probe) => { const r = ownOf(code); ibF.prod.value = r ? optOf(r) : code; ibProbe = probe || ''; ibF.qty.value = boxCaps()[r ? r[0] : code] || ''; ibF.qty.focus(); ibF.qty.select(); };
+  const ibOpen = box => {
+    pendingBox = box; ibProbe = ''; ibF.reset(); ibF.hidden = false;
+    document.getElementById('ibsscc').textContent = box;
+    const dl = document.getElementById('ibprods'); if (!dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(optOf(r))}">`).join('');
+    i18nApply(ibF); ibF.prod.focus();
+  };
+  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { if (!/—/.test(ibF.prod.value)) ibF.prod.value = optOf(ownOf(g)); if (!ibF.qty.value) ibF.qty.value = boxCaps()[ownOf(g)[0]] || ''; } });
+  ibF.addEventListener('submit', e => {
+    e.preventDefault();
+    // A scanner typing a pack code into the product field: take the product from it and ask for the quantity.
+    const raw = ibF.prod.value.trim(); if (raw.replace(/\s/g, '').length > 16 && !/—/.test(raw)) { const c = scanCode(raw); if (ownOf(c)) { ibFill(c, raw.replace(/[\s\x1d]/g, '')); return; } }
+    const g = ibGtin(), n = Math.round(+ibF.qty.value);
+    if (!g) { alert(L('Дорини рўйхатдан танланг ёки қутидаги битта қадоқни сканерланг.', 'Выберите препарат из списка или отсканируйте одну упаковку из короба.', 'Pick the medicine from the list or scan one pack from the box.')); ibF.prod.focus(); return; }
+    if (!(n > 0)) { ibF.qty.focus(); return; }
+    const l = load(), bx = l.find(x => x.box && x.raw === pendingBox); if (!bx) { ibF.hidden = true; return; }
+    const r = ownOf(g), caps = boxCaps(); caps[r[0]] = n; saveCaps(caps);
+    Object.assign(bx, { gtin: scanCode(r[0]), name: r[2] || r[1], pack: r[4], found: true, qty: n, probe: ibProbe || undefined });
+    save(l); pendingBox = ''; ibF.hidden = true; fresh = bx.gtin; draw();
+    out.innerHTML = status('ok', '✓', esc(`${r[2] || r[1]}: ` + L(`1 қути = ${n} та қадоқ`, `1 короб = ${n} упаковок`, `1 box = ${n} packs`)), esc(bx.raw));
+    q.focus();
+  });
+  document.getElementById('ibskip').addEventListener('click', () => { ibF.hidden = true; pendingBox = ''; draw(); q.focus(); });
+  // A box left without contents can be filled in later from its row in the list.
+  listEl.addEventListener('click', e => { if (e.target.closest('[data-sscc]')) { const b = load().find(x => x.box && x.gtin === 'SSCC'); if (b) ibOpen(b.raw); } });
   // Returns {ok, msg} for a code, or null when the text is not a code at all (a name search goes on as usual).
   window.invAdd = raw => {
     const text = unLayout(String(raw || '').trim()); if (!text) return null;
+    const box = ssccOf(text);
+    if (box) {
+      if (!meta()) return { ok: false, msg: 'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.' };
+      const l = load();
+      if (l.some(x => x.box && x.raw === box)) return { ok: false, msg: 'Бу код аллақачон саналган' };
+      l.push({ ts: now(), raw: box, gtin: 'SSCC', name: 'Транспорт қути (SSCC)', pack: '', found: true, box: true, qty: 0 });
+      save(l); fresh = 'SSCC'; draw(); ibOpen(box);
+      return { ok: true, msg: L(`✓ Қути саналди (${box}). Қайси дори ва ичида нечта қадоқ борлигини киритинг.`,
+        `✓ Короб учтён (${box}). Укажите, какой препарат и сколько упаковок внутри.`,
+        `✓ Box counted (${box}). Enter which medicine it holds and how many packs.`) };
+    }
     const code = scanCode(text);
     if (!/^\d{8,14}$/.test(code)) return null;
     if (!meta()) return { ok: false, msg: 'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.' };
@@ -3912,10 +3996,13 @@ document.addEventListener('click', e => {
     if (!marked) return { ok: false, msg: 'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.' };
     const key = text.replace(/[\s\x1d]/g, ''), l = load();
     if (l.some(x => x.raw.replace(/[\s\x1d]/g, '') === key)) return { ok: false, msg: 'Бу код аллақачон саналган' };
+    if (l.some(x => x.probe === key)) return { ok: false, msg: L('Бу қадоқ қути ичида саналган', 'Эта упаковка уже учтена в коробе', 'This pack is already counted inside a box') };
     const own = ownOf(code);
+    // While a box waits for its contents, a pack scanned from it names the product in the box form instead of being counted.
+    if (pendingBox && !ibF.hidden) { ibFill(code, key); return { ok: true, msg: L('Маҳсулот аниқланди. Қутидаги қадоқлар сонини текшириб, «Сақлаш»ни босинг.', 'Продукт определён. Проверьте количество упаковок в коробе и нажмите «Сохранить».', 'Product found. Check the number of packs in the box and press «Save».') }; }
     l.push({ ts: now(), raw: text, gtin: code, name: own ? (own[2] || own[1]) : '', pack: own ? own[4] : '', found: !!own });
     save(l); fresh = code; draw();
-    const n = l.filter(x => x.gtin === code).length;
+    const n = l.filter(x => x.gtin === code).reduce((t, x) => t + units(x), 0);
     return own ? { ok: true, msg: `✓ ${own[2] || own[1]} — ${n}` } : { ok: true, msg: `✓ ${code} — ${tr('базада топилмади')} — ${n}` };
   };
   // Book stock: a file from the company's accounting (barcode + quantity rows, or a list of marking codes from Asl Belgisi)
@@ -3928,6 +4015,8 @@ document.addEventListener('click', e => {
     const qty = new Map(), names = new Map(), codes = new Set();
     for (const r of rows) {
       const cells = r.map(c => cellText(c).trim()).filter(Boolean);
+      const bx = cells.map(c => ssccOf(c)).find(Boolean);
+      if (bx) { codes.add('S' + bx); continue; }
       const mk = cells.find(c => mkey(c));
       if (mk) { const k = mkey(mk); codes.add(k); const g = scanCode(mk); qty.set(g, (qty.get(g) || 0) + 1); continue; }
       const bi = cells.findIndex(c => /^\d{8,14}$/.test(c));
@@ -3947,12 +4036,14 @@ document.addEventListener('click', e => {
       wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1))));
     } else rows = (await f.text()).split(/\r?\n/).map(l => l.split(/[;\t,](?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"')));
     const b = parseRows(rows);
-    if (!b.rows.length) throw new Error('Файлдан штрих код ёки маркировка коди топилмади. Excel (.xlsx), CSV ёки TXT файл танланг.');
+    if (!b.rows.length && !b.codes.length) throw new Error('Файлдан штрих код ёки маркировка коди топилмади. Excel (.xlsx), CSV ёки TXT файл танланг.');
     return { file: f.name, loaded: now(), ...b };
   };
   // Book against fact per product, plus code-by-code differences when the book lists marking codes.
-  const compare = (l, b) => {
-    const fact = new Map(); for (const x of l) fact.set(x.gtin, (fact.get(x.gtin) || 0) + 1);
+  const ckey = x => x.box ? 'S' + x.raw : mkey(x.raw);
+  const compare = (all, b) => {
+    const l = all.filter(x => x.gtin !== 'SSCC');
+    const fact = new Map(); for (const x of l) fact.set(x.gtin, (fact.get(x.gtin) || 0) + units(x));
     const bq = new Map(b.rows.map(r => [r.gtin, r]));
     const rows = [...new Set([...bq.keys(), ...fact.keys()])].map(g => {
       const own = ownOf(g), bk = bq.get(g)?.qty || 0, ft = fact.get(g) || 0;
@@ -3960,9 +4051,9 @@ document.addEventListener('click', e => {
     }).sort((a, b2) => (a.diff === 0) - (b2.diff === 0) || a.diff - b2.diff || a.name.localeCompare(b2.name));
     let miss = [], extra = [];
     if (b.codes?.length) {
-      const bs = new Set(b.codes), fs = new Map(l.map(x => [mkey(x.raw), x]));
+      const bs = new Set(b.codes), fs = new Map(all.map(x => [ckey(x), x]));
       miss = b.codes.filter(k => !fs.has(k));
-      extra = l.filter(x => !bs.has(mkey(x.raw)));
+      extra = all.filter(x => !bs.has(ckey(x)));
     }
     return { rows, miss, extra, codes: !!b.codes?.length };
   };
@@ -3986,7 +4077,7 @@ document.addEventListener('click', e => {
     catch (e) { alert(tr(e.message || 'Файлни очиб бўлмади.')); }
   });
   cmpEl.addEventListener('click', e => { if (e.target.closest('[data-x]') && confirm(tr('Ҳисоб файлини олиб ташлаш') + '?')) { saveBook(null); draw(); } });
-  const groups = l => { const m = new Map(); for (const x of l) { const g = m.get(x.gtin) || { ...x, n: 0, last: '' }; g.n++; g.last = x.ts; m.set(x.gtin, g); } return [...m.values()]; };
+  const groups = l => { const m = new Map(); for (const x of l) { const g = m.get(x.gtin) || { ...x, n: 0, boxes: 0, last: '' }; g.n += units(x); g.boxes += x.box ? 1 : 0; g.last = x.ts; m.set(x.gtin, g); } return [...m.values()]; };
   let draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
     if (!on) return;
@@ -3998,9 +4089,9 @@ document.addEventListener('click', e => {
       document.getElementById('invsum').textContent = ''; return;
     }
     document.getElementById('invmeta').innerHTML = `<span>📅 ${esc(m.date)}</span><span>🏬 ${esc(m.wh)}</span><span>👤 ${esc(m.who)}</span>`;
-    document.getElementById('invsum').textContent = tr(`${l.length} та скан · ${g.length} та маҳсулот`);
+    document.getElementById('invsum').textContent = tr(`${l.length} та скан · ${g.filter(x => x.gtin !== 'SSCC').length} та маҳсулот`);
     drawCmp(l);
-    listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])} · ${esc(x.last.slice(11))}</small></span><b class="n">${x.n} та</b></div>`).join('');
+    listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"${x.gtin === 'SSCC' ? ' data-sscc style="cursor:pointer"' : ''}><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])} · ${esc(x.last.slice(11))}${x.boxes && x.gtin !== 'SSCC' ? ` · 📦 ${x.boxes} × ${Math.round((x.n - (x.n - l.filter(y => y.box && y.gtin === x.gtin).reduce((t, y) => t + y.qty, 0))) / x.boxes)}` : ''}${x.gtin === 'SSCC' ? ' · ' + L('ичидагини киритиш учун босинг', 'нажмите, чтобы указать содержимое', 'click to enter the contents') : ''}</small></span><b class="n">${x.n} та</b></div>`).join('');
     i18nApply(work);
   };
   startF.addEventListener('submit', e => {
@@ -4016,13 +4107,13 @@ document.addEventListener('click', e => {
     const l = load(), m = meta();
     if (l.length && !confirm('Жорий инвентаризация тугатилиб, тарихга сақлансинми?')) return;
     if (l.length && m && !saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l, book: book() }, ...hist()])) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
-    save([]); saveBook(null); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
+    save([]); saveBook(null); pendingBox = ''; ibF.hidden = true; try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
   });
   document.getElementById('invxls').addEventListener('click', () => { const l = load(); if (!l.length) return alert('Рўйхат бўш.'); exportXls(l, meta() || {}, now(), book()); });
   async function exportXls(l, m, made, bk) {
     const wb = new ExcelJS.Workbook(), RED = 'FFFDE2E2', GREEN = 'FFDCFCE7';
     // Each sheet: the count's details on top, then the table with a coloured header.
-    const sheet = (title, cols, rows, color = v => v === tr('Базада бор') ? GREEN : RED) => {
+    const sheet = (title, cols, rows, color = v => v === tr('Базада бор') ? GREEN : v === tr('Транспорт қути') ? 'FFE0F2FE' : RED) => {
       const ws = wb.addWorksheet(title);
       ws.columns = cols.map(([, w]) => ({ width: w }));
       ws.addRow([tr('Инвентаризация') + ' (Хатлов · Inventory) — BAYAN MEDICAL']).font = { bold: true, size: 14 };
@@ -4036,19 +4127,20 @@ document.addEventListener('click', e => {
       ws.views = [{ state: 'frozen', ySplit: h.number }];
       return ws;
     };
-    const stat = x => tr(x.name ? 'Базада бор' : 'Топилмади');
+    const stat = x => tr(x.box ? 'Транспорт қути' : x.name ? 'Базада бор' : 'Топилмади');
     sheet(tr('Жами'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Қадоқ', 46], ['Сони', 8], ['МХИК', 20], ['Ҳолат', 13], ['Биринчи скан', 20], ['Охирги скан', 20]],
       groups(l).map((x, i) => [i + 1, x.gtin, x.name || tr('Топилмади'), x.pack || '', x.n, results.get(x.gtin)?.items?.[0]?.mxikCode || '', stat(x), x.ts, x.last]));
-    sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 13], ['Маркировка коди', 70]],
-      l.map((x, i) => [i + 1, x.ts, x.gtin, x.name || tr('Топилмади'), stat(x), x.raw.replace(/\x1d/g, ' ')]));
+    sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Сони', 8], ['Ҳолат', 13], ['Маркировка коди', 70]],
+      l.map((x, i) => [i + 1, x.ts, x.gtin, tr(x.name) || tr('Топилмади'), units(x), stat(x), x.raw.replace(/\x1d/g, ' ')]));
     if (bk) {
       const c = compare(l, bk), YEL = 'FFFEF3C7', col = v => v === tr('Мос') ? GREEN : v === tr('Ортиқча') ? YEL : RED;
       const ws = sheet(tr('Солиштириш'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 34], ['Ҳисобда', 10], ['Фактда', 10], ['Фарқ', 9], ['Ҳолат', 13]],
         c.rows.map((r, i) => [i + 1, r.gtin, r.name || tr('Топилмади'), r.book, r.fact, r.diff, tr(r.diff < 0 ? 'Камомад' : r.diff > 0 ? 'Ортиқча' : 'Мос')]), col);
       ws.addRow([]); ws.addRow([tr('Ҳисоб файли') + ':', bk.file, '', tr('Юкланган') + ':', bk.loaded]);
       if (c.codes) sheet(tr('Кодлар фарқи'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 30], ['Маркировка коди', 60]],
-        [...c.miss.map(k => { const g = scanCode('01' + k.slice(0, 14)), o = ownOf(g); return [g, o ? (o[2] || o[1]) : '', tr('Ҳисобда бор, сканерланмаган'), '01' + k.slice(0, 14) + '21' + k.slice(14)]; }),
-         ...c.extra.map(x => [x.gtin, x.name || '', tr('Сканерланган, ҳисобда йўқ'), x.raw.replace(/\x1d/g, ' ')])].map((r, i) => [i + 1, ...r]),
+        [...c.miss.map(k => { if (k[0] === 'S') return ['SSCC', tr('Транспорт қути (SSCC)'), tr('Ҳисобда бор, сканерланмаган'), k.slice(1)];
+           const g = scanCode('01' + k.slice(0, 14)), o = ownOf(g); return [g, o ? (o[2] || o[1]) : '', tr('Ҳисобда бор, сканерланмаган'), '01' + k.slice(0, 14) + '21' + k.slice(14)]; }),
+         ...c.extra.map(x => [x.gtin, tr(x.name || ''), tr('Сканерланган, ҳисобда йўқ'), x.raw.replace(/\x1d/g, ' ')])].map((r, i) => [i + 1, ...r]),
         v => v === tr('Ҳисобда бор, сканерланмаган') ? RED : YEL);
     }
     const buf = await wb.xlsx.writeBuffer(), a = document.createElement('a');
