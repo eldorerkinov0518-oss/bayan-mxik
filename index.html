@@ -1043,6 +1043,27 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   html.mob .credit { position: static !important; display: table; margin: 12px auto 0; }
   html.mob .chatbtn { right: 12px; bottom: 14px; padding: 12px 14px; }
   html.mob .chatbtn { font-size: 0; } html.mob .chatbtn span { font-size: 22px; } html.mob .chatbtn b { font-size: 12px; }
+  /* Phone turned sideways: the page uses the whole width, the header shrinks so the screen's short height goes to the
+     content, the search button sits beside the field, form fields stand side by side and the camera view is beside its text. */
+  @media (orientation: landscape) and (max-height: 520px) {
+    html.mob .topbar { padding: 4px 16px !important; } html.mob .topbar img { height: 28px !important; }
+    html.mob .topbar-in, html.mob .hero-in, html.mob main { max-width: min(1100px, calc(100vw - 32px)); }
+    html.mob .hero { padding: 6px 16px 46px !important; } html.mob .hero h1 { font-size: 18px !important; }
+    html.mob main { margin-top: -40px !important; padding: 0 0 70px !important; }
+    html.mob main .search { padding: 8px 10px !important; top: 4px; }
+    html.mob #f { flex-direction: row; gap: 8px; } html.mob #f .field { flex: 1; width: auto; } html.mob #f .go { width: auto; padding: 10px 22px; font-size: 16px; }
+    html.mob #q { font-size: 16px; }
+    html.mob .tbl th:nth-child(4), html.mob .tbl td:nth-child(4) { display: table-cell; }
+    html.mob .invbox { grid-template-columns: 2fr 1fr 1fr; } html.mob .invbox .w { grid-column: auto; } html.mob .invbox b, html.mob .invbox > div, html.mob .invbox #ibserh { grid-column: 1 / -1; }
+    html.mob .invadm form { grid-template-columns: 1fr 1fr; } html.mob .admsite .arow { flex-direction: row; align-items: center; }
+    html.mob .hed .hm { grid-template-columns: repeat(3, 1fr); } html.mob .hed .ha { grid-template-columns: 1fr 2fr 1fr 1fr auto; }
+    html .scanov { display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: 1fr auto auto 1fr; gap: 10px 18px; padding: 8px 16px; justify-items: center; }
+    html .scanov[hidden] { display: none; }
+    html .scanov .scanbox { grid-column: 1; grid-row: 1 / -1; align-self: center; width: auto; height: calc(100vh - 16px); aspect-ratio: 4 / 3; max-width: 62vw; }
+    html .scanov .last { grid-column: 2; grid-row: 2; } html .scanov p { grid-column: 2; grid-row: 2; } html .scanov .last:not(:empty) + p { grid-row: 3; } html .scanov #scanx { grid-column: 2; grid-row: 3; align-self: start; }
+    html.mob .invstart:not([hidden]) { grid-template-columns: 1fr 1.4fr 1.4fr auto; align-items: end; } html.mob .invstart input { padding: 8px 10px; }
+    html.mob .chatbtn { bottom: 8px; padding: 9px 11px; } html.mob .viewsw { bottom: 8px; }
+  }
   /* Corner switch between the phone and computer views. */
   .viewsw { position: fixed; left: 12px; bottom: 14px; z-index: 31; display: flex; border-radius: 12px; overflow: hidden; background: var(--card);
     box-shadow: var(--shadow); border: 1px solid var(--line); }
@@ -1393,7 +1414,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2620</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2630</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
