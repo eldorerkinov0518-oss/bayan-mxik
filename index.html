@@ -1006,6 +1006,12 @@
   .invbox label { display: grid; gap: 4px; font-size: 12.5px; color: #334155; } .invbox input { padding: 9px 10px; border: 1px solid #bfdbfe; border-radius: 9px; font: inherit; min-width: 0; }
   .invbox > div { grid-column: 1 / -1; display: flex; gap: 8px; } .invbox .go { padding: 9px 16px; }
   html.mob .invbox { grid-template-columns: 1fr; }
+  .invadm { margin-top: 10px; border: 1px solid var(--warn, #f59e0b); border-radius: 14px; padding: 10px 14px; background: var(--soft); }
+  .invadm[hidden] { display: none; } .invadm h4 { margin: 8px 0 4px; font-size: 14px; } .invadm .s { margin: 4px 0; font-size: 12.5px; color: var(--muted); } .invadm .er { color: #b91c1c; font-size: 13px; }
+  .invadm .ul { display: grid; gap: 4px; max-height: 240px; overflow: auto; } .invadm label { display: flex; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 9px; background: var(--card); border: 1px solid var(--line); cursor: pointer; }
+  .invadm label small { color: var(--muted); margin-left: auto; } .invadm .bt { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 6px 0 4px; } .invadm .pr { font-size: 12.5px; color: var(--muted); }
+  .invadm input[type=checkbox] { width: 18px; height: 18px; flex: none; margin: 0; padding: 0; } .invadm label b { font-weight: 600; white-space: nowrap; } .invadm .bt button { width: auto; padding: 8px 14px; font-size: 14px; }
+  .invmeta .loc { color: #b45309; } .invlist .nbw { color: #b45309; font-weight: 700; }
   .invcmp { margin-top: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); }
   .invcmp .hd { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-weight: 700; }
   .invcmp .hd small { font-weight: 500; color: var(--muted); font-size: 12px; overflow-wrap: anywhere; }
@@ -1227,7 +1233,8 @@
       <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">МХИК: 17</span><button type="button" class="chip infob" id="infob" aria-expanded="false">ℹ Кодлар ҳақида</button></div>
       <span id="cnt">0 рақам</span>
     </div>
-    <div class="invbar"><button type="button" class="invbtn" id="invbtn">📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button></div>
+    <div class="invbar"><button type="button" class="invbtn" id="invbtn" hidden>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button> <button type="button" class="invbtn" id="invadmbtn" hidden></button></div>
+    <div class="invadm" id="invadm" hidden></div>
     <div class="inv" id="inv" hidden>
       <div class="invh"><b>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></b><span id="invsum"></span></div>
       <form class="invstart" id="invstart">
@@ -1239,7 +1246,7 @@
       <div id="invwork" hidden>
         <div class="invmeta" id="invmeta"></div>
         <p class="invhelp">Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади. Аввал дорини, сериясини ва битта қутидаги қадоқлар сонини танланг, кейин гофрокаробкалардаги 18 хонали транспорт кодини (SSCC) ва алоҳида қадоқларни сканерланг. Дори тугагач, «Бу дори тугади»ни босиб, кейингисига ўтинг.</p>
-        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invbk" title="Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш">📥 Ҳисоб файли</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
+        <div class="invtools"><button type="button" class="go" id="invcam">📷 Сканерлаш</button><button type="button" class="copy" id="invbk" title="Корхона ҳисобидаги кодларни юклаб, факт билан солиштириш">📥 Ҳисоб файли</button><button type="button" class="copy" id="invxls">⬇ Excel</button><button type="button" class="copy" id="invclr">✓ Тугатиш</button><button type="button" class="copy" id="invsnd"></button><button type="button" class="copy" id="invoff">Ёпиш</button></div>
         <form class="invbox" id="invbox" hidden>
           <b>💊 <span>Қайси дорини санаймиз?</span></b>
           <label class="w"><span>Дори</span><input name="prod" list="ibprods" autocomplete="off" placeholder="Номини ёзинг ёки битта қадоқни сканерланг" required></label>
@@ -1279,7 +1286,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2480</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2490</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2418,8 +2425,9 @@ function ssccOf(raw) {
 document.getElementById('f').addEventListener('submit', async e => {
   e.preventDefault();
   if (window.invMode?.()) {
-    const r = window.invAdd(q.value);
-    if (r) { out.innerHTML = status(r.ok ? 'ok' : 'warn', r.ok ? '✓' : '!', esc(r.msg), esc(q.value.trim().slice(0, 60))); q.value = ''; q.dispatchEvent(new Event('input')); q.focus(); return; }
+    // The field is emptied at once, so the scanner's next code is not lost while this one is being saved.
+    const v = q.value, p = window.invAdd(v);
+    if (p) { q.value = ''; q.dispatchEvent(new Event('input')); q.focus(); window.invShow(await p, v); return; }
   }
   { const ss = ssccOf(q.value);
     if (ss) { out.innerHTML = status('info', '📦', `${esc(tr('Транспорт қадоғи коди (SSCC)'))}: ${esc(ss)}`, esc(tr('Бу гофрокаробка (агрегация) коди. Ичидаги қадоқлар рўйхати «Асл белгиси» тизимида сақланади. Маҳсулотни топиш учун қутидаги қадоқнинг штрих коди ёки маркировка кодини сканерланг.'))); return; } }
@@ -3887,9 +3895,12 @@ document.addEventListener('click', e => {
       // Inventory: keep the camera open and count each new code; the same code held in view counts once.
       if (text === lastText && Date.now() - lastAt < 2500) { lastAt = Date.now(); return; }
       lastText = text; lastAt = Date.now();
-      const r = window.invAdd(text) || { ok: false, msg: 'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.' };
-      navigator.vibrate?.(r.ok ? 60 : [40, 60, 40]);
-      const el = document.getElementById('scanlast'); el.textContent = tr(r.msg); el.style.color = r.ok ? '' : '#fca5a5';
+      const p = window.invAdd(text);
+      if (!p) navigator.vibrate?.([40, 60, 40]);
+      Promise.resolve(p || { ok: false, msg: 'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.' }).then(r => {
+        const el = document.getElementById('scanlast'); el.textContent = tr(r.msg); el.style.color = r.ok ? (r.warn ? '#fde68a' : '') : '#fca5a5';
+        if (!ov.hidden) window.invShow(r, text);
+      });
       return;
     }
     if (busy) return; busy = true; stop();
@@ -3947,7 +3958,7 @@ document.addEventListener('click', e => {
   const z = n => String(n).padStart(2, '0');
   const now = () => { const d = new Date(); return `${d.getFullYear()}-${z(d.getMonth() + 1)}-${z(d.getDate())} ${z(d.getHours())}:${z(d.getMinutes())}:${z(d.getSeconds())}`; };
   let on = sessionStorage.getItem('bayan-inv-on') === '1', fresh = '';
-  window.invMode = () => on;
+  window.invMode = () => on && allowed;
   // Packs per shipping box for each product (GTIN), asked once and kept in this browser; Dexap 2 ml №5 holds 132 (Alex).
   const CAPS = 'bayan-box-cap', boxCaps = () => { try { return { '4780090865883': 132, ...JSON.parse(localStorage.getItem(CAPS)) }; } catch { return { '4780090865883': 132 }; } };
   const saveCaps = c => { try { localStorage.setItem(CAPS, JSON.stringify(c)); } catch {} };
@@ -3963,9 +3974,12 @@ document.addEventListener('click', e => {
   const ibGtin = () => { const v = ibF.prod.value.trim(), m = v.match(/(\d{8,14})\s*$/); if (m && ownOf(m[1])) return m[1];
     const c = scanCode(v); if (/^\d{8,14}$/.test(c) && ownOf(c)) return c;
     const hit = CATALOG.filter(r => (r[2] || r[1]).toLowerCase() === v.toLowerCase()); return hit.length === 1 ? hit[0][0] : ''; };
-  const ibFill = code => { const r = ownOf(code); if (!r) return false; ibF.prod.value = optOf(r); if (!ibF.qty.value) ibF.qty.value = boxCaps()[r[0]] || ''; ibF.ser.focus(); return true; };
+  // The last series counted for each medicine is offered again, so a repeat count needs only Enter.
+  const SERS = 'bayan-inv-ser', sers = () => { try { return JSON.parse(localStorage.getItem(SERS)) || {}; } catch { return {}; } };
+  const ibFill = code => { const r = ownOf(code); if (!r) return false; ibF.prod.value = optOf(r); if (!ibF.qty.value) ibF.qty.value = boxCaps()[r[0]] || '';
+    if (!ibF.ser.value) ibF.ser.value = sers()[r[0]] || ''; ibF.ser.focus(); ibF.ser.select(); return true; };
   const ibList = () => { const dl = document.getElementById('ibprods'); if (!dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(optOf(r))}">`).join(''); };
-  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { ibF.prod.value = optOf(ownOf(g)); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value; } });
+  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { pend = ''; ibF.prod.value = optOf(ownOf(g)); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value; if (!ibF.ser.value) ibF.ser.value = sers()[ownOf(g)[0]] || ''; } });
   ibF.addEventListener('submit', e => {
     e.preventDefault();
     // A scanner typing a pack code into the medicine field picks that medicine.
@@ -3975,7 +3989,11 @@ document.addEventListener('click', e => {
     if (!(n > 0)) { ibF.qty.focus(); return; }
     const r = ownOf(g), caps = boxCaps(); caps[r[0]] = n; saveCaps(caps);
     setCur({ gtin: scanCode(r[0]), name: r[2] || r[1], pack: r[4], ser: ibF.ser.value.trim(), qty: n, started: now() });
+    try { localStorage.setItem(SERS, JSON.stringify({ ...sers(), [r[0]]: ibF.ser.value.trim() })); } catch {}
     ibF.reset(); draw(); q.focus();
+    // The pack that picked the medicine is counted now.
+    const p = pend; pend = '';
+    if (p && scanCode(p) === scanCode(r[0])) window.invAdd(p)?.then(v => window.invShow(v, p));
   });
   curEl.addEventListener('click', e => {
     if (!e.target.closest('[data-done]')) return;
@@ -3996,38 +4014,152 @@ document.addEventListener('click', e => {
     curEl.innerHTML = `<span>💊 <b>${esc(c.name)}</b><br><small>${c.ser ? `${esc(L('Серия', 'Серия', 'Series'))} ${esc(c.ser)} · ` : ''}📦 1 ${esc(L('қути', 'короб', 'box'))} = ${c.qty} ${esc(L('та', 'шт', 'pcs'))}</small></span>`
       + `<span class="n">${total} ${esc(L('та', 'шт', 'pcs'))}<br><small>${boxes} ${esc(L('қути', 'коробов', 'boxes'))}</small></span><button type="button" data-done>✓ ${esc(L('Бу дори тугади', 'Этот препарат закончен', 'This medicine is done'))}</button>`;
   };
-  // Returns {ok, msg} for a code, or null when the text is not a code at all (a name search goes on as usual).
-  window.invAdd = raw => {
+  // Shared count: the count lives in the shared database (inv/meta, inv/scans), so several people can scan at once and a
+  // code is taken only once, whoever scans it; this browser keeps a copy to show and export. The admin chooses who may
+  // count (invUsers). Until the database rules allow it, the count stays in this browser as before.
+  const ADMIN_ID = 'DmRe67o0qvYrhB6Ti9YuwvoX9Ib2';
+  const ADM = () => { try { return !!JSON.parse(localStorage.getItem('bayan-admin-rt') || 'null'); } catch { return false; } };
+  const me = () => { try { return JSON.parse(localStorage.getItem('bayan-user-name')) || ''; } catch { return ''; } };
+  const db = async (p, method = 'GET', body) => {
+    const [a, qs] = p.split('?');
+    const r = await fetch(`${CHAT_DB}/${a}.json${qs ? '?' + qs : ''}`, body === undefined ? { method } : { method, body: JSON.stringify(body) });
+    if (!r.ok) { const e = new Error('db ' + r.status); e.status = r.status; throw e; }
+    return r.json();
+  };
+  // Database keys may not hold . $ # [ ] / and similar, so every other character is written as ~hex.
+  const fk = k => String(k).replace(/[^A-Za-z0-9_-]/g, c => { const n = c.charCodeAt(0); return n < 256 ? '~' + n.toString(16).padStart(2, '0') : '~~' + n.toString(16).padStart(4, '0'); });
+  let uid = '';
+  const myUid = async () => {
+    if (uid) return uid;
+    const t = await window.userToken?.();
+    try { uid = JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).user_id || ''; } catch {}
+    return uid;
+  };
+  const OK = 'bayan-inv-ok', admBtn = document.getElementById('invadmbtn');
+  let allowed = ADM() || localStorage.getItem(OK) === '1', srv = false, srvErr = false, codesN = 0, lastT = 0, tick = 0, busy = false, pend = '';
+  if (!allowed) on = false;
+  const showBtn = () => { btn.hidden = !allowed; admBtn.hidden = !ADM(); if (!allowed && on) { on = false; sessionStorage.setItem('bayan-inv-on', ''); } };
+  const checkPerm = async () => {
+    if (ADM()) allowed = true;
+    else { try { await myUid(); allowed = !!uid && (await db(`invUsers/${uid}`)) === true; } catch (e) { if (e.status) allowed = false; } }
+    try { localStorage.setItem(OK, allowed ? '1' : ''); } catch {}
+    showBtn(); draw();
+    if (on) sync(true);
+  };
+  const setMeta = m => { try { m ? localStorage.setItem(META, JSON.stringify(m)) : localStorage.removeItem(META); } catch {} };
+  const archive = (m, l) => !l.length || hist().some(h => m.id && h.meta.id === m.id) || saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l, book: book() }, ...hist()]);
+  const reset = () => { save([]); saveBook(null); setCur(null); setMeta(null); lastT = 0; };
+  const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  const skey = x => x.k || (x.box ? 'S' + x.raw : mkey(x.raw) || String(x.raw).replace(/[\s\x1d]/g, ''));
+  const row = (k, v) => ({ ...v, k: v.k || k });
+  // Brings this browser's copy in line with the shared count: a new count replaces the old one (which goes to history),
+  // a finished one is archived here too, and new scans by others are added.
+  const sync = async full => {
+    if (!allowed || busy) return; busy = true;
+    try {
+      let sm;
+      try { sm = await db('inv/meta'); srv = true; srvErr = false; }
+      catch (e) { if (e.status) { srv = false; srvErr = e.status === 401 || e.status === 403; } return; }
+      if (full) db('settings/codes').then(i => { codesN = i?.n || 0; }).catch(() => {});
+      const lm = meta();
+      if (!sm) {
+        if (lm?.id) {
+          archive(lm, load()); reset();
+          if (on) out.innerHTML = status('ok', '✓', esc(L('Инвентаризация тугатилди ва тарихга сақланди.', 'Инвентаризация завершена и сохранена в истории.', 'The inventory was finished and saved to history.')));
+        } else if (lm) {
+          // A count started in this browser before counting was shared moves to the database.
+          await myUid();
+          const m = { ...lm, id: newId(), uid, by: me() }, l = load();
+          await db('inv/meta', 'PUT', m); setMeta(m);
+          if (l.length) await db('inv/scans', 'PATCH', Object.fromEntries(l.map(x => { const k = skey(x); return [fk(k), { ...x, k, uid, by: x.by || me(), t: { '.sv': 'timestamp' } }]; })));
+          full = true;
+        }
+        if (!lm || lm.id) return;
+      } else if (!lm || lm.id !== sm.id) { if (lm) archive(lm, load()); reset(); setMeta(sm); full = true; }
+      else if (JSON.stringify(lm) !== JSON.stringify(sm)) setMeta(sm);
+      let s;
+      try { s = await db('inv/scans' + (full || !lastT ? '' : `?orderBy=${encodeURIComponent('"t"')}&startAt=${lastT}`)); }
+      catch (e) { if (e.status !== 400) return; s = await db('inv/scans'); full = true; }
+      const l = full ? [] : load(), have = new Set(l.map(skey));
+      let add = 0;
+      for (const [k, v] of Object.entries(s || {})) { const x = row(k, v); lastT = Math.max(lastT, x.t || 0); if (have.has(x.k)) continue; have.add(x.k); l.push(x); add++; }
+      if (full || add) { l.sort((a, b) => (a.t || 0) - (b.t || 0) || a.ts.localeCompare(b.ts)); save(l); }
+    } catch {} finally { busy = false; if (on) draw(); }
+  };
+  setInterval(() => { if (on && allowed && !document.hidden) sync(++tick % 10 === 0); }, 3000);
+  // Short sounds for each scan (one beep: counted, two rising: counted with a warning, low double: not counted), and a vibration on phones.
+  let ac = null, snd = localStorage.getItem('bayan-inv-snd') !== '0';
+  const beep = kind => {
+    navigator.vibrate?.(kind === 'ok' ? 60 : [60, 60, 60]);
+    if (!snd) return;
+    try {
+      ac ||= new (window.AudioContext || window.webkitAudioContext)();
+      let t0 = ac.currentTime;
+      for (const [f, d] of kind === 'ok' ? [[1046, .09]] : kind === 'warn' ? [[784, .1], [1046, .1]] : [[220, .14], [220, .14]]) {
+        const o = ac.createOscillator(), g = ac.createGain();
+        o.type = 'square'; o.frequency.value = f; g.gain.value = .05; o.connect(g); g.connect(ac.destination); o.start(t0); o.stop(t0 + d); t0 += d + .05;
+      }
+    } catch {}
+  };
+  const START = () => L('Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.', 'Сначала укажите дату, склад и ответственного и нажмите «Начать».', 'First enter the date, warehouse and person in charge, then press «Start».');
+  const PICK = () => L('Аввал дорини, сериясини ва битта қутидаги қадоқлар сонини танлаб, «Бошлаш»ни босинг.', 'Сначала выберите препарат, серию и количество упаковок в коробе и нажмите «Начать».', 'First pick the medicine, its series and the packs per box, then press «Start».');
+  const dupMsg = x => { const who = [x?.by, x?.ts && x.ts.slice(11, 16)].filter(Boolean).join(', ');
+    return L(`Бу код аллақачон саналган${who ? ` (${who})` : ''}. Қайта қўшилмади.`, `Этот код уже посчитан${who ? ` (${who})` : ''}. Повторно не добавлен.`, `This code is already counted${who ? ` (${who})` : ''}. Not added again.`); };
+  const total = c => load().filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser).reduce((t, x) => t + units(x), 0);
+  // Saves one scan: checked against the admin's code base, then written to the shared count, where a code already
+  // taken by anyone is refused by the database itself, so two people scanning the same box at once count it once.
+  const commit = async x => {
+    const l0 = load(), old = l0.find(y => skey(y) === x.k);
+    if (old) return { ok: false, dup: true, msg: dupMsg(old) };
+    if (srv && codesN) { try { if ((await db(`codes/${fk(x.k)}`)) == null) x.nb = true; } catch {} }
+    x.by = me();
+    if (srv) {
+      try { await myUid(); const r = await db(`inv/scans/${fk(x.k)}`, 'PUT', { ...x, uid, t: { '.sv': 'timestamp' } }); x.uid = uid; x.t = +r?.t || Date.now(); }
+      catch (e) {
+        if (!e.status) return { ok: false, msg: L('Интернет алоқаси йўқ. Код сақланмади, қайта сканерланг.', 'Нет связи с интернетом. Код не сохранён, отсканируйте ещё раз.', 'No internet connection. The code was not saved; scan it again.') };
+        let o = null; try { o = await db(`inv/scans/${fk(x.k)}`); } catch {}
+        if (o) { const l = load(); if (!l.some(y => skey(y) === x.k)) { l.push(row(x.k, o)); save(l); draw(); } return { ok: false, dup: true, msg: dupMsg(o) }; }
+        sync(true);
+        return { ok: false, msg: L('Код сақланмади: инвентаризация тугатилган ёки сизга рухсат берилмаган.', 'Код не сохранён: инвентаризация завершена или у вас нет доступа.', 'The code was not saved: the inventory is finished or you have no access.') };
+      }
+    }
+    const l = load(), o2 = l.find(y => skey(y) === x.k);
+    if (o2) return { ok: false, dup: true, msg: dupMsg(o2) };
+    l.push(x); save(l); fresh = x.gtin; draw();
+    return { ok: true, x };
+  };
+  const done = (r, msg) => !r.ok ? r : { ok: true, warn: !!r.x.nb, msg: msg + (r.x.nb ? ' · ⚠ ' + L('Бу код админ базасида йўқ', 'Этого кода нет в базе администратора', 'This code is not in the admin’s code base') : '') };
+  // Returns {ok, msg} (or a promise of it) for a code, or null when the text is not a code at all (a name search goes on as usual).
+  const add = raw => {
     const text = unLayout(String(raw || '').trim()); if (!text) return null;
     const box = ssccOf(text);
     if (box) {
-      if (!meta()) return { ok: false, msg: 'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.' };
-      const c = cur(); if (!c) return { ok: false, msg: L('Аввал дорини, сериясини ва битта қутидаги қадоқлар сонини танлаб, «Бошлаш»ни босинг.', 'Сначала выберите препарат, серию и количество упаковок в коробе и нажмите «Начать».', 'First pick the medicine, its series and the packs per box, then press «Start».') };
-      const l = load();
-      if (l.some(x => x.box && x.raw === box)) return { ok: false, msg: 'Бу код аллақачон саналган' };
-      l.push({ ts: now(), raw: box, gtin: c.gtin, name: c.name, pack: c.pack, ser: c.ser, found: true, box: true, qty: c.qty });
-      save(l); fresh = c.gtin; draw();
-      const t = l.filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser).reduce((s2, x) => s2 + units(x), 0);
-      return { ok: true, msg: `✓ ${c.name}: +${c.qty} (📦) — ${t}` };
+      if (!meta()) return { ok: false, msg: START() };
+      const c = cur(); if (!c) return { ok: false, msg: PICK() };
+      return commit({ ts: now(), k: 'S' + box, raw: box, gtin: c.gtin, name: c.name, pack: c.pack, ser: c.ser, found: true, box: true, qty: c.qty })
+        .then(r => done(r, `✓ ${c.name}: +${c.qty} (📦) — ${total(c)}`));
     }
     const code = scanCode(text);
     if (!/^\d{8,14}$/.test(code)) return null;
-    if (!meta()) return { ok: false, msg: 'Аввал санани, омборни ва масъул шахсни киритиб, «Бошлаш»ни босинг.' };
+    if (!meta()) return { ok: false, msg: START() };
     const marked = text.replace(/\s/g, '').length > 16 && !/^\d{17}$/.test(text);
     // Only marking codes (DataMatrix with GTIN + serial) are counted, and each one only once in this count.
     if (!marked) return { ok: false, msg: 'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.' };
-    const key = text.replace(/[\s\x1d]/g, ''), l = load();
-    if (l.some(x => x.raw.replace(/[\s\x1d]/g, '') === key)) return { ok: false, msg: 'Бу код аллақачон саналган' };
+    const key = mkey(text) || text.replace(/[\s\x1d]/g, ''), old = load().find(x => skey(x) === key);
+    if (old) return { ok: false, dup: true, msg: dupMsg(old) };
     const own = ownOf(code), c = cur();
-    // Without a current medicine a scanned pack only picks the medicine in the form.
-    if (!c) { if (ibFill(code)) return { ok: true, msg: L('Дори аниқланди. Сериясини ва битта қутидаги қадоқлар сонини киритиб, «Бошлаш»ни босинг.', 'Препарат определён. Укажите серию и количество упаковок в коробе и нажмите «Начать».', 'Medicine found. Enter the series and packs per box, then press «Start».') };
-      return { ok: false, msg: L('Аввал дорини, сериясини ва битта қутидаги қадоқлар сонини танлаб, «Бошлаш»ни босинг.', 'Сначала выберите препарат, серию и количество упаковок в коробе и нажмите «Начать».', 'First pick the medicine, its series and the packs per box, then press «Start».') }; }
+    // Without a current medicine the first pack picks the medicine in the form, and is counted once the form is sent.
+    if (!c) { if (ibFill(code)) { pend = text; return { ok: true, msg: L('Дори аниқланди. Серияни текшириб, «Бошлаш»ни босинг: бу қадоқ ҳам саналади.', 'Препарат определён. Проверьте серию и нажмите «Начать»: эта упаковка тоже будет посчитана.', 'Medicine found. Check the series and press «Start»: this pack is counted too.') }; }
+      return { ok: false, msg: PICK() }; }
     if (scanCode(c.gtin) !== code) return { ok: false, msg: L(`Бу қадоқ бошқа дорига тегишли (${own ? own[2] || own[1] : code}). Ҳозир «${c.name}» саналмоқда.`, `Эта упаковка другого препарата (${own ? own[2] || own[1] : code}). Сейчас считается «${c.name}».`, `This pack is another medicine (${own ? own[2] || own[1] : code}). Now counting «${c.name}».`) };
-    l.push({ ts: now(), raw: text, gtin: code, name: own ? (own[2] || own[1]) : '', pack: own ? own[4] : '', ser: c.ser, found: !!own });
-    save(l); fresh = code; draw();
-    const n = l.filter(x => x.gtin === code && (x.ser || '') === c.ser).reduce((t, x) => t + units(x), 0);
-    return own ? { ok: true, msg: `✓ ${own[2] || own[1]} — ${n}` } : { ok: true, msg: `✓ ${code} — ${tr('базада топилмади')} — ${n}` };
+    return commit({ ts: now(), k: key, raw: text, gtin: code, name: own ? (own[2] || own[1]) : '', pack: own ? own[4] : '', ser: c.ser, found: !!own })
+      .then(r => done(r, own ? `✓ ${own[2] || own[1]} — ${total(c)}` : `✓ ${code} — ${tr('базада топилмади')} — ${total(c)}`));
   };
+  window.invAdd = raw => {
+    const r = add(raw); if (!r) return null;
+    return Promise.resolve(r).then(v => { beep(v.ok ? (v.warn ? 'warn' : 'ok') : 'err'); return v; });
+  };
+  window.invShow = (r, raw) => { out.innerHTML = status(r.ok && !r.warn ? 'ok' : 'warn', r.ok ? '✓' : '!', esc(r.msg), esc(String(raw || '').trim().slice(0, 60))); };
   // Book stock: a file from the company's accounting (barcode + quantity rows, or a list of marking codes from Asl Belgisi)
   // that the count is compared with. Marking codes are matched on GTIN + serial, so a missing GS separator does not matter.
   const BOOK = 'bayan-inv-book', book = () => { try { return JSON.parse(localStorage.getItem(BOOK)); } catch { return null; } };
@@ -4100,7 +4232,7 @@ document.addEventListener('click', e => {
     catch (e) { alert(tr(e.message || 'Файлни очиб бўлмади.')); }
   });
   cmpEl.addEventListener('click', e => { if (e.target.closest('[data-x]') && confirm(tr('Ҳисоб файлини олиб ташлаш') + '?')) { saveBook(null); draw(); } });
-  const groups = l => { const m = new Map(); for (const x of l) { const k = x.gtin + '|' + (x.ser || ''), g = m.get(k) || { ...x, n: 0, boxes: 0, last: '' }; g.n += units(x); g.boxes += x.box ? 1 : 0; g.last = x.ts; m.set(k, g); } return [...m.values()]; };
+  const groups = l => { const m = new Map(); for (const x of l) { const k = x.gtin + '|' + (x.ser || ''), g = m.get(k) || { ...x, n: 0, boxes: 0, nbs: 0, last: '' }; g.n += units(x); g.boxes += x.box ? 1 : 0; g.nbs += x.nb ? 1 : 0; g.last = x.ts; m.set(k, g); } return [...m.values()]; };
   let draw = () => {
     btn.classList.toggle('on', on); panel.hidden = !on;
     if (!on) return;
@@ -4111,26 +4243,39 @@ document.addEventListener('click', e => {
       if (!startF.who.value) { try { startF.who.value = JSON.parse(localStorage.getItem('bayan-user-name')) || ''; } catch {} }
       document.getElementById('invsum').textContent = ''; return;
     }
-    document.getElementById('invmeta').innerHTML = `<span>📅 ${esc(m.date)}</span><span>🏬 ${esc(m.wh)}</span><span>👤 ${esc(m.who)}</span>`;
+    const ppl = new Map(); for (const x of l) if (x.by) ppl.set(x.by, (ppl.get(x.by) || 0) + 1);
+    document.getElementById('invmeta').innerHTML = `<span>📅 ${esc(m.date)}</span><span>🏬 ${esc(m.wh)}</span><span>👤 ${esc(m.who)}</span>`
+      + (srv ? `<span title="${esc(L('Бир неча киши бир вақтда санаши мумкин, такрор код қабул қилинмайди', 'Считать могут несколько человек одновременно, повторный код не принимается', 'Several people can count at once; a repeated code is refused'))}">🌐 ${esc(L('Умумий хатлов', 'Общая инвентаризация', 'Shared count'))}</span>`
+        : `<span class="loc" title="${esc(srvErr ? L('Админ Firebase’да янги қоидаларни Publish қилгач, хатлов умумий бўлади', 'Станет общей, когда администратор опубликует новые правила Firebase', 'Becomes shared once the admin publishes the new Firebase rules') : L('Интернет алоқасини текширинг', 'Проверьте интернет', 'Check the internet connection'))}">💻 ${esc(L('Фақат шу браузерда', 'Только в этом браузере', 'This browser only'))}</span>`)
+      + [...ppl].map(([n, c]) => `<span>👥 ${esc(n)}: ${c}</span>`).join('');
     document.getElementById('invsum').textContent = tr(`${l.length} та скан · ${g.filter(x => x.gtin !== 'SSCC').length} та маҳсулот`);
     drawCmp(l); drawCur(m, l);
-    listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])}${x.ser ? ` · ${esc(L('серия', 'серия', 'series'))} ${esc(x.ser)}` : ''} · ${esc(x.last.slice(11))}${x.boxes ? ` · 📦 ${x.boxes}` : ''}</small></span><b class="n">${x.n} та</b></div>`).join('');
+    listEl.innerHTML = g.map(x => `<div class="${x.gtin === fresh ? 'new' : ''}${x.name ? '' : ' nf'}"><span>${x.name ? esc(x.name) : '✕ Базада топилмади'}<small>${esc(x.gtin)}${(n => n ? ` · №${n}` : '')(x.pack && packMatch(x.pack)?.[1])}${x.ser ? ` · ${esc(L('серия', 'серия', 'series'))} ${esc(x.ser)}` : ''} · ${esc(x.last.slice(11))}${x.boxes ? ` · 📦 ${x.boxes}` : ''}${x.nbs ? ` · <span class="nbw" title="${esc(L('Админ базасида йўқ кодлар', 'Коды, которых нет в базе администратора', 'Codes missing from the admin’s base'))}">⚠ ${x.nbs}</span>` : ''}</small></span><b class="n">${x.n} та</b></div>`).join('');
     i18nApply(work);
   };
-  startF.addEventListener('submit', e => {
+  startF.addEventListener('submit', async e => {
     e.preventDefault();
-    const m = { date: startF.date.value, wh: startF.wh.value.trim(), who: startF.who.value.trim(), started: now() };
+    const m = { id: newId(), date: startF.date.value, wh: startF.wh.value.trim(), who: startF.who.value.trim(), started: now(), by: me() };
     if (!m.date || !m.wh || !m.who) return;
-    try { localStorage.setItem(META, JSON.stringify(m)); } catch {}
-    save([]); draw(); q.focus();
+    // Someone else may have started a count meanwhile: then this person joins it.
+    try { const sm = await db('inv/meta'); srv = true; if (sm) { await sync(true); q.focus(); return; } await myUid(); await db('inv/meta', 'PUT', { ...m, uid }); }
+    catch (e2) { if (e2.status) { srv = false; srvErr = true; } }
+    setMeta(m); save([]); lastT = 0; draw(); q.focus();
   });
-  btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-inv-on', on ? '1' : ''); draw(); if (on && meta()) q.focus(); });
+  btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-inv-on', on ? '1' : ''); draw(); if (on) { sync(true); if (meta()) q.focus(); } });
+  const sndB = document.getElementById('invsnd'), showSnd = () => { sndB.textContent = snd ? '🔔' : '🔕'; sndB.title = snd ? L('Овозли сигнал ёқиқ', 'Звуковой сигнал включён', 'Sound is on') : L('Овозли сигнал ўчиқ', 'Звуковой сигнал выключен', 'Sound is off'); };
+  sndB.addEventListener('click', () => { snd = !snd; try { localStorage.setItem('bayan-inv-snd', snd ? '1' : '0'); } catch {} showSnd(); if (snd) beep('ok'); });
+  showSnd();
   document.getElementById('invoff').addEventListener('click', () => { on = false; sessionStorage.setItem('bayan-inv-on', ''); draw(); });
-  document.getElementById('invclr').addEventListener('click', () => {
+  document.getElementById('invclr').addEventListener('click', async () => {
     const l = load(), m = meta();
-    if (l.length && !confirm('Жорий инвентаризация тугатилиб, тарихга сақлансинми?')) return;
-    if (l.length && m && !saveHist([{ id: Date.now().toString(36), meta: m, ended: now(), list: l, book: book() }, ...hist()])) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
-    save([]); saveBook(null); setCur(null); try { localStorage.removeItem(META); } catch {} startF.wh.value = ''; draw();
+    if ((l.length || srv) && !confirm(srv ? L('Инвентаризация барча иштирокчилар учун тугатилиб, тарихга сақлансинми?', 'Завершить инвентаризацию для всех участников и сохранить в истории?', 'Finish the inventory for everyone and save it to history?') : 'Жорий инвентаризация тугатилиб, тарихга сақлансинми?')) return;
+    if (l.length && m && !archive(m, l)) return alert('Тарихга сақлаб бўлмади: браузер хотираси тўлган. Аввал Excel’га юклаб олинг ва эски тарихни ўчиринг.');
+    if (srv && m?.id) {
+      try { const sm = await db('inv/meta'); if (sm?.id === m.id) { await db('inv/meta', 'DELETE'); await db('inv/scans', 'DELETE'); } }
+      catch { return alert(L('Умумий инвентаризацияни ёпиб бўлмади. Интернет алоқасини текшириб, қайта уриниб кўринг.', 'Не удалось закрыть общую инвентаризацию. Проверьте интернет и попробуйте снова.', 'Could not close the shared inventory. Check the internet and try again.')); }
+    }
+    reset(); startF.wh.value = ''; draw();
   });
   document.getElementById('invxls').addEventListener('click', () => { const l = load(); if (!l.length) return alert('Рўйхат бўш.'); exportXls(l, meta() || {}, now(), book()); });
   async function exportXls(l, m, made, bk) {
@@ -4153,8 +4298,8 @@ document.addEventListener('click', e => {
     const stat = x => tr(x.box ? 'Транспорт қути' : x.name ? 'Базада бор' : 'Топилмади');
     sheet(tr('Жами'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Серия', 12], ['Қадоқ', 46], ['Қутилар', 9], ['Сони', 8], ['МХИК', 20], ['Ҳолат', 13], ['Биринчи скан', 20], ['Охирги скан', 20]],
       groups(l).map((x, i) => [i + 1, x.gtin, x.name || tr('Топилмади'), x.ser || '', x.pack || '', x.boxes || '', x.n, results.get(x.gtin)?.items?.[0]?.mxikCode || '', tr(x.name ? 'Базада бор' : 'Топилмади'), x.ts, x.last]));
-    sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Серия', 12], ['Сони', 8], ['Ҳолат', 13], ['Маркировка коди', 70]],
-      l.map((x, i) => [i + 1, x.ts, x.gtin, tr(x.name) || tr('Топилмади'), x.ser || '', units(x), stat(x), x.raw.replace(/\x1d/g, ' ')]));
+    sheet(tr('Ҳар бир скан'), [['№', 5], ['Сана ва вақт', 20], ['Штрих код', 16], ['Маҳсулот', 28], ['Серия', 12], ['Сони', 8], ['Ҳолат', 13], ['Маркировка коди', 70], [L('Ким сканерлади', 'Кто сканировал', 'Scanned by'), 18], [L('Кодлар базаси', 'База кодов', 'Code base'), 16]],
+      l.map((x, i) => [i + 1, x.ts, x.gtin, tr(x.name) || tr('Топилмади'), x.ser || '', units(x), stat(x), x.raw.replace(/\x1d/g, ' '), x.by || '', x.nb ? L('Базада йўқ', 'Нет в базе', 'Not in the base') : '']));
     if (bk) {
       const c = compare(l, bk), YEL = 'FFFEF3C7', col = v => v === tr('Мос') ? GREEN : v === tr('Ортиқча') ? YEL : RED;
       const ws = sheet(tr('Солиштириш'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 34], ['Ҳисобда', 10], ['Фактда', 10], ['Фарқ', 9], ['Ҳолат', 13]],
@@ -4184,7 +4329,78 @@ document.addEventListener('click', e => {
     if (d && confirm('Бу инвентаризация тарихдан ўчирилсинми?')) { saveHist(hist().filter(h => h.id !== d.dataset.hd)); drawHist(); }
   });
   const draw0 = draw; draw = () => { draw0(); drawHist(); };
-  draw();
+  // Admin settings for the count: who may run it (registered staff, ticked one by one) and the base of known marking
+  // codes, filled from Excel, CSV or TXT files; a scanned code missing from the base is counted with a warning.
+  const admEl = document.getElementById('invadm'), codesF = document.createElement('input');
+  codesF.type = 'file'; codesF.accept = '.xlsx,.csv,.txt,.xls'; codesF.hidden = true; admEl.after(codesF);
+  admBtn.textContent = '⚙ ' + L('Хатлов созламалари', 'Настройки инвентаризации', 'Inventory settings');
+  const drawAdm = async () => {
+    admEl.innerHTML = `<p class="s">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
+    let users = {}, perm = {}, info = null, err = '';
+    try { [users, perm, info] = await Promise.all([db('users'), db('invUsers'), db('settings/codes')]); }
+    catch (e) { err = e.status ? L('Маълумотни ўқиб бўлмади. Firebase’да янги қоидаларни (firebase-rules.json) Publish қилинг.', 'Не удалось прочитать данные. Опубликуйте новые правила Firebase (firebase-rules.json → Publish).', 'Could not read the data. Publish the new Firebase rules (firebase-rules.json).') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.'); }
+    users ||= {}; perm ||= {}; codesN = info?.n || 0;
+    const ul = Object.entries(users).filter(([id]) => id !== ADMIN_ID).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name)));
+    admEl.innerHTML = (err ? `<p class="er">${esc(err)}</p>` : '')
+      + `<h4>👥 ${esc(L('Инвентаризация ўтказадиган ходимлар', 'Кто проводит инвентаризацию', 'Staff who may run the inventory'))}</h4>`
+      + `<p class="s">${esc(L('Белгиланган ходимларда «Инвентаризация» тугмаси кўринади. Админ уни доим кўради.', 'У отмеченных сотрудников появится кнопка «Инвентаризация». Администратор видит её всегда.', 'Ticked staff see the «Inventory» button. The admin always sees it.'))}</p>`
+      + `<div class="ul">${ul.map(([id, u]) => `<label><input type="checkbox" data-u="${esc(id)}"${perm[id] === true ? ' checked' : ''}> <b>${esc(u.name || '—')}</b> <small>${esc(u.email || '')}</small></label>`).join('')
+        || `<p class="s">${esc(L('Ҳали рўйхатдан ўтган ходим йўқ.', 'Зарегистрированных сотрудников пока нет.', 'No staff have registered yet.'))}</p>`}</div>`
+      + `<h4>▦ ${esc(L('Маркировка кодлари базаси', 'База кодов маркировки', 'Marking code base'))}</h4>`
+      + `<p class="s"><b>${esc(info?.n ? L(`Базада ${info.n} та код`, `В базе ${info.n} кодов`, `${info.n} codes in the base`) : L('База ҳозирча бўш.', 'База пока пуста.', 'The base is empty.'))}</b>${info?.n ? ` · ${esc(L('охирги юклаш', 'последняя загрузка', 'last upload'))}: ${esc(info.file || '')}, ${esc(info.at || '')}` : ''}</p>`
+      + `<p class="s">${esc(L('Excel (.xlsx), CSV ёки TXT файлдаги маркировка кодлари (DataMatrix) ва қути кодлари (SSCC) базага қўшилади, бор кодлар такрорланмайди. Янги кодлар чиққанда файлни яна юклайверинг. Сканерланган код базада бўлмаса, бу ҳақда огоҳлантирилади.', 'Коды маркировки (DataMatrix) и коды коробов (SSCC) из файла Excel (.xlsx), CSV или TXT добавляются в базу без повторов. Когда появятся новые коды, просто загрузите файл ещё раз. Если отсканированного кода нет в базе, появится предупреждение.', 'Marking codes (DataMatrix) and box codes (SSCC) from an Excel (.xlsx), CSV or TXT file are added to the base without repeats. When new codes come out, upload the file again. A scanned code that is not in the base gets a warning.'))}</p>`
+      + `<div class="bt"><button type="button" class="go" data-up>📥 ${esc(L('Файлдан кодлар юклаш', 'Загрузить коды из файла', 'Upload codes from a file'))}</button>`
+      + (info?.n ? `<button type="button" class="copy" data-wipe>🗑 ${esc(L('Базани тозалаш', 'Очистить базу', 'Clear the base'))}</button>` : '') + `<span class="pr"></span></div>`;
+  };
+  const codeOf = v => cellText(v).trim().replace(/^"|"$/g, '').replace(/^\](?:d2|C1|Q3|e0)/, '').replace(/<GS>|\\x1d|\\u001d/gi, '\x1d').replace(/\((\d{2,4})\)/g, '$1');
+  const readCodes = async f => {
+    if (/\.xls$/i.test(f.name)) throw new Error(L('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.', 'Сохраните старый файл .xls в Excel как .xlsx и загрузите снова.', 'Save the old .xls file as .xlsx in Excel and upload it again.'));
+    const cells = [];
+    if (/\.xlsx$/i.test(f.name)) {
+      const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
+      wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => cells.push(...(r.values || []).slice(1))));
+    } else for (const line of (await f.text()).split(/\r?\n/)) { const t = codeOf(line); if (mkey(t) || ssccOf(t)) cells.push(t); else cells.push(...line.split(/[;\t,]/)); }
+    const m = new Map();
+    for (const v of cells) { const c = codeOf(v), b = ssccOf(c); if (b) { m.set('S' + b, 1); continue; } const k = mkey(c); if (k) m.set(k, k.slice(0, 14)); }
+    return m;
+  };
+  admBtn.addEventListener('click', () => { admEl.hidden = !admEl.hidden; admBtn.classList.toggle('on', !admEl.hidden); if (!admEl.hidden) drawAdm(); });
+  admEl.addEventListener('change', async e => {
+    const c = e.target.closest('[data-u]'); if (!c) return;
+    c.disabled = true;
+    try { await db(`invUsers/${c.dataset.u}`, c.checked ? 'PUT' : 'DELETE', c.checked ? true : undefined); }
+    catch { c.checked = !c.checked; alert(L('Сақлаб бўлмади. Firebase қоидаларини текширинг.', 'Не удалось сохранить. Проверьте правила Firebase.', 'Could not save. Check the Firebase rules.')); }
+    c.disabled = false;
+  });
+  admEl.addEventListener('click', async e => {
+    if (e.target.closest('[data-up]')) codesF.click();
+    if (e.target.closest('[data-wipe]') && confirm(L('Маркировка кодлари базаси бутунлай тозалансинми?', 'Полностью очистить базу кодов маркировки?', 'Clear the whole marking code base?'))) {
+      try { await db('codes', 'DELETE'); await db('settings/codes', 'DELETE'); codesN = 0; } catch { alert(L('Тозалаб бўлмади.', 'Не удалось очистить.', 'Could not clear.')); }
+      drawAdm();
+    }
+  });
+  codesF.addEventListener('change', async () => {
+    const f = codesF.files[0]; codesF.value = ''; if (!f) return;
+    const pr = admEl.querySelector('.pr'), bt = admEl.querySelectorAll('.bt button');
+    bt.forEach(b => { b.disabled = true; });
+    try {
+      pr.textContent = L('Файл ўқилмоқда…', 'Чтение файла…', 'Reading the file…');
+      const m = await readCodes(f);
+      if (!m.size) throw new Error(L('Файлдан маркировка коди ёки қути коди (SSCC) топилмади.', 'В файле не найдено кодов маркировки или кодов коробов (SSCC).', 'No marking codes or box codes (SSCC) were found in the file.'));
+      const ents = [...m], N = 1500;
+      for (let i = 0; i < ents.length; i += N) {
+        await db('codes', 'PATCH', Object.fromEntries(ents.slice(i, i + N).map(([k, v]) => [fk(k), v])));
+        pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`;
+      }
+      const n = Object.keys(await db('codes?shallow=true') || {}).length;
+      await db('settings/codes', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
+      codesN = n;
+      alert(L(`Файлдан ${ents.length} та код ўқилди. Базада жами ${n} та код.`, `Из файла прочитано кодов: ${ents.length}. Всего в базе: ${n}.`, `${ents.length} codes read from the file. ${n} codes in the base in all.`));
+    } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
+    drawAdm();
+  });
+  showBtn(); draw();
+  if (!document.documentElement.classList.contains('locked')) checkPerm();
 }
 
 </script>
