@@ -984,6 +984,7 @@
   .invbar { margin-top: 10px; } .invbtn { border: 1px dashed var(--brand); background: transparent; color: var(--brand); border-radius: 10px; padding: 8px 14px; font: 600 14px var(--font), sans-serif; cursor: pointer; }
   .invbtn.on { background: var(--brand); color: #fff; border-style: solid; }
   .inv { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: var(--soft); }
+  .invtr { font-size: 12px; font-weight: 600; opacity: .7; margin-left: 4px; }
   .invh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; } .invh span { color: var(--muted); font-size: 13px; }
   .invhelp { margin: 6px 0 10px; font-size: 13px; color: var(--muted); }
   .invtools { display: flex; gap: 8px; flex-wrap: wrap; } .invtools .go { padding: 10px 16px; font-size: 14px; }
@@ -1195,9 +1196,9 @@
       <div class="chips"><span class="chip" id="cBar">Штрих код: 8–14</span><span class="chip" id="cIkpu">МХИК: 17</span><button type="button" class="chip infob" id="infob" aria-expanded="false">ℹ Кодлар ҳақида</button></div>
       <span id="cnt">0 рақам</span>
     </div>
-    <div class="invbar"><button type="button" class="invbtn" id="invbtn">📦 Инвентаризация</button></div>
+    <div class="invbar"><button type="button" class="invbtn" id="invbtn">📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button></div>
     <div class="inv" id="inv" hidden>
-      <div class="invh"><b>📦 Инвентаризация</b><span id="invsum"></span></div>
+      <div class="invh"><b>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></b><span id="invsum"></span></div>
       <form class="invstart" id="invstart">
         <label><span>Сана</span><input type="date" name="date" required></label>
         <label><span>Омбор</span><input name="wh" maxlength="60" placeholder="Масалан: Асосий омбор" required></label>
@@ -1226,17 +1227,17 @@
         <option value="">Ҳаммаси</option><option value="yes">МХИК бор</option><option value="no">МХИК йўқ</option>
         <option value="main">❗ Асосий хато</option><option value="diff">Фарқ бор (ҳаммаси)</option><option value="wait">Текширилмаган</option>
       </select>
-      <button class="go" id="checkAll" type="button" title="Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).">↻ Янгилаш</button>
+      <button class="go" id="checkAll" type="button" title="Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz’даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).">↻ Янгилаш</button>
       <button class="copy" id="csv" type="button" title="Excel'га юклаш">Excel</button>
       <button class="copy" id="pdf" type="button">PDF</button>
       <button class="copy" id="txt" type="button">TXT</button>
     </div>
-    <div class="prog" id="prog">Маҳсулотлар tasnif.soliq.uz да текширилмоқда…</div>
+    <div class="prog" id="prog">Маҳсулотлар tasnif.soliq.uz’да текширилмоқда…</div>
     <div class="tbl"><table><thead><tr><th>Штрих код</th><th>Маҳсулот</th><th class="pkn">№</th><th>Қадоқ</th><th>МХИК</th></tr></thead><tbody id="lt"></tbody></table></div>
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2410</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2420</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1383,7 +1384,7 @@ const I18N = {
   'базада топилмади': ['нет в базе', 'not in the database'],
   '✕ Базада топилмади': ['✕ Нет в базе', '✕ Not in the database'],
   'Жорий инвентаризация ёпилиб, рўйхат тозалансинми? Аввал Excel’га юклаб олишни унутманг.': ['Закрыть текущую инвентаризацию и очистить список? Не забудьте сначала скачать Excel.', 'Close the current stock count and clear the list? Download the Excel file first.'],
-  'Инвентаризация': ['Инвентаризация', 'Stock count'],
+  'Инвентаризация': ['Инвентаризация', 'Inventory'],
   'Файл тузилган': ['Файл создан', 'File created'],
   'Ҳолат': ['Статус', 'Status'],
   'Базада бор': ['Есть в базе', 'In database'],
@@ -1392,7 +1393,7 @@ const I18N = {
   'Бу ички платформа. Кириш ва рўйхатдан ўтиш фақат компания ходимларига мўлжалланган.': ['Это внутренняя платформа. Вход и регистрация предназначены только для сотрудников компании.', 'This is an internal platform. Sign-in and registration are for company employees only.'],
   'Бу маркировка коди эмас. Қутидаги квадрат DataMatrix кодни ўқитинг.': ['Это не код маркировки. Сканируйте квадратный DataMatrix на коробке.', 'This is not a marking code. Scan the square DataMatrix on the box.'],
   'Қутилардаги маркировка кодини (квадрат DataMatrix) камера (📷) ёки сканер билан кетма-кет ўқитинг. Ҳар бир қути рўйхатга санаси билан бир марта қўшилади.': ['Сканируйте подряд коды маркировки на коробках (квадратный DataMatrix) камерой (📷) или сканером. Каждая коробка добавляется в список один раз, с датой.', 'Scan the marking codes on the boxes (square DataMatrix) one after another with the camera (📷) or a scanner. Each box is added once, with its date.'],
-  '📦 Инвентаризация': ['📦 Инвентаризация', '📦 Stock count'],
+  '📦 Инвентаризация': ['📦 Инвентаризация', '📦 Inventory'],
   '📷 Сканерлаш': ['📷 Сканировать', '📷 Scan'],
   '⬇ Excel': ['⬇ Excel', '⬇ Excel'],
   'Тугатиш': ['Завершить', 'Finish'],
@@ -1452,13 +1453,13 @@ const I18N = {
   'асосий хато': ['основные ошибки', 'major errors'],
   'Фарқ бор (ҳаммаси)': ['Есть расхождения (все)', 'Has differences (all)'],
   'Текширилмаган': ['Не проверено', 'Not checked'],
-  'Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).':
+  'Натижалар автоматик текширилади. Бу тугма tasnif.soliq.uz’даги энг янги маълумотни ҳозироқ қайта олади (масалан, МХИК тузатилгандан кейин).':
     ['Результаты проверяются автоматически. Эта кнопка сразу заново загружает самые свежие данные с tasnif.soliq.uz (например, после исправления ИКПУ).',
      'Results are checked automatically. This button fetches the latest data from tasnif.soliq.uz right now (for example, after a PSCIC is corrected).'],
   'Янгилаш': ['Обновить', 'Refresh'],
   "Excel'га юклаш": ['Скачать в Excel', 'Download as Excel'],
   'Тўхтатиш': ['Остановить', 'Stop'],
-  'Маҳсулотлар tasnif.soliq.uz да текширилмоқда…': ['Продукты проверяются на tasnif.soliq.uz…', 'Checking products on tasnif.soliq.uz…'],
+  'Маҳсулотлар tasnif.soliq.uz’да текширилмоқда…': ['Продукты проверяются на tasnif.soliq.uz…', 'Checking products on tasnif.soliq.uz…'],
   'Штрих код': ['Штрих-код', 'Barcode'],
   'Штрих код ва QR код': ['Штрих-код и QR-код', 'Barcode and QR code'],
   'МХИК QR коди': ['QR-код ИКПУ', 'PSCIC QR code'],
@@ -1584,7 +1585,7 @@ const I18N = {
   'Базавий улгуржи нарх': ['Базовая оптовая цена', 'Base wholesale price'],
   'Таснифдаги ўрни': ['Место в классификаторе', 'Place in the classifier'],
   'Қўшимча маълумотлар': ['Дополнительные сведения', 'Additional details'],
-  'tasnif.soliq.uz даги расмлар': ['Фото на tasnif.soliq.uz', 'Photos on tasnif.soliq.uz'],
+  'tasnif.soliq.uz’даги расмлар': ['Фото на tasnif.soliq.uz', 'Photos on tasnif.soliq.uz'],
   'tasnif хом маълумоти (фақат админ учун)': ['исходные данные tasnif (только для админа)', 'raw tasnif data (admin only)'],
   'Қадоқ кодлари': ['Коды упаковки', 'Package codes'],
   'Код': ['Код', 'Code'],
@@ -1596,7 +1597,7 @@ const I18N = {
   'Бу штрих код учун МХИК топилмади.': ['Для этого штрих-кода ИКПУ не найден.', 'No PSCIC found for this barcode.'],
   'tasnif.soliq.uz билан боғланиб бўлмади.': ['Не удалось связаться с tasnif.soliq.uz.', 'Could not connect to tasnif.soliq.uz.'],
   'Интернетни текширинг.': ['Проверьте интернет.', 'Check your internet connection.'],
-  'МХИК коди tasnif.soliq.uz да изланмоқда…': ['Код ИКПУ ищется на tasnif.soliq.uz…', 'Searching the PSCIC code on tasnif.soliq.uz…'],
+  'МХИК коди tasnif.soliq.uz’да изланмоқда…': ['Код ИКПУ ищется на tasnif.soliq.uz…', 'Searching the PSCIC code on tasnif.soliq.uz…'],
   'Бу МХИК коди tasnif.soliq.uz базасида топилмади.': ['Этот код ИКПУ не найден в базе tasnif.soliq.uz.', 'This PSCIC code was not found on tasnif.soliq.uz.'],
   'кўриш': ['показать', 'show'],
   'каталогдан фарқ': ['расхождения с каталогом', 'differences from catalog'],
@@ -1622,7 +1623,7 @@ const I18N = {
   'Рўйхатни Excel, PDF ёки TXT кўринишида юклаб олишингиз мумкин. Фақат фильтрдаги маҳсулотлар юкланади.': ['Список можно скачать в Excel, PDF или TXT. Скачиваются только продукты из фильтра.', 'You can download the list as Excel, PDF or TXT. Only the filtered products are included.'],
   '17 хонали МХИК кодини рўйхат қидирувига ёзсангиз, у қайси штрих кодларга тегишли эканини топади.': ['Введите 17-значный код ИКПУ в поиск, и страница найдёт, к каким штрих-кодам он относится.', 'Type a 17-digit PSCIC code into the search to find which barcodes it belongs to.'],
   'Телеграм бот ҳам худди шу текширувни қилади: штрих кодни ботга юборинг.': ['Telegram-бот делает ту же проверку: отправьте ему штрих-код.', 'The Telegram bot does the same check: send it a barcode.'],
-  'Ҳали излаш бўлмади. Излаган кодларингиз шу ерда кўринади.': ['Поисков ещё не было. Здесь появятся коды, которые вы искали.', 'No searches yet. Codes you search for will appear here.'],
+  'Ҳали ҳеч нарса изланмаган. Излаган кодларингиз шу ерда кўринади.': ['Поисков ещё не было. Здесь появятся коды, которые вы искали.', 'No searches yet. Codes you search for will appear here.'],
   'Сифат — ҳар бир ампулада.': ['Качество в каждой ампуле.', 'Quality in every ampoule.'],
   'Ҳар бир доза — инсон саломатлиги учун масъулият.': ['Каждая доза — ответственность за здоровье человека.', 'Every dose is a responsibility for human health.'],
   'Аниқлик, тозалик, ишонч — ишимиз асоси.': ['Точность, чистота, доверие — основа нашей работы.', 'Precision, purity, trust: the basis of our work.'],
@@ -1664,7 +1665,7 @@ const I18N = {
   'Сиз админ томонидан блоклангансиз': ['Вы заблокированы админом', 'You have been blocked by the admin'],
   'Чат вақтинча ёпиқ': ['Чат временно закрыт', 'Chat is temporarily closed'],
   'Админ режими': ['Режим админа', 'Admin mode'],
-  'Алоқа йўқ, қайта уриниляпти…': ['Нет связи, повторная попытка…', 'No connection, retrying…'],
+  'Алоқа йўқ, қайта уринилмоқда…': ['Нет связи, повторная попытка…', 'No connection, retrying…'],
   'Кимлар онлайн — кўриш учун босинг': ['Кто онлайн: нажмите, чтобы посмотреть', 'Who is online: click to see'],
   // Exports
   'Сана': ['Дата', 'Date'], 'Жами': ['Всего', 'Total'], 'Манба': ['Источник', 'Source'],
@@ -2278,7 +2279,7 @@ function render(item, card) {
   }
   if (details) html += `<div class="sec"><div class="label">Қўшимча маълумотлар</div><dl>${details}</dl></div>`;
   html += codesBlock(c);
-  html += gallery('tasnif.soliq.uz даги расмлар', cardImages(c));
+  html += gallery('tasnif.soliq.uz’даги расмлар', cardImages(c));
   // Admin only: the raw tasnif record, to see which fields (photo, price, …) tasnif actually sends.
   if (getLS('bayan-admin-rt', '')) html += `<details class="raw"><summary>📄 tasnif хом маълумоти (фақат админ учун)</summary><pre>${esc(JSON.stringify(card || item, null, 1))}</pre></details>`;
   const pk = Array.isArray(c.packages) ? c.packages : [];
@@ -2462,7 +2463,7 @@ lf.addEventListener('input', async () => {
   const f = lf.value.replace(/\D+/g, '');
   if (f.length !== 17 || filtered().length) return;
   const seq = ++lookupSeq;
-  prog.innerHTML = 'МХИК коди tasnif.soliq.uz да изланмоқда…';
+  prog.innerHTML = 'МХИК коди tasnif.soliq.uz’да изланмоқда…';
   try {
     const items = await findByIkpu(f);
     if (seq !== lookupSeq) return;
@@ -2660,7 +2661,7 @@ document.getElementById('pdf').addEventListener('click', () => {
 
 // Date and time in the top bar as a week calendar, Tashkent time whatever the computer's zone.
 const MONTHS = {
-  uz: ['Январ', 'Феврал', 'Март', 'Апрел', 'Май', 'Июн', 'Июл', 'Август', 'Сентябр', 'Октябр', 'Ноябр', 'Декабр'],
+  uz: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   ru: ['Январь', 'Февраль', 'Март', 'Апрель', 'Май', 'Июнь', 'Июль', 'Август', 'Сентябрь', 'Октябрь', 'Ноябрь', 'Декабрь'],
   en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] }[UI];
 const WD = { uz: ['Ду', 'Се', 'Чо', 'Па', 'Жу', 'Ша', 'Як'], ru: ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб', 'Вс'], en: ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'] }[UI];
@@ -2863,7 +2864,7 @@ document.getElementById('stats').addEventListener('click', e => {
 function drawRecent() {
   const list = getLS(RECENT, []).map(r => r.t === 'ИКПУ коди' ? { ...r, t: 'МХИК коди' } : r);  // saved before the per-language rename
   document.getElementById('recent').innerHTML = list.length ? list.slice(0, 4).map(r => `<button type="button" data-c="${esc(r.c)}">${esc(r.c)}<small>${esc(r.t)}</small></button>`).join('')
-    : '<div class="empty">Ҳали излаш бўлмади. Излаган кодларингиз шу ерда кўринади.</div>';
+    : '<div class="empty">Ҳали ҳеч нарса изланмаган. Излаган кодларингиз шу ерда кўринади.</div>';
 }
 function addRecent(code) {
   const own = code.length === 17 ? null : ownOf(code);
@@ -3495,7 +3496,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       state.textContent = isAdmin() ? 'Админ режими' : 'Фойдаланувчилар ва админ';
       if (!box.hidden) { if (!rxOpen) draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
       unread(); drawBar();
-    } catch { state.textContent = 'Алоқа йўқ, қайта уриниляпти…'; }
+    } catch { state.textContent = 'Алоқа йўқ, қайта уринилмоқда…'; }
   };
   // Presence: every open page refreshes /online/<id> twice a minute; whoever refreshed in the last 75 s counts as online.
   // Everyone sees how many people are here; only the admin can open the list of names.
@@ -3927,7 +3928,7 @@ document.addEventListener('click', e => {
     const sheet = (title, cols, rows) => {
       const ws = wb.addWorksheet(title);
       ws.columns = cols.map(([, w]) => ({ width: w }));
-      ws.addRow([tr('Инвентаризация') + ' — BAYAN MEDICAL']).font = { bold: true, size: 14 };
+      ws.addRow([tr('Инвентаризация') + ' (Хатлов · Inventory) — BAYAN MEDICAL']).font = { bold: true, size: 14 };
       [['Сана', m.date], ['Омбор', m.wh], ['Масъул шахс', m.who], ['Бошланган', m.started], ['Тугатилган', made]].forEach(([k, v]) => { const r = ws.addRow([tr(k), v || '']); r.getCell(1).font = { bold: true }; });
       ws.addRow([]);
       const h = ws.addRow(cols.map(([c]) => tr(c)));
