@@ -1262,10 +1262,10 @@
         <form class="invbox" id="invbox" hidden>
           <b>💊 <span>Қайси дорини санаймиз?</span></b>
           <label class="w"><span>Дори</span><input name="prod" list="ibprods" autocomplete="off" placeholder="Номини ёзинг ёки битта қадоқни сканерланг" required></label>
-          <label><span>Серия</span><input name="ser" maxlength="30" autocomplete="off" placeholder="Масалан: 010925"></label>
+          <label><span>Серия</span><input name="ser" maxlength="30" autocomplete="off" list="ibsers" placeholder="Масалан: 010925"></label>
           <label><span>Битта қутидаги қадоқлар сони</span><input name="qty" type="number" min="1" step="1" inputmode="numeric" required></label>
           <div><button class="go" type="submit">Бошлаш</button></div>
-          <datalist id="ibprods"></datalist>
+          <datalist id="ibprods"></datalist><datalist id="ibsers"></datalist>
         </form>
         <div class="invcur" id="invcur" hidden></div>
         <input type="file" id="invfile" accept=".xlsx,.csv,.txt,.xls" hidden>
@@ -1298,7 +1298,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2530</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2540</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -4026,7 +4026,8 @@ document.addEventListener('click', e => {
     if (!m) return;
     if (!c) { ibList(); i18nApply(ibF); return; }
     const mine = l.filter(x => x.gtin === c.gtin && (x.ser || '') === c.ser), total = mine.reduce((t, x) => t + units(x), 0), boxes = mine.filter(x => x.box).length;
-    curEl.innerHTML = `<span>💊 <b>${esc(c.name)}</b><br><small>${c.ser ? `${esc(L('Серия', 'Серия', 'Series'))} ${esc(c.ser)} · ` : ''}📦 1 ${esc(L('қути', 'короб', 'box'))} = ${c.qty} ${esc(L('та', 'шт', 'pcs'))}</small></span>`
+    const bs = c.ser && bookSer(c.ser);
+    curEl.innerHTML = `<span>💊 <b>${esc(c.name)}</b><br><small>${c.ser ? `${esc(L('Серия', 'Серия', 'Series'))} ${esc(c.ser)} · ` : ''}${bs ? `${esc(L('ҳисобда', 'по учёту', 'in the ledger'))} ${bs.qty} · ` : ''}📦 1 ${esc(L('қути', 'короб', 'box'))} = ${c.qty} ${esc(L('та', 'шт', 'pcs'))}</small></span>`
       + `<span class="n">${total} ${esc(L('та', 'шт', 'pcs'))}<br><small>${boxes} ${esc(L('қути', 'коробов', 'boxes'))}</small></span><button type="button" data-done>✓ ${esc(L('Бу дори тугади', 'Этот препарат закончен', 'This medicine is done'))}</button>`;
   };
   // Shared count: the count lives in the shared database (inv/meta, inv/scans), so several people can scan at once and a
@@ -4219,6 +4220,46 @@ document.addEventListener('click', e => {
     }
     return { rows: [...qty].map(([gtin, q]) => ({ gtin, qty: q, name: names.get(gtin) || '' })), codes: [...codes] };
   };
+  // The finished-goods warehouse ledger («Склад ГП»: Серия, Название, Кол-во в коробке, Текущий Остаток) is read by series:
+  // its series fill the form with the packs per box, and the count is compared with the stock of each series.
+  const nser = v => String(v || '').toUpperCase().replace(/[\s\-_.\/]/g, '');
+  const nnum = v => +String(v ?? '').replace(/[\s\u00a0]/g, '').replace(',', '.') || 0;
+  const ledger = rows => {
+    const hi = rows.findIndex(r => r.some(c => /^Серия$/i.test(cellText(c).trim())) && r.some(c => /остаток/i.test(cellText(c))));
+    if (hi < 0) return null;
+    const h = rows[hi].map(c => cellText(c).trim().toLowerCase()), col = re => h.findIndex(x => re.test(x));
+    const cs = col(/^серия$/), cn = col(/^название$/), cb = col(/в коробке/), cq = col(/текущий остаток|^остаток/), cst = col(/^статус$/);
+    if (cs < 0 || cq < 0) return null;
+    const sers = [];
+    for (const r of rows.slice(hi + 1)) {
+      const ser = cellText(r[cs]).trim(); if (!ser) continue;
+      const q = nnum(cellText(r[cq])); if (!q) continue;
+      sers.push({ ser, name: cellText(r[cn]).trim(), cap: nnum(cellText(r[cb])) || 0, qty: q, st: cst < 0 ? '' : cellText(r[cst]).trim() });
+    }
+    return sers.length ? { sers, date: cellText(rows[hi][1]).trim() } : null;
+  };
+  const bookSer = s => book()?.sers?.find(x => nser(x.ser) === nser(s));
+  // The medicine of a ledger name: the catalog brand it starts with and the same №, when only one product fits.
+  const nrm = t => String(t || '').toLowerCase().replace(/ё/g, 'е').replace(/[^a-zа-я0-9]/g, '');
+  const ledgerProd = name => {
+    const n = nrm(name), num = (String(name).match(/№\s*(\d+)/) || [])[1];
+    let hit = CATALOG.filter(r => nrm(r[2]) && n.startsWith(nrm(r[2])));
+    const top = Math.max(0, ...hit.map(r => nrm(r[2]).length)); hit = hit.filter(r => nrm(r[2]).length === top);
+    if (num) hit = hit.filter(r => +(packMatch(r[4])?.[1]) === +num);
+    return hit.length === 1 ? hit[0] : null;
+  };
+  const serList = () => {
+    const dl = document.getElementById('ibsers'), b = book(), g = ibGtin(), r = g && ownOf(g);
+    const all = (b?.sers || []).filter(x => x.qty > 0), mine = r ? all.filter(x => nrm(x.name).startsWith(nrm(r[2]))) : [];
+    dl.innerHTML = (mine.length ? mine : all).map(x => `<option value="${esc(x.ser)}" label="${esc(`${x.name} · ${x.cap ? `1 қути = ${x.cap} · ` : ''}қолдиқ ${x.qty}`)}">`).join('');
+  };
+  ibF.ser.addEventListener('focus', serList);
+  ibF.ser.addEventListener('change', () => {
+    const x = bookSer(ibF.ser.value); if (!x) return;
+    ibF.ser.value = x.ser;
+    if (x.cap) ibF.qty.value = x.cap;
+    if (!ibGtin()) { const r = ledgerProd(x.name); if (r) ibF.prod.value = optOf(r); }
+  });
   const readBook = async f => {
     if (/\.xls$/i.test(f.name)) throw new Error('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.');
     let rows = [];
@@ -4226,6 +4267,7 @@ document.addEventListener('click', e => {
       const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer());
       wb.eachSheet(ws => ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1))));
     } else rows = (await f.text()).split(/\r?\n/).map(l => l.split(/[;\t,](?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"')));
+    const lg = ledger(rows); if (lg) return { file: f.name, loaded: now(), rows: [], codes: [], ...lg };
     const b = parseRows(rows);
     if (!b.rows.length && !b.codes.length) throw new Error('Файлдан штрих код ёки маркировка коди топилмади. Excel (.xlsx), CSV ёки TXT файл танланг.');
     return { file: f.name, loaded: now(), ...b };
@@ -4233,6 +4275,16 @@ document.addEventListener('click', e => {
   // Book against fact per product, plus code-by-code differences when the book lists marking codes.
   const ckey = x => x.box ? 'S' + x.raw : mkey(x.raw);
   const compare = (all, b) => {
+    if (b.sers) {
+      const l = all.filter(x => x.gtin !== 'SSCC'), fact = new Map(), fname = new Map();
+      for (const x of l) { const k = nser(x.ser); fact.set(k, (fact.get(k) || 0) + units(x)); if (!fname.has(k)) fname.set(k, [x.ser, x.name]); }
+      const bq = new Map(b.sers.map(r => [nser(r.ser), r]));
+      const rows = [...new Set([...bq.keys(), ...fact.keys()])].map(k => {
+        const r = bq.get(k), bk = r?.qty || 0, ft = fact.get(k) || 0;
+        return { gtin: r?.ser || fname.get(k)?.[0] || '', label: `${L('Серия', 'Серия', 'Series')} ${r?.ser || fname.get(k)?.[0] || '—'}`, name: r?.name || fname.get(k)?.[1] || '', book: bk, fact: ft, diff: ft - bk };
+      }).sort((a, b2) => (a.diff === 0) - (b2.diff === 0) || a.diff - b2.diff || a.name.localeCompare(b2.name));
+      return { rows, miss: [], extra: [], codes: false, bySer: true };
+    }
     const l = all.filter(x => x.gtin !== 'SSCC');
     const fact = new Map(); for (const x of l) fact.set(x.gtin, (fact.get(x.gtin) || 0) + units(x));
     const bq = new Map(b.rows.map(r => [r.gtin, r]));
@@ -4258,7 +4310,7 @@ document.addEventListener('click', e => {
       + `<div class="ch"><span><span>Ҳисобда:</span> <b>${sum('book')}</b></span><span><span>Фактда:</span> <b>${sum('fact')}</b></span><span class="ok"><span>Мос:</span> <b>${ok}</b></span><span class="lo"><span>Камомад:</span> <b>${lo}</b></span><span class="hi"><span>Ортиқча:</span> <b>${hi}</b></span>`
       + (c.codes ? `<span class="lo"><span>Сканерланмаган кодлар:</span> <b>${c.miss.length}</b></span><span class="hi"><span>Ҳисобда йўқ кодлар:</span> <b>${c.extra.length}</b></span>` : '') + `</div>`
       + `<div class="tb"><table><thead><tr><th>Маҳсулот</th><th>Ҳисобда</th><th>Фактда</th><th>Фарқ</th></tr></thead><tbody>`
-      + c.rows.map(r => `<tr class="${r.diff < 0 ? 'lo' : r.diff > 0 ? 'hi' : 'ok'}"><td>${r.name ? esc(r.name) : '✕ Базада топилмади'}<small>${esc(r.gtin)}</small></td><td class="n">${r.book}</td><td class="n">${r.fact}</td><td class="n d">${r.diff > 0 ? '+' : ''}${r.diff || '✓'}</td></tr>`).join('')
+      + c.rows.map(r => `<tr class="${r.diff < 0 ? 'lo' : r.diff > 0 ? 'hi' : 'ok'}"><td>${r.name ? esc(r.name) : '✕ Базада топилмади'}<small>${esc(r.label || r.gtin)}</small></td><td class="n">${r.book}</td><td class="n">${r.fact}</td><td class="n d">${r.diff > 0 ? '+' : ''}${r.diff || '✓'}</td></tr>`).join('')
       + `</tbody></table></div>`;
   };
   document.getElementById('invbk').addEventListener('click', () => fileEl.click());
@@ -4338,7 +4390,7 @@ document.addEventListener('click', e => {
       l.map((x, i) => [i + 1, x.ts, x.gtin, tr(x.name) || tr('Топилмади'), x.ser || '', units(x), stat(x), x.raw.replace(/\x1d/g, ' '), x.by || '', x.nb ? L('Базада йўқ', 'Нет в базе', 'Not in the base') : '']));
     if (bk) {
       const c = compare(l, bk), YEL = 'FFFEF3C7', col = v => v === tr('Мос') ? GREEN : v === tr('Ортиқча') ? YEL : RED;
-      const ws = sheet(tr('Солиштириш'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 34], ['Ҳисобда', 10], ['Фактда', 10], ['Фарқ', 9], ['Ҳолат', 13]],
+      const ws = sheet(tr('Солиштириш'), [['№', 5], [c.bySer ? 'Серия' : 'Штрих код', 16], ['Маҳсулот', 34], ['Ҳисобда', 10], ['Фактда', 10], ['Фарқ', 9], ['Ҳолат', 13]],
         c.rows.map((r, i) => [i + 1, r.gtin, r.name || tr('Топилмади'), r.book, r.fact, r.diff, tr(r.diff < 0 ? 'Камомад' : r.diff > 0 ? 'Ортиқча' : 'Мос')]), col);
       ws.addRow([]); ws.addRow([tr('Ҳисоб файли') + ':', bk.file, '', tr('Юкланган') + ':', bk.loaded]);
       if (c.codes) sheet(tr('Кодлар фарқи'), [['№', 5], ['Штрих код', 16], ['Маҳсулот', 28], ['Ҳолат', 30], ['Маркировка коди', 60]],
