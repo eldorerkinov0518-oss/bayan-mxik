@@ -1372,7 +1372,7 @@
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2600</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2610</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -3349,7 +3349,11 @@ function fitSides() {
   rec.forEach(b => { b.hidden = false; });
   for (let i = rec.length - 1; i > 0 && side.scrollHeight > side.clientHeight + 1; i--) rec[i].hidden = true;
 }
-for (const side of document.querySelectorAll('.side')) side.addEventListener('wheel', e => { if (!e.target.closest('.lnks')) e.preventDefault(); }, { passive: false });
+// The wheel does not move the side panels themselves, but every list inside them that scrolls (links, users) does.
+for (const side of document.querySelectorAll('.side')) side.addEventListener('wheel', e => {
+  for (let el = e.target; el && el !== side; el = el.parentElement) if (el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY)) return;
+  e.preventDefault();
+}, { passive: false });
 // Useful links: three are visible, the rest scroll inside the card.
 function fitLinks() {
   for (const box of document.querySelectorAll('.lnks')) {
