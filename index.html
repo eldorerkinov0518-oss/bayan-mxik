@@ -519,16 +519,16 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
     html.fixed main .search { position: sticky; top: 0; z-index: 3; }
     html.fixed main footer { display: none; }
     /* While the admin panel is open, the column does not scroll: search, buttons and tabs stay still and only the panel's content scrolls (in «Users», only the list). With the inventory open too, the column scrolls as usual so neither is squeezed. */
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) { overflow: hidden; display: flex; flex-direction: column; padding-bottom: 12px; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) > .search { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) > .search > :not(#invadm) { flex: none; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) > :not(.search) { display: none; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #invadm:not([hidden]) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #invadm .atabs { flex: none; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #invadm .apane:not([hidden]) { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #admC:not([hidden]) { display: flex; flex-direction: column; overflow: hidden; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #admC .ucard { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; } html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #admC .ucard > * { flex: none; }
-    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]))) #admC .ulist { flex: 1 1 auto; min-height: 0; max-height: none; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) { overflow: hidden; display: flex; flex-direction: column; padding-bottom: 12px; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) > .search { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) > .search > :not(#invadm) { flex: none; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) > :not(.search) { display: none; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #invadm:not([hidden]) { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #invadm .atabs { flex: none; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #invadm .apane:not([hidden]) { flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; padding-right: 4px; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #admC:not([hidden]) { display: flex; flex-direction: column; overflow: hidden; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #admC .ucard { flex: 1 1 auto; min-height: 0; display: flex; flex-direction: column; } html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #admC .ucard > * { flex: none; }
+    html.fixed main:has(#invadm:not([hidden])):not(:has(#inv:not([hidden]), #zay:not([hidden]))) #admC .ulist { flex: 1 1 auto; min-height: 0; max-height: none; }
     html.fixed .list .tools { margin: 10px 0 6px; } html.fixed .list h2 { margin-top: 0; }
   }
   /* Page background: slow colour blobs and floating medical shapes behind everything. */
@@ -1168,6 +1168,36 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .invbar { margin-top: 10px; } .invbtn { border: 1px dashed var(--brand); background: transparent; color: var(--brand); border-radius: 10px; padding: 8px 14px; font: 600 14px var(--font), sans-serif; cursor: pointer; }
   .invbtn.on { background: var(--brand); color: #fff; border-style: solid; }
   .inv { margin-top: 12px; border: 1px solid var(--line); border-radius: 14px; padding: 12px 14px; background: var(--soft); }
+  .zbad { display: inline-block; min-width: 18px; padding: 0 5px; border-radius: 999px; background: #e11d48; color: #fff; font: 700 11.5px/18px var(--font), sans-serif; font-style: normal; text-align: center; margin-left: 4px; }
+  .zay .ztabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 8px 0 10px; } .zay .ztabs button { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 999px; padding: 6px 12px; font: 600 13px var(--font), sans-serif; cursor: pointer; }
+  .zay .ztabs button.on { background: var(--b1); border-color: var(--b1); color: #fff; } .zay .ztabs em { font-style: normal; opacity: .75; }
+  .zhint { color: var(--muted); font-size: 13px; margin: 6px 0; } .zer { color: #b91c1c; font-size: 13px; margin: 6px 0; } .zer:empty { display: none; } .zwarn { color: #b45309 !important; }
+  .zlist { display: flex; flex-direction: column; gap: 6px; } .zrow { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 12px; padding: 9px 12px; cursor: pointer; font: inherit; }
+  .zrow:hover { border-color: var(--b2, #2f80ed); } .zrow .zn { font-weight: 800; color: var(--b1); white-space: nowrap; } .zrow .zi { flex: 1; min-width: 0; } .zrow .zi b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .zrow small { color: var(--muted); font-size: 12px; }
+  .zst { font-size: 12px; font-weight: 700; border-radius: 999px; padding: 3px 9px; white-space: nowrap; background: #e2e8f0; color: #334155; } .zst.w { background: #fef3c7; color: #92400e; } .zst.d { background: #dcfce7; color: #166534; } .zst.n { background: #fee2e2; color: #991b1b; }
+  .zdet h3 { margin: 10px 0 8px; font-size: 17px; } .zdet h4, .zform h4 { margin: 14px 0 6px; font-size: 14px; } .zdh { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; } .zdh .zst { margin-right: auto; }
+  .zdh button, .zbtns button, .zform > button, .zrole select { border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 10px; padding: 7px 12px; font: 600 13px var(--font), sans-serif; cursor: pointer; }
+  .zinfo { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 6px; } .zinfo span { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 6px 10px; font-size: 12px; color: var(--muted); } .zinfo b { display: block; color: var(--text); font-size: 13.5px; }
+  .znote { background: var(--card); border-left: 3px solid var(--b2, #2f80ed); padding: 6px 10px; border-radius: 6px; white-space: pre-wrap; font-size: 13.5px; }
+  .ztw { overflow-x: auto; margin-top: 8px; } .ztab { border-collapse: collapse; width: 100%; font-size: 13px; background: var(--card); } .ztab th, .ztab td { border: 1px solid var(--line); padding: 5px 7px; text-align: left; } .ztab th { background: var(--soft); font-size: 12px; } .ztab .r { text-align: right; white-space: nowrap; }
+  .zfiles { display: flex; flex-direction: column; gap: 5px; } .zfile { display: flex; gap: 8px; align-items: center; text-align: left; border: 1px solid var(--line); background: var(--card); color: var(--text); border-radius: 10px; padding: 7px 10px; cursor: pointer; font: inherit; }
+  .zfile span { flex: 1; min-width: 0; overflow-wrap: anywhere; } .zfile small { display: block; color: var(--muted); font-size: 11.5px; } .zfile i { font-style: normal; font-size: 12px; font-weight: 700; color: var(--b2, #2f80ed); white-space: nowrap; } .zfile.seen i { color: #16a34a; }
+  .zadd { display: block; margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--b1); } .zadd input { display: block; margin-top: 4px; font-size: 12.5px; max-width: 100%; }
+  .zroute { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; } .zroute li { display: flex; gap: 8px; padding: 6px 10px; border-radius: 10px; background: var(--card); border: 1px solid var(--line); } .zroute li.w { border-color: #f59e0b; } .zroute li.n { border-color: #ef4444; } .zroute li.d { border-color: #86efac; }
+  .zroute b { display: block; font-size: 13.5px; } .zroute small { display: block; color: var(--muted); font-size: 12px; } .zroute q { display: block; font-size: 13px; font-style: italic; margin-top: 2px; } .zic { width: 20px; flex: none; }
+  .zold { margin-top: 8px; font-size: 13px; } .zact { margin-top: 12px; padding: 10px 12px; border: 2px solid var(--b2, #2f80ed); border-radius: 12px; background: var(--card); } .zact label, .zform label { display: block; margin-top: 8px; } .zact label span, .zform label span { display: block; font-size: 12px; color: var(--muted); margin-bottom: 3px; }
+  .zact textarea, .zform input, .zform select, .zform textarea { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 9px; padding: 7px 9px; font: 14px var(--font), sans-serif; background: var(--card); color: var(--text); }
+  .zbtns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; } .zbtns .go { padding: 9px 16px; font-size: 14px; } .zbtns .go:disabled { opacity: .45; cursor: not-allowed; } .zbtns .zno, .zdh .zno { color: #b91c1c; }
+  .zg { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 0 10px; } .zg .w { grid-column: 1 / -1; }
+  .zits { display: flex; flex-direction: column; gap: 6px; margin-bottom: 6px; } .zit { display: grid; grid-template-columns: 3fr 1fr 1fr 1fr 1.3fr 2fr auto; gap: 5px; } .zit button { border: 0; background: none; color: #b91c1c; cursor: pointer; font-size: 15px; } .zform .zit input, .zform .zit select { padding: 6px 7px; font-size: 13px; }
+  .zsum { margin-left: 8px; font-size: 14px; } .zq { width: 100%; box-sizing: border-box; border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; font: 14px var(--font), sans-serif; background: var(--card); color: var(--text); margin-bottom: 8px; }
+  .zinv { margin: 4px 0; font-size: 13.5px; } .zinv small { color: var(--muted); } .zsmall { border: 1px dashed var(--b2, #2f80ed); background: none; color: var(--b1); border-radius: 9px; padding: 5px 10px; font: 600 12.5px var(--font), sans-serif; cursor: pointer; } .zlink { cursor: pointer; } .zlink:hover td { background: var(--soft); }
+  @media (max-width: 760px) { .zit { grid-template-columns: 1fr 1fr 1fr; padding: 6px; border: 1px dashed var(--line); border-radius: 10px; } .zit [data-k="n"], .zit [data-k="m"] { grid-column: 1 / -1; } .zrow { flex-wrap: wrap; } }
+  .zov { position: fixed; inset: 0; z-index: 9999; background: rgba(15, 23, 42, .7); display: flex; align-items: center; justify-content: center; padding: 12px; } .zovb { background: var(--card, #fff); color: var(--text); border-radius: 14px; width: min(980px, 100%); height: min(92vh, 1100px); display: flex; flex-direction: column; overflow: hidden; }
+  .zovh { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 8px 12px; border-bottom: 1px solid var(--line); } .zovh b { overflow-wrap: anywhere; } .zovh button { border: 0; background: none; font-size: 20px; cursor: pointer; color: inherit; }
+  .zovc { flex: 1; min-height: 0; display: flex; flex-direction: column; gap: 8px; padding: 10px; overflow: auto; align-items: center; } .zovc img { max-width: 100%; height: auto; } .zovc iframe { width: 100%; flex: 1; min-height: 60vh; border: 0; } .zovc .go { text-decoration: none; padding: 9px 16px; }
+  .zrole { border: 1px solid var(--line); border-radius: 12px; padding: 8px 10px; margin: 8px 0; background: var(--card); } .zrole.off { opacity: .55; } .zrh { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; } .zrh label { font-size: 13px; }
+  .zchips { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0; } .zchips span { background: var(--soft); border: 1px solid var(--line); border-radius: 999px; padding: 3px 4px 3px 10px; font-size: 13px; } .zchips button { border: 0; background: none; color: #b91c1c; cursor: pointer; } .zrole small { display: block; color: var(--muted); font-size: 12px; margin-top: 4px; } .zrole select { max-width: 100%; }
   .invtr { font-size: 12px; font-weight: 600; opacity: .7; margin-left: 4px; }
   .invh { display: flex; justify-content: space-between; gap: 8px; align-items: baseline; flex-wrap: wrap; } .invh span { color: var(--muted); font-size: 13px; } .invh #invsum { margin-left: auto; } .invfold { border: 1px solid var(--line); background: var(--card); color: var(--b1); border-radius: 999px; padding: 4px 12px; font: 700 12.5px var(--font), sans-serif; cursor: pointer; } .invfold:hover { background: var(--soft); }
   .invhelp { margin: 6px 0 10px; font-size: 13px; color: var(--muted); }
@@ -1439,7 +1469,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
     </div>
     <div class="invbar"><button type="button" class="invbtn" id="invbtn" hidden>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></button> <button type="button" class="invbtn" id="invadmbtn" hidden></button></div>
     <div class="invadm" id="invadm" hidden>
-      <div class="atabs" role="tablist"><button type="button" data-tab="admO" class="on">📊 Умумий</button><button type="button" data-tab="admA">📦 Хатлов ва базалар</button><button type="button" data-tab="admB">🌐 Сайт ва чат</button><button type="button" data-tab="admC">👥 Фойдаланувчилар</button></div>
+      <div class="atabs" role="tablist"><button type="button" data-tab="admO" class="on">📊 Умумий</button><button type="button" data-tab="admA">📦 Хатлов ва базалар</button><button type="button" data-tab="admB">🌐 Сайт ва чат</button><button type="button" data-tab="admC">👥 Фойдаланувчилар</button><button type="button" data-tab="admZ">📝 Заявка йўли</button></div>
       <div class="apane" id="admO"></div>
       <div class="apane" id="admA" hidden></div>
       <div class="apane admsite" id="admB" hidden>
@@ -1452,7 +1482,9 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
         <p class="s">Хабарни ўчириш ва блоклаш чат ойнасининг ўзида қолди: хабарни танлаб, «🛠 Админ асбоблари»дан фойдаланинг.</p>
       </div>
       <div class="apane" id="admC" hidden></div>
+      <div class="apane" id="admZ" hidden></div>
     </div>
+    <div class="inv zay" id="zay" hidden></div>
     <div class="inv" id="inv" hidden>
       <div class="invh"><b>📦 Инвентаризация <small class="invtr">Хатлов · Inventory</small></b><span id="invsum"></span><button type="button" class="invfold" id="invfold" title="Йиғиб қўйиш">▴ Йиғиш</button></div>
       <form class="invstart" id="invstart">
@@ -1505,7 +1537,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2890</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v22.10-2900</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1808,7 +1840,7 @@ const I18N = {
   '🎨 Фон': ['🎨 Фон', '🎨 Background'],
   '⏸ Эффектлар: ҳаракатда': ['⏸ Эффекты: в движении', '⏸ Effects: moving'], '▶ Эффектлар: қотирилган': ['▶ Эффекты: остановлены', '▶ Effects: frozen'],
   'Сайтдаги ҳаракатланувчи эффектларни ҳамма учун қотириш ёки қайта юргизиш': ['Остановить или снова запустить движущиеся эффекты сайта для всех', 'Freeze or restart the site’s moving effects for everyone'],
-  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📦 Хатлов ва базалар': ['📦 Инвентаризация и базы', '📦 Inventory and bases'], '📊 Умумий': ['📊 Обзор', '📊 Overview'], '🌐 Сайт ва чат': ['🌐 Сайт и чат', '🌐 Site and chat'], '👥 Фойдаланувчилар': ['👥 Пользователи', '👥 Users'],
+  '▴ Йиғиш': ['▴ Свернуть', '▴ Collapse'], '📦 Хатлов ва базалар': ['📦 Инвентаризация и базы', '📦 Inventory and bases'], '📝 Заявка йўли': ['📝 Маршрут заявок', '📝 Request route'], '📊 Умумий': ['📊 Обзор', '📊 Overview'], '🌐 Сайт ва чат': ['🌐 Сайт и чат', '🌐 Site and chat'], '👥 Фойдаланувчилар': ['👥 Пользователи', '👥 Users'],
   'Бу созламалар ҳамма фойдаланувчилар учун бирдан ўзгаради.': ['Эти настройки меняются сразу для всех пользователей.', 'These settings change at once for every user.'],
   'Тест режими': ['Тестовый режим', 'Test mode'], 'Сайт тепасидаги сариқ «тест режими» ёзуви.': ['Жёлтая надпись «тестовый режим» вверху сайта.', 'The yellow «test mode» line at the top of the site.'],
   'Ҳаракатли эффектлар': ['Движущиеся эффекты', 'Moving effects'], 'Безакли анимацияларни тўхтатиш ёки қайта юргизиш. Мавзуга тегмайди.': ['Остановить или снова запустить декоративные анимации. Тема не меняется.', 'Stop or restart the decorative animations. The theme stays as it is.'],
@@ -5359,6 +5391,321 @@ document.addEventListener('click', e => {
     el.style.transition = 'transform .2s, opacity .2s'; d = 0; show(); setTimeout(() => { el.style.transition = ''; }, 220);
   });
 })();
+</script>
+<script>
+// Purchase requests (заявка) and their approval route. The requester files the request with its documents; then each
+// signer in turn opens every document, approves or rejects with a reason and may add files of their own; at the end
+// the supply department marks it as entered in SAP (SAP gives the order number itself, writing it here is optional).
+// Requests live in zay/<id>, signatures in zaySig/<id>/<round>/<role> (only the holder of that role can write one, and
+// only once), files in zayFiles/<id>/<k>/<piece> with their details in zayFm/<id>/<k>. Each signature keeps a hash of
+// the request as it was signed, so a later change by the requester shows up. The admin picks who holds each role.
+{
+  const L = (uz, ru, en) => UI === 'ru' ? ru : UI === 'en' ? en : uz;
+  const ADMIN_ID = 'DmRe67o0qvYrhB6Ti9YuwvoX9Ib2';
+  const ls = (k, v) => { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || 'null'); localStorage.setItem(k, JSON.stringify(v)); } catch { return null; } };
+  const ADM = () => !!ls('bayan-admin-rt');
+  const db = async (p, method = 'GET', body) => { const r = await fetch(`${CHAT_DB}/${p}.json`, body === undefined ? { method } : { method, body: JSON.stringify(body) }); if (!r.ok) { const e = new Error('db ' + r.status); e.status = r.status; throw e; } return r.json(); };
+  let uid = '';
+  const myUid = async () => { if (uid) return uid; const t = await window.userToken?.(); try { uid = JSON.parse(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/'))).user_id || ''; } catch {} return uid; };
+  const ROUTE = ['omts', 'kb', 'fin', 'dir', 'chief', 'sap'], SET = ['omts', 'kb', 'fin', 'dir', 'chief'];
+  const RN = r => ({ req: L('Заявка берувчи', 'Заявитель', 'Requester'), omts: L('Таъминот бўлими: қабул қилди', 'ОМТС: принял', 'Supply: accepted'), kb: L('Корпоратив хавфсизлик бўлими (КБ)', 'Отдел КБ', 'Corporate security'),
+    fin: L('Молия директори', 'Финансовый директор', 'Finance director'), dir: L('Ижрочи директор', 'Исполнительный директор', 'Executive director'), chief: L('Бош бухгалтер', 'Главный бухгалтер', 'Chief accountant'),
+    sap: L('Таъминот бўлими: SAP’га киритди', 'ОМТС: внесено в SAP', 'Supply: entered in SAP') })[r] || r;
+  const RU = { req: 'Заявитель', omts: 'ОМТС (принял)', kb: 'Отдел КБ', fin: 'Финансовый директор', dir: 'Исполнительный директор', chief: 'Главный бухгалтер', sap: 'ОМТС (внесено в SAP)' };
+  const PIECE = 1000000, MAXF = 7 * 1024 * 1024;
+  const bar = document.querySelector('.invbar'), btn = document.createElement('button'), panel = document.getElementById('zay');
+  btn.type = 'button'; btn.className = 'invbtn'; btn.id = 'zaybtn'; bar.prepend(btn);
+  let list = {}, sigs = {}, fms = {}, invs = {}, zq = '', roles = {}, me = { name: '', pos: '', dept: '' }, tab = sessionStorage.getItem('bayan-zay-tab') || 'in', cur = null, form = null, err = '', loading = false, ov = null;
+  let on = sessionStorage.getItem('bayan-zay-on') === '1';
+  const money = n => (Math.round(+n * 100) / 100).toLocaleString('ru-RU');
+  const z2 = n => String(n).padStart(2, '0');
+  const dt = t => { if (!t) return ''; const d = new Date(t); return `${z2(d.getDate())}.${z2(d.getMonth() + 1)}.${d.getFullYear()} ${z2(d.getHours())}:${z2(d.getMinutes())}`; };
+  const hz = z => { const s = JSON.stringify([z.title, z.dept, z.items, z.sum, z.cur, z.sup, z.note, z.r]); let h = 2166136261; for (const c of s) h = Math.imul(h ^ c.charCodeAt(0), 16777619) >>> 0; return h.toString(36); };
+  const holders = r => roles[r === 'sap' ? 'omts' : r] || {};
+  const route = () => ROUTE.filter(r => r === 'sap' || (!roles.off?.[r] && Object.keys(roles[r] || {}).length));
+  const sg = id => sigs[id]?.[list[id]?.r || 1] || {};
+  const stat = id => {
+    const z = list[id], s = sg(id);
+    if (z.st === 'cancel') return { k: 'cancel', s };
+    const no = Object.entries(s).find(([, v]) => v && v.st === 'no'); if (no) return { k: 'no', r: no[0], s };
+    if (!s.req) return { k: 'draft', s };
+    const next = route().find(r => !s[r]); return next ? { k: 'wait', r: next, s } : { k: 'done', s };
+  };
+  const myTurn = id => { const t = stat(id); return t.k === 'wait' && !!holders(t.r)[uid]; };
+  const stTxt = id => { const t = stat(id);
+    return t.k === 'wait' ? ['w', '⏳ ' + L('Кутилмоқда: ', 'Ожидает: ', 'Waiting for: ') + RN(t.r)] : t.k === 'done' ? ['d', '✅ ' + L('Тасдиқланди, SAP’да', 'Согласовано, в SAP', 'Approved, in SAP') + (t.s.sap?.sap ? ' № ' + t.s.sap.sap : '')]
+      : t.k === 'no' ? ['n', '❌ ' + L('Рад этилди: ', 'Отклонено: ', 'Rejected: ') + RN(t.r)] : t.k === 'cancel' ? ['c', '⛔ ' + L('Бекор қилинди', 'Отменено', 'Cancelled')] : ['c', L('Қоралама', 'Черновик', 'Draft')]; };
+  const seen = () => ls('bayan-zay-seen') || {};
+  const filesOf = id => Object.entries(fms[id] || {}).sort((a, b) => (a[1].ts || 0) - (b[1].ts || 0));
+  const allSeen = id => filesOf(id).every(([k]) => seen()[id + '/' + k]);
+  const myIds = () => Object.keys(list).filter(id => list[id].by === uid);
+  const inIds = () => Object.keys(list).filter(myTurn);
+  const sorted = ids => ids.sort((a, b) => (list[b].ts || 0) - (list[a].ts || 0));
+
+  const showBtn = () => {
+    const n = inIds().length;
+    btn.innerHTML = `📝 ${esc(L('Заявкалар', 'Заявки', 'Requests'))}${n ? ` <em class="zbad">${n}</em>` : ''}`;
+    btn.classList.toggle('on', on); panel.hidden = !on;
+  };
+  const load = async () => {
+    if (loading || !await myUid()) return; loading = true;
+    try {
+      const [a, b, c, d, p, f] = await Promise.all([db('zay'), db('zaySig'), db('zayFm'), db('settings/zayRoles'), db(`profiles/${uid}`).catch(() => null), db('zayInv').catch(() => ({}))]);
+      list = a || {}; sigs = b || {}; fms = c || {}; roles = d || {}; invs = f || {}; err = '';
+      for (const z of Object.values(list)) z.items = Array.isArray(z.items) ? z.items.filter(Boolean) : Object.values(z.items || {});
+      me = { name: p?.name || ls('bayan-user-name') || '', pos: p?.pos || '', dept: p?.dept || '' };
+    } catch (e) { err = e.status ? L('Заявкаларни ўқиб бўлмади. Админ Firebase’да янги қоидаларни Publish қилиши керак.', 'Не удалось прочитать заявки. Администратору нужно опубликовать новые правила Firebase.', 'Could not read requests. The admin needs to publish the new Firebase rules.') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.'); }
+    loading = false; showBtn(); if (on && !form) draw();
+  };
+
+  // ---------- drawing ----------
+  const head = () => `<div class="invh"><b>📝 ${esc(L('Заявкалар', 'Заявки', 'Requests'))} <small class="invtr">${esc(L('харид заявкаси ва келишув', 'закупка и согласование', 'purchase and approval'))}</small></b><span></span><button type="button" class="invfold" data-z="fold">▴ ${esc(L('Йиғиш', 'Свернуть', 'Collapse'))}</button></div>`;
+  const tabs = () => { const T = [['in', '⏳ ' + L('Менга келганлар', 'Мне на согласование', 'For me'), inIds().length], ['mine', '📄 ' + L('Меникилар', 'Мои', 'Mine'), myIds().length], ['all', '🗂 ' + L('Ҳаммаси', 'Все', 'All'), Object.keys(list).length], ['fak', '🧾 ' + L('Ҳисоб-фактуралар', 'Счета-фактуры', 'Invoices'), invList().length], ['new', '➕ ' + L('Янги заявка', 'Новая заявка', 'New request')]];
+    return `<div class="ztabs">${T.map(([k, t, n]) => `<button type="button" data-zt="${k}" class="${tab === k && !cur ? 'on' : ''}">${esc(t)}${n ? ` <em>${n}</em>` : ''}</button>`).join('')}</div>`; };
+  const rowH = id => { const z = list[id], [c, t] = stTxt(id);
+    return `<button type="button" class="zrow" data-zo="${esc(id)}"><span class="zn">№ ${esc(z.n)}</span><span class="zi"><b>${esc(z.title)}</b><small>${esc(z.byName)}${z.dept ? ' · ' + esc(z.dept) : ''} · ${esc(dt(z.ts).slice(0, 10))}${z.sum ? ' · ' + money(z.sum) + ' ' + esc(z.cur) : ''}${filesOf(id).length ? ' · 📎' + filesOf(id).length : ''}</small></span><span class="zst ${c}">${esc(t)}</span></button>`; };
+  const draw = () => {
+    if (!on) return;
+    let h = head() + tabs();
+    if (err) h += `<p class="zer">${esc(err)}</p>`;
+    if (form) h += formH();
+    else if (cur && list[cur]) h += detailH(cur);
+    else if (tab === 'fak') h += facH();
+    else {
+      const qq = zq.toLowerCase(), ids = sorted((tab === 'in' ? inIds() : tab === 'mine' ? myIds() : Object.keys(list)).filter(id => !qq || `${list[id].n} ${list[id].title} ${list[id].byName} ${list[id].sup || ''} ${list[id].dept || ''}`.toLowerCase().includes(qq)));
+      h += `<input class="zq" data-zq type="search" value="${esc(zq)}" placeholder="🔎 ${esc(L('Заявка рақами, мавзу, исм ёки етказиб берувчи', 'Номер заявки, тема, имя или поставщик', 'Request number, subject, name or supplier'))}">`;
+      if (tab === 'in' && !route().some(r => r !== 'sap')) h += `<p class="zhint">⚠ ${esc(L('Келишув йўли ҳали созланмаган: админ «🛠 Админ панели → 📝 Заявка йўли»да ким нимага имзо чекишини белгилаши керак.', 'Маршрут согласования ещё не настроен: администратор назначает подписантов в «🛠 Админ-панель → 📝 Маршрут заявок».', 'The approval route is not set up yet: the admin assigns signers in «🛠 Admin panel → 📝 Request route».'))}</p>`;
+      h += ids.length ? `<div class="zlist">${ids.map(rowH).join('')}</div>` : `<p class="zhint">${esc(tab === 'in' ? L('Ҳозир сизнинг имзонгизни кутаётган заявка йўқ.', 'Сейчас нет заявок, ожидающих вашей подписи.', 'No requests are waiting for you.') : L('Ҳали заявка йўқ. «➕ Янги заявка»ни босинг.', 'Заявок пока нет. Нажмите «➕ Новая заявка».', 'No requests yet. Press «➕ New request».'))}</p>`;
+    }
+    panel.innerHTML = h;
+  };
+  const detailH = id => {
+    const z = list[id], t = stat(id), s = t.s, f = filesOf(id), sn = seen(), [c, txt] = stTxt(id), H = hz(z);
+    const items = (z.items || []).map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.n)}</td><td>${esc(x.u)}</td><td class="r">${esc(x.q)}</td><td>${esc(x.c || '')}</td><td class="r">${x.p ? money(x.p) : ''}</td><td class="r">${x.p ? money(x.p * x.q) : ''}</td><td>${esc(x.m || '')}</td></tr>`).join('');
+    const step = r => { const v = s[r], wait = t.k === 'wait' && t.r === r;
+      const who = v ? `${esc(v.name)}${v.pos ? ', ' + esc(v.pos) : ''}` : Object.values(holders(r)).map(esc).join(', ') || '—';
+      return `<li class="${v ? (v.st === 'no' ? 'n' : 'd') : wait ? 'w' : ''}"><span class="zic">${v ? (v.st === 'no' ? '❌' : '✅') : wait ? '⏳' : '○'}</span><div><b>${esc(RN(r))}</b><small>${who}${v ? ' · ' + esc(dt(v.ts)) : ''}</small>`
+        + `${v?.sap ? `<small>SAP № <b>${esc(v.sap)}</b></small>` : ''}${v?.note ? `<q>${esc(v.note)}</q>` : ''}${v && r !== 'req' && v.h && v.h !== H ? `<small class="zwarn">⚠ ${esc(L('Имзодан кейин заявка ўзгартирилган', 'Заявка изменена после подписи', 'Changed after signing'))}</small>` : ''}</div></li>`; };
+    const old = Object.entries(sigs[id] || {}).filter(([r]) => +r < (z.r || 1)).flatMap(([r, o]) => Object.entries(o || {}).filter(([, v]) => v.st === 'no').map(([k, v]) => `<li>${esc(L(`${r}-марта`, `Раунд ${r}`, `Round ${r}`))}: ❌ ${esc(RN(k))} — ${esc(v.name)}, ${esc(dt(v.ts))}${v.note ? `: «${esc(v.note)}»` : ''}</li>`));
+    const mine = z.by === uid, live = t.k === 'wait' || t.k === 'no' || t.k === 'draft';
+    const canFile = live && (mine || Object.keys(roles).some(r => r !== 'off' && roles[r]?.[uid]) || ADM());
+    const untouched = Object.keys(s).every(k => k === 'req');
+    let act = '';
+    if (myTurn(id)) {
+      const need = f.length && !allSeen(id);
+      act = `<div class="zact"><b>✍ ${esc(L('Сизнинг навбатингиз', 'Ваша очередь', 'Your turn'))}: ${esc(RN(t.r))}</b>`
+        + (need ? `<p class="zwarn">👁 ${esc(L('Тасдиқлашдан олдин ҳар бир ҳужжатни очиб кўриб чиқинг.', 'Перед согласованием откройте и просмотрите каждый документ.', 'Open and review every document before approving.'))}</p>` : '')
+        + `<label><span>${esc(L('Изоҳ (рад этилса — сабаби шарт)', 'Комментарий (при отказе — причина обязательна)', 'Comment (required when rejecting)'))}</span><textarea data-zf="note" maxlength="500" rows="2"></textarea></label>`
+        + `<div class="zbtns"><button type="button" class="go" data-za="ok" ${need ? 'disabled' : ''}>✅ ${esc(t.r === 'sap' ? L('SAP’га киритилди, ёпиш', 'Внесено в SAP, закрыть', 'Entered in SAP, close') : L('Келишилди', 'Согласовано', 'Approve'))}</button>`
+        + `<button type="button" class="zno" data-za="no">❌ ${esc(L('Рад этиш', 'Отклонить', 'Reject'))}</button></div></div>`;
+    }
+    const own = [];
+    if (mine && t.k === 'no') own.push(`<button type="button" class="go" data-za="redo">✏ ${esc(L('Тузатиб қайта юбориш', 'Исправить и отправить снова', 'Fix and resubmit'))}</button>`);
+    if (mine && t.k === 'wait' && untouched) own.push(`<button type="button" data-za="edit">✏ ${esc(L('Таҳрирлаш', 'Изменить', 'Edit'))}</button>`);
+    if ((mine || ADM()) && live) own.push(`<button type="button" class="zno" data-za="cancel">⛔ ${esc(L('Бекор қилиш', 'Отменить', 'Cancel'))}</button>`);
+    return `<div class="zdet"><div class="zdh"><button type="button" class="zback" data-za="back">← ${esc(L('Рўйхат', 'Список', 'List'))}</button><span class="zst ${c}">${esc(txt)}</span><button type="button" data-za="print" title="${esc(L('Келишув варақаси (чоп этиш ёки PDF)', 'Лист согласования (печать или PDF)', 'Approval sheet (print or PDF)'))}">🖨 ${esc(L('Келишув варақаси', 'Лист согласования', 'Approval sheet'))}</button></div>`
+      + `<h3>${esc(L('Заявка', 'Заявка', 'Request'))} № ${esc(z.n)}: ${esc(z.title)}</h3>`
+      + `<div class="zinfo"><span>${esc(L('Бўлим', 'Подразделение', 'Department'))}<b>${esc(z.dept || '—')}</b></span><span>${esc(L('Заявка берувчи', 'Заявитель', 'Requester'))}<b>${esc(z.byName)}${z.byPos ? ', ' + esc(z.byPos) : ''}</b></span><span>${esc(L('Сана', 'Дата', 'Date'))}<b>${esc(dt(z.ts))}</b></span>`
+      + `${z.sup ? `<span>${esc(L('Етказиб берувчи', 'Поставщик', 'Supplier'))}<b>${esc(z.sup)}</b></span>` : ''}<span>${esc(L('Жами', 'Итого', 'Total'))}<b>${z.sum ? money(z.sum) + ' ' + esc(z.cur) : '—'}</b></span></div>`
+      + (z.note ? `<p class="znote">${esc(z.note)}</p>` : '')
+      + `<div class="ztw"><table class="ztab"><thead><tr><th>№</th><th>${esc(L('Номи', 'Наименование', 'Item'))}</th><th>${esc(L('Ўлч.', 'Ед.', 'Unit'))}</th><th>${esc(L('Миқдор', 'Кол-во', 'Qty'))}</th><th>A1/A2/A3</th><th>${esc(L('Нарх', 'Цена', 'Price'))}</th><th>${esc(L('Сумма', 'Сумма', 'Sum'))}</th><th>${esc(L('Изоҳ', 'Примечание', 'Note'))}</th></tr></thead><tbody>${items}</tbody></table></div>`
+      + `<h4>📎 ${esc(L('Ҳужжатлар', 'Документы', 'Documents'))}</h4><div class="zfiles">${f.map(([k, m]) => `<button type="button" class="zfile ${sn[id + '/' + k] ? 'seen' : ''}" data-zfo="${esc(k)}">${/^image/.test(m.type) ? '🖼' : /pdf/.test(m.type) ? '📕' : '📄'} <span>${esc(m.name)}<small>${esc(m.byName || '')} · ${esc(dt(m.ts))} · ${Math.max(1, Math.round(m.size / 1024))} KB</small></span><i>${sn[id + '/' + k] ? '✔ ' + esc(L('кўрилди', 'просмотрен', 'viewed')) : '👁 ' + esc(L('очиш', 'открыть', 'open'))}</i></button>`).join('') || `<p class="zhint">${esc(L('Ҳужжат юкланмаган.', 'Документы не загружены.', 'No documents.'))}</p>`}</div>`
+      + (canFile ? `<label class="zadd">➕ ${esc(L('Ҳужжат юклаш (скан, КП, шартнома, PDF ёки расм)', 'Загрузить документ (скан, КП, договор, PDF или фото)', 'Upload a document (scan, quote, contract, PDF or photo)'))}<input type="file" data-zf="add" multiple accept=".pdf,image/*,.doc,.docx,.xls,.xlsx"></label>` : '')
+      + `<h4>🧾 ${esc(L('Ҳисоб-фактуралар', 'Счета-фактуры', 'Invoices'))}</h4>${Object.values(invs[id] || {}).sort((a, b) => (a.ts || 0) - (b.ts || 0)).map(x => `<p class="zinv">🧾 № <b>${esc(x.no)}</b> ${esc(L('сана', 'от', 'of'))} ${esc(String(x.date).split('-').reverse().join('.'))}${x.sum ? ' · ' + money(x.sum) + ' ' + esc(x.cur) : ''}${x.sup ? ' · ' + esc(x.sup) : ''}${x.po ? ' · SAP № ' + esc(x.po) : ''} <small>(${esc(x.byName)}, ${esc(dt(x.ts))})</small></p>`).join('') || `<p class="zhint">${esc(L('Ҳали фактура боғланмаган.', 'Счёт-фактура пока не привязан.', 'No invoice linked yet.'))}</p>`}`
+      + (list[id].st !== 'cancel' ? `<button type="button" class="zsmall" data-za="fak">➕ ${esc(L('Фактура киритиш', 'Ввести счёт-фактуру', 'Enter an invoice'))}</button>` : '')
+      + `<h4>🖊 ${esc(L('Келишув йўли', 'Маршрут согласования', 'Approval route'))}</h4><ol class="zroute">${['req', ...route()].map(step).join('')}</ol>`
+      + (old.length ? `<details class="zold"><summary>${esc(L('Олдинги рад этишлар', 'Прежние отказы', 'Earlier rejections'))}</summary><ul>${old.join('')}</ul></details>` : '')
+      + act + (own.length ? `<div class="zbtns">${own.join('')}</div>` : '') + '</div>';
+  };
+  // Invoices (счёт-фактура): whoever enters one picks its request from the list or types the request number, so every
+  // invoice is tied to an approved request. Kept in zayInv/<request id>/<k>; the scan goes with the request's files.
+  const invList = () => Object.entries(invs).flatMap(([id, o]) => Object.entries(o || {}).map(([k, v]) => ({ id, k, ...v }))).filter(x => list[x.id]).sort((a, b) => (b.ts || 0) - (a.ts || 0));
+  const zLabel = id => `${list[id].n} — ${list[id].title}`;
+  const facH = () => {
+    const ids = sorted(Object.keys(list).filter(id => list[id].st !== 'cancel')), pre = form?.fak || '';
+    const l = invList();
+    return `<form class="zform zfak" data-zfak><h4>🧾 ${esc(L('Ҳисоб-фактура киритиш', 'Ввод счёта-фактуры', 'Enter an invoice'))}</h4><div class="zg">`
+      + `<label class="w"><span>${esc(L('Заявка (рўйхатдан танланг ёки рақамини ёзинг)', 'Заявка (выберите из списка или введите номер)', 'Request (pick from the list or type its number)'))}</span><input name="z" list="zaydl" required autocomplete="off" value="${esc(pre)}" placeholder="${esc(L('Масалан: 12', 'Например: 12', 'e.g. 12'))}"><datalist id="zaydl">${ids.map(id => `<option value="${esc(zLabel(id))}">${esc(stTxt(id)[1])}</option>`).join('')}</datalist></label>`
+      + `<label><span>${esc(L('Фактура рақами', 'Номер счёта-фактуры', 'Invoice number'))}</span><input name="no" maxlength="40" required></label>`
+      + `<label><span>${esc(L('Фактура санаси', 'Дата счёта-фактуры', 'Invoice date'))}</span><input name="date" type="date" required></label>`
+      + `<label><span>${esc(L('Сумма', 'Сумма', 'Amount'))}</span><input name="sum" type="number" min="0" step="any"></label>`
+      + `<label><span>${esc(L('Валюта', 'Валюта', 'Currency'))}</span><select name="cur">${['UZS', 'USD', 'EUR', 'RUB', 'CNY'].map(c => `<option>${c}</option>`).join('')}</select></label>`
+      + `<label><span>${esc(L('Етказиб берувчи', 'Поставщик', 'Supplier'))}</span><input name="sup" maxlength="120"></label>`
+      + `<label><span>${esc(L('SAP заказ рақами', 'Номер заказа SAP', 'SAP order number'))}</span><input name="po" maxlength="20" inputmode="numeric" placeholder="4500001205"></label>`
+      + `<label class="w zadd">📎 ${esc(L('Фактура файли (ихтиёрий)', 'Файл счёта-фактуры (необязательно)', 'Invoice file (optional)'))}<input type="file" name="file" accept=".pdf,image/*"></label></div>`
+      + `<div class="zbtns"><button class="go" type="submit">💾 ${esc(L('Сақлаш', 'Сохранить', 'Save'))}</button></div><p class="zer" data-zmsg></p></form>`
+      + `<h4>${esc(L('Киритилган фактуралар', 'Введённые счета-фактуры', 'Entered invoices'))}</h4>`
+      + (l.length ? `<div class="ztw"><table class="ztab"><thead><tr><th>${esc(L('Заявка', 'Заявка', 'Request'))}</th><th>${esc(L('Фактура', 'Счёт-фактура', 'Invoice'))}</th><th>${esc(L('Сана', 'Дата', 'Date'))}</th><th>${esc(L('Сумма', 'Сумма', 'Amount'))}</th><th>${esc(L('Етказиб берувчи', 'Поставщик', 'Supplier'))}</th><th>SAP</th><th>${esc(L('Киритди', 'Ввёл', 'Entered by'))}</th></tr></thead><tbody>`
+        + l.map(x => `<tr class="zlink" data-zo="${esc(x.id)}"><td><b>№ ${esc(list[x.id].n)}</b> ${esc(list[x.id].title)}</td><td>${esc(x.no)}${x.fk ? ' 📎' : ''}</td><td>${esc(x.date.split('-').reverse().join('.'))}</td><td class="r">${x.sum ? money(x.sum) + ' ' + esc(x.cur) : ''}</td><td>${esc(x.sup || '')}</td><td>${esc(x.po || '')}</td><td>${esc(x.byName)}<br><small>${esc(dt(x.ts))}</small></td></tr>`).join('') + '</tbody></table></div>'
+        : `<p class="zhint">${esc(L('Ҳали фактура киритилмаган.', 'Счетов-фактур пока нет.', 'No invoices yet.'))}</p>`);
+  };
+  const saveFak = async f => {
+    const msg = t => { const el = panel.querySelector('[data-zmsg]'); if (el) el.textContent = t; }, fd = new FormData(f), v = String(fd.get('z')).trim();
+    const num = v.split('—')[0].replace(/[№\s]/g, ''), id = Object.keys(list).find(i => list[i].n === num || zLabel(i) === v);
+    if (!id) return msg(L(`«${v}» рақамли заявка топилмади.`, `Заявка «${v}» не найдена.`, `Request «${v}» not found.`));
+    const file = f.querySelector('[name=file]').files[0];
+    if (file && file.size > MAXF) return msg(L('Файл 7 МБ дан катта.', 'Файл больше 7 МБ.', 'The file is over 7 MB.'));
+    f.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    try {
+      let fk = '';
+      if (file) { const before = new Set(Object.keys(fms[id] || {})); msg('⏫ ' + file.name); await upFile(id, file); fk = Object.keys(fms[id]).find(k => !before.has(k)) || ''; }
+      const k = Date.now().toString(36) + Math.random().toString(36).slice(2, 5), sum = +fd.get('sum') || 0;
+      await db(`zayInv/${id}/${k}`, 'PUT', { no: String(fd.get('no')).trim().slice(0, 40), date: fd.get('date'), sum, cur: fd.get('cur'), sup: String(fd.get('sup')).trim().slice(0, 120) || list[id].sup || '', po: String(fd.get('po')).trim().slice(0, 20), fk, by: uid, byName: (me.name || '—').slice(0, 60), ts: { '.sv': 'timestamp' } });
+      form = null; await load(); cur = id; draw();
+    } catch (e) { f.querySelectorAll('button').forEach(b => { b.disabled = false; }); msg(e.status ? L('Сақлаб бўлмади: Firebase қоидалари ҳали Publish қилинмаган бўлиши мумкин.', 'Не удалось сохранить: возможно, правила Firebase ещё не опубликованы.', 'Could not save: the Firebase rules may not be published yet.') : L('Сақлаб бўлмади.', 'Не удалось сохранить.', 'Could not save.')); }
+  };
+  const itemRow = (x = {}) => `<div class="zit"><input data-k="n" maxlength="200" placeholder="${esc(L('Номи (ТМЦ ёки хизмат)', 'Наименование ТМЦ/услуги', 'Item or service'))}" value="${esc(x.n || '')}" required><input data-k="u" maxlength="20" placeholder="${esc(L('Ўлч. бирл.', 'Ед. изм.', 'Unit'))}" value="${esc(x.u || L('дона', 'шт', 'pcs'))}"><input data-k="q" type="number" min="0" step="any" placeholder="${esc(L('Миқдор', 'Кол-во', 'Qty'))}" value="${esc(x.q ?? '')}" required>`
+    + `<select data-k="c"><option value="">A1/A2/A3</option>${['A1', 'A2', 'A3'].map(a => `<option ${x.c === a ? 'selected' : ''}>${a}</option>`).join('')}</select><input data-k="p" type="number" min="0" step="any" placeholder="${esc(L('Тахминий нарх', 'Предв. цена', 'Est. price'))}" value="${esc(x.p ?? '')}"><input data-k="m" maxlength="200" placeholder="${esc(L('Изоҳ', 'Примечание', 'Note'))}" value="${esc(x.m || '')}"><button type="button" data-za="rm" title="${esc(L('Ўчириш', 'Удалить', 'Remove'))}">✕</button></div>`;
+  const formH = () => { const z = form.z;
+    return `<form class="zform" data-zform><h3>${esc(form.id ? L('Заявкани таҳрирлаш', 'Изменение заявки', 'Edit request') + ' № ' + z.n : L('Янги заявка', 'Новая заявка', 'New request') + ' № ' + form.n)}</h3>`
+      + `<div class="zg"><label class="w"><span>${esc(L('Нима учун (мавзу)', 'Тема заявки', 'Subject'))}</span><input name="title" maxlength="150" required value="${esc(z.title || '')}" placeholder="${esc(L('Масалан: Ишлаб чиқариш учун датчиклар', 'Например: датчики для производства', 'e.g. Sensors for production'))}"></label>`
+      + `<label><span>${esc(L('Бўлим', 'Подразделение', 'Department'))}</span><input name="dept" maxlength="80" required value="${esc(z.dept ?? me.dept)}"></label>`
+      + `<label><span>${esc(L('Етказиб берувчи (агар маълум бўлса)', 'Поставщик (если известен)', 'Supplier (if known)'))}</span><input name="sup" maxlength="120" value="${esc(z.sup || '')}"></label>`
+      + `<label><span>${esc(L('Валюта', 'Валюта', 'Currency'))}</span><select name="cur">${['UZS', 'USD', 'EUR', 'RUB', 'CNY'].map(c => `<option ${(z.cur || 'UZS') === c ? 'selected' : ''}>${c}</option>`).join('')}</select></label></div>`
+      + `<h4>${esc(L('Нималар керак', 'Позиции', 'Items'))}</h4><div class="zits">${(z.items?.length ? z.items : [{}]).map(itemRow).join('')}</div><button type="button" data-za="addrow">➕ ${esc(L('Қатор қўшиш', 'Добавить строку', 'Add row'))}</button> <b class="zsum" data-zsum></b>`
+      + `<label class="w"><span>${esc(L('Асос ва изоҳ', 'Обоснование и комментарий', 'Reason and comment'))}</span><textarea name="note" maxlength="1000" rows="3">${esc(z.note || '')}</textarea></label>`
+      + `<label class="zadd">📎 ${esc(L('Ҳужжатлар: заявка скани, КП, шартнома, расм ва ҳ.к. (ҳар бири 7 МБ гача)', 'Документы: скан заявки, КП, договор, фото и т.п. (до 7 МБ каждый)', 'Documents: request scan, quote, contract, photo etc. (up to 7 MB each)'))}<input type="file" name="files" multiple accept=".pdf,image/*,.doc,.docx,.xls,.xlsx"></label>`
+      + `<p class="zhint">${esc(L('Юборганингизда сиз «Заявка берувчи» сифатида имзо чекасиз. Кейин заявка келишув йўли бўйича навбат билан ўтади.', 'При отправке вы подписываете как «Заявитель». Затем заявка идёт по маршруту согласования.', 'Sending signs it as the requester; then it goes along the approval route.'))}</p>`
+      + `<div class="zbtns"><button class="go" type="submit">📨 ${esc(L('Юбориш', 'Отправить', 'Send'))}</button><button type="button" data-za="cancelform">${esc(L('Бекор', 'Отмена', 'Cancel'))}</button></div><p class="zer" data-zmsg></p></form>`; };
+  const items = () => [...panel.querySelectorAll('.zit')].map(r => { const o = {}; r.querySelectorAll('[data-k]').forEach(i => { o[i.dataset.k] = i.type === 'number' ? (i.value === '' ? null : +i.value) : i.value.trim(); }); return o; }).filter(x => x.n);
+  const sumUp = () => { const el = panel.querySelector('[data-zsum]'); if (!el) return; const s = items().reduce((a, x) => a + (x.p || 0) * (x.q || 0), 0); el.textContent = s ? L('Жами: ', 'Итого: ', 'Total: ') + money(s) + ' ' + panel.querySelector('[name=cur]').value : ''; };
+
+  // ---------- files ----------
+  const readUrl = f => new Promise((ok, no) => { const r = new FileReader(); r.onload = () => ok(r.result); r.onerror = no; r.readAsDataURL(f); });
+  const shrink = src => new Promise(ok => { const im = new Image(); im.onload = () => { const k = Math.min(1, 2000 / Math.max(im.width, im.height)), c = document.createElement('canvas'); c.width = Math.round(im.width * k); c.height = Math.round(im.height * k); c.getContext('2d').drawImage(im, 0, 0, c.width, c.height); ok(c.toDataURL('image/jpeg', .85)); }; im.onerror = () => ok(src); im.src = src; });
+  const upFile = async (id, f) => {
+    if (f.size > MAXF) throw Object.assign(new Error('big'), { big: f.name });
+    let data = await readUrl(f), type = f.type || 'application/octet-stream', name = f.name;
+    if (/^image\/(jpeg|png|webp)/.test(type) && data.length > 900000) { data = await shrink(data); type = 'image/jpeg'; name = name.replace(/\.\w+$/, '') + '.jpg'; }
+    const k = Date.now().toString(36) + Math.random().toString(36).slice(2, 6), n = Math.ceil(data.length / PIECE);
+    if (n > 10) throw Object.assign(new Error('big'), { big: f.name });
+    for (let i = 0; i < n; i++) await db(`zayFiles/${id}/${k}/${i}`, 'PUT', data.slice(i * PIECE, (i + 1) * PIECE));
+    const m = { name: name.slice(0, 120), type: type.slice(0, 100), size: f.size, n, by: uid, byName: (me.name || '').slice(0, 60), ts: { '.sv': 'timestamp' } };
+    await db(`zayFm/${id}/${k}`, 'PUT', m); (fms[id] ||= {})[k] = { ...m, ts: Date.now() };
+  };
+  const upAll = async (id, files, msg) => { let i = 0; for (const f of files) { i++; if (msg) msg(`⏫ ${L('Юкланмоқда', 'Загрузка', 'Uploading')} ${i}/${files.length}: ${f.name}`); await upFile(id, f); } };
+  const closeOv = () => { if (ov) { ov.querySelectorAll('[data-url]').forEach(a => URL.revokeObjectURL(a.dataset.url)); ov.remove(); ov = null; } };
+  const openFile = async (id, k) => {
+    const m = fms[id]?.[k]; if (!m) return;
+    closeOv(); ov = document.createElement('div'); ov.className = 'zov';
+    ov.innerHTML = `<div class="zovb"><div class="zovh"><b>${esc(m.name)}</b><button type="button" data-zx>✕</button></div><div class="zovc"><p class="zhint">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p></div></div>`;
+    document.body.append(ov);
+    try {
+      const parts = await db(`zayFiles/${id}/${k}`); const arr = Array.isArray(parts) ? parts : Object.keys(parts || {}).sort((a, b) => a - b).map(i => parts[i]);
+      const data = arr.join(''), cut = data.indexOf(','), bin = atob(data.slice(cut + 1)), u8 = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      const url = URL.createObjectURL(new Blob([u8], { type: m.type }));
+      if (!ov) return URL.revokeObjectURL(url);
+      ov.querySelector('.zovc').innerHTML = (/^image/.test(m.type) ? `<img src="${url}" alt="">` : /pdf/.test(m.type) ? `<iframe src="${url}" title="PDF"></iframe>` : `<p class="zhint">${esc(L('Бу турдаги файлни бу ерда кўрсатиб бўлмайди, юклаб олиб очинг.', 'Этот файл нельзя показать здесь, скачайте и откройте его.', 'This file can’t be shown here; download and open it.'))}</p>`)
+        + `<a class="go" data-url="${url}" href="${url}" download="${esc(m.name)}">⬇ ${esc(L('Юклаб олиш', 'Скачать', 'Download'))}</a>`;
+      const s = seen(); s[id + '/' + k] = Date.now(); ls('bayan-zay-seen', s); draw();
+    } catch { if (ov) ov.querySelector('.zovc').innerHTML = `<p class="zer">${esc(L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.'))}</p>`; }
+  };
+  document.addEventListener('click', e => { if (ov && (e.target === ov || e.target.closest('[data-zx]'))) closeOv(); });
+  document.addEventListener('keydown', e => { if (ov && e.key === 'Escape') closeOv(); });
+
+  // ---------- actions ----------
+  const sign = async (id, role, st, note, extra = {}) => {
+    const z = list[id];
+    await db(`zaySig/${id}/${z.r || 1}/${role}`, 'PUT', { uid, name: (me.name || '—').slice(0, 60), pos: (me.pos || '').slice(0, 60), st, note: (note || '').slice(0, 500), h: hz(z), ...extra, ts: { '.sv': 'timestamp' } });
+  };
+  // Numbers run one after another across all requests; the number is given when the new-request form opens.
+  const nextNo = () => String(Object.values(list).reduce((m, z) => Math.max(m, parseInt(z.n) || 0), 0) + 1);
+  const submitForm = async f => {
+    const msg = t => { const el = panel.querySelector('[data-zmsg]'); if (el) el.textContent = t; };
+    const it = items(); if (!it.length) return msg(L('Камида битта қатор тўлдиринг.', 'Заполните хотя бы одну строку.', 'Fill in at least one row.'));
+    const fd = new FormData(f), files = [...f.querySelector('[name=files]').files];
+    const big = files.find(x => x.size > MAXF); if (big) return msg(L(`«${big.name}» 7 МБ дан катта.`, `«${big.name}» больше 7 МБ.`, `«${big.name}» is over 7 MB.`));
+    f.querySelectorAll('button').forEach(b => { b.disabled = true; });
+    const old = form.id ? list[form.id] : null, id = form.id || Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+    const z = { n: old?.n || (Object.values(list).some(x => x.n === form.n) ? nextNo() : form.n), title: fd.get('title').trim().slice(0, 150), dept: fd.get('dept').trim().slice(0, 80), sup: fd.get('sup').trim().slice(0, 120), cur: fd.get('cur'), note: fd.get('note').trim().slice(0, 1000),
+      items: it.slice(0, 60), sum: Math.round(it.reduce((a, x) => a + (x.p || 0) * (x.q || 0), 0) * 100) / 100, by: uid, byName: (me.name || '—').slice(0, 60), byPos: (me.pos || '').slice(0, 60), r: form.redo ? (old.r || 1) + 1 : (old?.r || 1), ts: old?.ts || { '.sv': 'timestamp' } };
+    try {
+      msg('⏳ ' + L('Сақланмоқда…', 'Сохранение…', 'Saving…'));
+      await db(`zay/${id}`, 'PUT', z); list[id] = { ...z, ts: old?.ts || Date.now() };
+      await upAll(id, files, msg);
+      await sign(id, 'req', 'ok', '');
+      form = null; cur = id; await load(); draw();
+    } catch (e) { f.querySelectorAll('button').forEach(b => { b.disabled = false; }); msg(e.big ? L(`«${e.big}» жуда катта.`, `«${e.big}» слишком большой.`, `«${e.big}» is too large.`) : e.status ? L('Сақлаб бўлмади: Firebase қоидалари ҳали Publish қилинмаган бўлиши мумкин.', 'Не удалось сохранить: возможно, правила Firebase ещё не опубликованы.', 'Could not save: the Firebase rules may not be published yet.') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.')); }
+  };
+  const printSheet = id => {
+    const z = list[id], s = sg(id), H = hz(z), w = window.open('', '_blank'); if (!w) return;
+    const rows = ['req', ...route()].map(r => { const v = s[r]; return `<tr><td>${RU[r]}</td><td>${v ? esc(v.name) + (v.pos ? '<br><small>' + esc(v.pos) + '</small>' : '') : Object.values(holders(r)).map(esc).join(', ')}</td><td>${v ? (v.st === 'no' ? '✖ Отклонено' : '✔ Согласовано электронно') + (v.sap ? '<br>SAP № ' + esc(v.sap) : '') + (v.h && r !== 'req' && v.h !== H ? '<br><b>⚠ заявка изменена после подписи</b>' : '') : 'ожидается'}</td><td>${v ? esc(dt(v.ts)) : ''}</td><td>${esc(v?.note || '')}</td></tr>`; }).join('');
+    const its = (z.items || []).map((x, i) => `<tr><td>${i + 1}</td><td>${esc(x.n)}</td><td>${esc(x.u)}</td><td>${esc(x.q)}</td><td>${esc(x.c || '')}</td><td>${x.p ? money(x.p) : ''}</td><td>${esc(x.m || '')}</td></tr>`).join('');
+    w.document.write(`<!doctype html><meta charset="utf-8"><title>Заявка ${esc(z.n)}</title><style>body{font:13px Arial,sans-serif;margin:24px;color:#000}h1{font-size:16px;text-align:center;margin:0 0 4px}h2{font-size:14px;margin:18px 0 6px}p{margin:3px 0}table{border-collapse:collapse;width:100%}td,th{border:1px solid #000;padding:4px 6px;vertical-align:top;text-align:left}small{color:#333}.m{color:#555;font-size:11px;margin-top:16px}</style>`
+      + `<h1>ООО «BAYAN MEDICAL»</h1><h1>ЗАЯВКА № ${esc(z.n)} на закупку товаров, работ/услуг</h1><p>Дата: ${esc(dt(z.ts).slice(0, 10))}</p><p>Подразделение: <b>${esc(z.dept)}</b></p><p>Заполнил: <b>${esc(z.byName)}${z.byPos ? ', ' + esc(z.byPos) : ''}</b></p><p>Тема: <b>${esc(z.title)}</b></p>${z.sup ? `<p>Поставщик: <b>${esc(z.sup)}</b></p>` : ''}`
+      + `<table><tr><th>№</th><th>Наименование ТМЦ/услуг</th><th>Ед. изм.</th><th>Кол-во</th><th>A1/A2/A3</th><th>Предв. цена</th><th>Примечание</th></tr>${its}</table><p><b>Итого: ${z.sum ? money(z.sum) + ' ' + esc(z.cur) : '—'}</b></p>${z.note ? `<p>Обоснование: ${esc(z.note)}</p>` : ''}`
+      + `<h2>ЛИСТ СОГЛАСОВАНИЯ</h2><table><tr><th>Этап</th><th>Ф.И.О., должность</th><th>Решение</th><th>Дата, время</th><th>Комментарий</th></tr>${rows}</table>`
+      + `<p>Документы: ${filesOf(id).map(([, m]) => esc(m.name)).join('; ') || '—'}</p><p class="m">Согласовано в электронной системе BAYAN MEDICAL (${esc(location.host)}). Контрольный код заявки: ${H}.</p><script>onload=()=>print()<\/script>`);
+    w.document.close();
+  };
+  panel.addEventListener('click', async e => {
+    const t = e.target.closest('[data-zt]'); if (t) { tab = t.dataset.zt; sessionStorage.setItem('bayan-zay-tab', tab); cur = null; form = tab === 'new' ? { z: {}, n: nextNo() } : null; if (tab === 'new') tab = 'mine'; draw(); return; }
+    const o = e.target.closest('[data-zo]'); if (o) { cur = o.dataset.zo; draw(); panel.scrollIntoView({ block: 'start', behavior: 'smooth' }); return; }
+    const fo = e.target.closest('[data-zfo]'); if (fo) return openFile(cur, fo.dataset.zfo);
+    if (e.target.closest('[data-z="fold"]')) { btn.click(); return; }
+    const a = e.target.closest('[data-za]')?.dataset.za; if (!a) return;
+    if (a === 'back') { cur = null; draw(); }
+    else if (a === 'addrow') { panel.querySelector('.zits').insertAdjacentHTML('beforeend', itemRow()); }
+    else if (a === 'rm') { const r = e.target.closest('.zit'); if (panel.querySelectorAll('.zit').length > 1) r.remove(); else r.querySelectorAll('input').forEach(i => { i.value = ''; }); sumUp(); }
+    else if (a === 'cancelform') { form = null; draw(); }
+    else if (a === 'edit' || a === 'redo') { const z = list[cur]; form = { id: cur, redo: a === 'redo', z: JSON.parse(JSON.stringify(z)) }; draw(); sumUp(); }
+    else if (a === 'print') printSheet(cur);
+    else if (a === 'fak') { const id = cur; cur = null; tab = 'fak'; sessionStorage.setItem('bayan-zay-tab', tab); draw(); const i = panel.querySelector('[data-zfak] [name=z]'); i.value = zLabel(id); panel.querySelector('[data-zfak] [name=sup]').value = list[id].sup || ''; panel.querySelector('[data-zfak] [name=no]').focus(); }
+    else if (a === 'cancel') {
+      if (!confirm(L('Заявка бекор қилинсинми?', 'Отменить заявку?', 'Cancel this request?'))) return;
+      try { await db(`zay/${cur}/st`, 'PUT', 'cancel'); list[cur].st = 'cancel'; draw(); } catch { alert(L('Бекор қилиб бўлмади.', 'Не удалось отменить.', 'Could not cancel.')); }
+    } else if (a === 'ok' || a === 'no') {
+      const t = stat(cur), note = panel.querySelector('[data-zf="note"]').value.trim();
+      if (a === 'no' && !note) { const n = panel.querySelector('[data-zf="note"]'); n.focus(); n.placeholder = L('Рад этиш сабабини ёзинг', 'Укажите причину отказа', 'Write the reason'); return; }
+      if (a === 'ok' && !allSeen(cur)) return;
+      panel.querySelectorAll('.zact button').forEach(b => { b.disabled = true; });
+      try { await sign(cur, t.r, a, note); await load(); }
+      catch { panel.querySelectorAll('.zact button').forEach(b => { b.disabled = false; }); alert(L('Имзони сақлаб бўлмади. Сизга бу босқич бириктирилганини админдан сўранг.', 'Не удалось сохранить подпись. Уточните у администратора, назначены ли вы на этот этап.', 'Could not save the signature. Ask the admin whether this step is assigned to you.')); }
+    }
+  });
+  panel.addEventListener('input', e => { if (e.target.matches('[data-zq]')) { zq = e.target.value.trim(); const p = e.target.selectionStart; draw(); const n = panel.querySelector('[data-zq]'); n.focus(); n.setSelectionRange(p, p); return; } if (e.target.closest('.zit') || e.target.name === 'cur') sumUp(); });
+  panel.addEventListener('change', async e => {
+    if (e.target.dataset.zf !== 'add' || !e.target.files.length) return;
+    const files = [...e.target.files], lab = e.target.closest('label'), was = lab.firstChild.textContent;
+    try { await upAll(cur, files, t => { lab.firstChild.textContent = t + ' '; }); await load(); }
+    catch (er) { lab.firstChild.textContent = was; alert(er.big ? L(`«${er.big}» 7 МБ дан катта.`, `«${er.big}» больше 7 МБ.`, `«${er.big}» is over 7 MB.`) : L('Юклаб бўлмади.', 'Не удалось загрузить.', 'Upload failed.')); }
+  });
+  panel.addEventListener('submit', e => { if (e.target.matches('[data-zfak]')) { e.preventDefault(); saveFak(e.target); return; } if (!e.target.matches('[data-zform]')) return; e.preventDefault(); submitForm(e.target); });
+  btn.addEventListener('click', () => { on = !on; sessionStorage.setItem('bayan-zay-on', on ? '1' : ''); showBtn(); if (on) { draw(); load(); panel.scrollIntoView({ block: 'start', behavior: 'smooth' }); } });
+
+  // ---------- admin: who signs what ----------
+  const adm = document.getElementById('admZ');
+  const drawAdm = async () => {
+    if (!adm || !ADM()) return;
+    adm.innerHTML = `<p class="s">${esc(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
+    let users = {}, profs = {}, e2 = '';
+    try { [users, profs, roles] = await Promise.all([db('users'), db('profiles').catch(() => ({})), db('settings/zayRoles')]); roles ||= {}; }
+    catch (e) { e2 = e.status ? L('Ўқиб бўлмади. Firebase қоидаларини Publish қилинг.', 'Не удалось прочитать. Опубликуйте правила Firebase.', 'Could not read. Publish the Firebase rules.') : L('Интернет алоқаси йўқ.', 'Нет связи с интернетом.', 'No internet connection.'); }
+    const ppl = {}; for (const [id, u] of Object.entries(users || {})) ppl[id] = u.name || u.email || id; for (const [id, p] of Object.entries(profs || {})) if (p?.name) ppl[id] = p.name + (p.pos ? ', ' + p.pos : '');
+    const opts = Object.entries(ppl).sort((a, b) => String(a[1]).localeCompare(String(b[1])));
+    adm.innerHTML = (e2 ? `<p class="er">${esc(e2)}</p>` : '')
+      + `<p class="s">${esc(L('Заявка шу тартибда ўтади: заявка берувчи → ', 'Порядок: заявитель → ', 'Order: requester → ') + SET.map(RN).join(' → ') + ' → ' + RN('sap'))}. ${esc(L('Ҳар бир босқичга бир ёки бир неча кишини бириктиринг (бири имзоласа етарли). Ўчирилган ёки одам бириктирилмаган босқич ўтказиб юборилади.', 'Назначьте на каждый этап одного или нескольких человек (достаточно подписи одного). Выключенный или пустой этап пропускается.', 'Assign one or more people to each step (one signature is enough). A switched-off or empty step is skipped.'))}</p>`
+      + SET.map(r => { const hs = roles[r] || {};
+        return `<div class="zrole ${roles.off?.[r] ? 'off' : ''}"><div class="zrh"><b>${esc(RN(r))}</b><label><input type="checkbox" data-zoff="${r}" ${roles.off?.[r] ? '' : 'checked'}> ${esc(L('ишлатилади', 'используется', 'in use'))}</label></div>`
+          + `<div class="zchips">${Object.entries(hs).map(([id, n]) => `<span>${esc(n)} <button type="button" data-zrm="${r}|${esc(id)}">✕</button></span>`).join('') || `<small>${esc(L('ҳеч ким', 'никто', 'nobody'))}</small>`}</div>`
+          + `<select data-zadd="${r}"><option value="">+ ${esc(L('киши қўшиш', 'добавить', 'add person'))}</option>${opts.filter(([id]) => !hs[id]).map(([id, n]) => `<option value="${esc(id)}">${esc(n)}</option>`).join('')}</select>${r === 'omts' ? `<small>${esc(L('Таъминот бўлими охирида «SAP’га киритилди»ни ҳам белгилайди.', 'ОМТС в конце также отмечает «внесено в SAP».', 'Supply also marks «entered in SAP» at the end.'))}</small>` : ''}</div>`; }).join('');
+  };
+  const saveRoles = async () => { try { await db('settings/zayRoles', 'PUT', roles); } catch { alert(L('Сақлаб бўлмади.', 'Не удалось сохранить.', 'Could not save.')); } drawAdm(); load(); };
+  adm?.addEventListener('change', e => {
+    const a = e.target.dataset.zadd, o = e.target.dataset.zoff;
+    if (a && e.target.value) { const opt = e.target.selectedOptions[0]; (roles[a] ||= {})[e.target.value] = opt.textContent.slice(0, 80); saveRoles(); }
+    if (o) { roles.off ||= {}; if (e.target.checked) delete roles.off[o]; else roles.off[o] = true; saveRoles(); }
+  });
+  adm?.addEventListener('click', e => { const b = e.target.closest('[data-zrm]'); if (!b) return; const [r, id] = b.dataset.zrm.split('|'); if (roles[r]) delete roles[r][id]; saveRoles(); });
+  document.querySelector('#invadm .atabs')?.addEventListener('click', e => { if (e.target.closest('[data-tab="admZ"]')) drawAdm(); });
+  if (adm && !adm.hidden) drawAdm();
+
+  showBtn();
+  if (!document.documentElement.classList.contains('locked') || window.userToken) load();
+  setInterval(() => { if (!document.hidden) load(); }, 60000);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) load(); });
+}
 </script>
 </body>
 </html>
