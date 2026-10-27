@@ -291,6 +291,14 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .editbar button { border: 0; background: transparent; color: inherit; cursor: pointer; font-size: 14px; }
   .chat .editbar b { color: #38bdf8; }
   .msg small .edtag { font-style: italic; opacity: .85; }
+  .msg small .seen { font: inherit; color: inherit; background: none; border: 0; padding: 0 2px; cursor: pointer; letter-spacing: -1px; }
+  .msg small button.seen { color: #38bdf8; font-weight: 600; } .mrow.me .msg small button.seen { color: #fff; }
+  .msg small button.seen:hover { text-decoration: underline; }
+  .seenlist { display: block; text-align: left; margin-top: 6px; padding: 6px 8px; border-radius: 10px; background: #fff; color: #1f2937; font-size: 12px; box-shadow: 0 4px 14px rgba(0,0,0,.18); max-height: 180px; overflow: auto; }
+  .seenlist b { display: block; margin-bottom: 4px; color: #475569; font-size: 11px; }
+  .seenlist span { display: flex; align-items: center; gap: 6px; padding: 2px 0; }
+  .seenlist i { width: 20px; height: 20px; border-radius: 50%; color: #fff; font: 600 9px/20px system-ui; text-align: center; font-style: normal; overflow: hidden; flex: none; }
+  .seenlist i img { width: 100%; height: 100%; object-fit: cover; }
   .mtools { display: flex; flex-direction: column; gap: 3px; opacity: .35; transition: opacity .15s; }
   .mrow:hover .mtools, .mrow.sel .mtools { opacity: 1; }
   .mtools button { width: 24px; height: 24px; border: 1px solid #e2e8f0; border-radius: 7px; background: #fff; font-size: 11px; cursor: pointer; padding: 0; }
@@ -1505,7 +1513,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v27.10-2920</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v27.10-2930</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -1816,7 +1824,7 @@ const I18N = {
   'Чат тарихи': ['История чата', 'Chat history'], 'Бутун ёзишмаларни (ўчирилган ва таҳрирланганлари билан) .txt файлга юклаб олиш.': ['Скачать всю переписку (с удалёнными и изменёнными) в файл .txt.', 'Download the whole chat (with deleted and edited messages) as a .txt file.'],
   'Чатни тозалаш': ['Очистить чат', 'Clear the chat'], 'Барча хабарларни ўчиради. Нусхаси тарихда қолади.': ['Удаляет все сообщения. Копия остаётся в истории.', 'Deletes every message. A copy stays in the history.'],
   'Хабарни ўчириш ва блоклаш чат ойнасининг ўзида қолди: хабарни танлаб, «🛠 Админ асбоблари»дан фойдаланинг.': ['Удаление и блокировка сообщений остались в самом чате: выберите сообщение и используйте «🛠 Инструменты админа».', 'Deleting and blocking stay in the chat itself: pick a message and use «🛠 Admin tools».'], '📲 Иловани ўрнатиш': ['📲 Установить приложение', '📲 Install the app'], 'Сайтни телефон ёки компьютерга илова қилиб ўрнатиш': ['Установить сайт как приложение на телефон или компьютер', 'Install the site as an app on a phone or computer'], '▾ Очиш': ['▾ Развернуть', '▾ Expand'], 'Рўйхатни йиғиш ёки очиш': ['Свернуть или развернуть список', 'Collapse or expand the list'], 'Чат фонини ҳамма учун танлаш': ['Выбрать фон чата для всех', 'Choose the chat background for everyone'],
-  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Сайт мавзуси': ['Тема сайта', 'Site theme'], 'Стандарт': ['Стандарт', 'Standard'], 'Тунги': ['Ночная', 'Night'], 'Денгиз': ['Море', 'Sea'], 'Табиат': ['Природа', 'Nature'], 'Классик': ['Классика', 'Classic'], 'Шафақ': ['Закат', 'Sunset'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Ўлчамини ўзгартириш учун тортинг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
+  'Қора': ['Тёмный', 'Dark'], 'Ёрқин': ['Светлый', 'Light'], 'Океан': ['Океан', 'Ocean'], 'Бинафша': ['Фиолетовый', 'Violet'], 'Яшил': ['Зелёный', 'Green'], 'Сайт мавзуси': ['Тема сайта', 'Site theme'], 'Стандарт': ['Стандарт', 'Standard'], 'Тунги': ['Ночная', 'Night'], 'Денгиз': ['Море', 'Sea'], 'Табиат': ['Природа', 'Nature'], 'Классик': ['Классика', 'Classic'], 'Шафақ': ['Закат', 'Sunset'], 'Таҳрирлаш': ['Редактировать', 'Edit'], 'Таҳрирлаш:': ['Редактирование:', 'Editing:'], 'таҳрирланган': ['изменено', 'edited'], 'Юборилди': ['Отправлено', 'Sent'], 'Кимлар кўрди': ['Кто прочитал', 'Seen by'], 'Хабарни фақат 24 соат ичида таҳрирлаш мумкин.': ['Сообщение можно редактировать только в течение 24 часов.', 'A message can only be edited within 24 hours.'], 'Таҳрирлаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось изменить. Проверьте интернет.', 'Could not edit. Check the connection.'], 'Хабар ўчирилмади: уни архивга сақлаб бўлмади. Firebase қоидаларига «deleted» бўлимини қўшинг (firebase-rules.json).': ['Сообщение не удалено: не удалось сохранить его в архив. Добавьте раздел «deleted» в правила Firebase (firebase-rules.json).', 'Message not deleted: it could not be archived. Add the «deleted» section to the Firebase rules (firebase-rules.json).'], '💾 Тарих': ['💾 История', '💾 History'], 'Бутун ёзишмалар тарихини .txt файл қилиб юклаб олиш': ['Скачать всю историю переписки в .txt', 'Download the whole chat history as .txt'], 'Тарихни юклаб бўлмади. Интернет алоқасини текширинг.': ['Не удалось скачать историю. Проверьте интернет.', 'Could not download the history. Check the connection.'], 'Катталаштириш': ['Развернуть', 'Enlarge'], 'Ўлчамини ўзгартириш учун тортинг': ['Потяните, чтобы изменить размер', 'Drag to resize'], 'Онлайн': ['Онлайн', 'Online'], 'Неон': ['Неон', 'Neon'],
   'Юзлар': ['Лица', 'Faces'], 'Қўллар': ['Жесты', 'Hands'], 'Юраклар': ['Сердца', 'Hearts'], 'Иш ва тиббиёт': ['Работа и медицина', 'Work and medicine'],
   'Байрам ва бошқалар': ['Праздник и другое', 'Celebration and more'], 'Сўнгги ишлатилганлар': ['Недавние', 'Recently used'],
   'Яна': ['Ещё', 'More'],
@@ -2039,6 +2047,7 @@ const I18N_RE = [
   [/(\d[\d.]*) МБ/g, '$1 МБ', '$1 MB'],
   [/(\d+) КБ/g, '$1 КБ', '$1 KB'],
   [/(\d+) киши онлайн/g, 'онлайн: $1', '$1 online'],
+  [/Кўрганлар: (\d+)/g, 'Прочитали: $1', 'Seen by: $1'],
   [/\(сиз\)/g, '(вы)', '(you)'],
   [/\((\d+)\) Янги хабар/g, '($1) Новое сообщение', '($1) New message'],
   [/(\d+) та(?![\p{L}])/gu, '$1', '$1'],
@@ -3626,6 +3635,10 @@ document.querySelectorAll('.tglnk').forEach(a => {
   // Reactions: /reactions/<message>/<emoji index>/<person id> = true; anyone can toggle their own, the admin can clear them.
   const EMO = ['👍', '❤️', '😂', '😮', '🙏', '🔥', '👏', '🎉', '😢', '😡', '🤔', '👎', '✅', '💯', '😍', '🤝'];
   let reacts = {}, rxOpen = null, rxMore = false;
+  // Read receipts, as in Telegram: /seen/<person id> = {name, ts} where ts is the newest message that person has had on
+  // screen. A message counts as read by everyone whose ts is at or after it. The sender sees who read their message,
+  // the admin sees it on every message.
+  let seenBy = {}, seenOpen = null, seenSent = 0;
   let list = [], blocked = {}, picked = new Set(), seen = getLS('bayan-chat-seen', 0), timer;
 
   // Admin signs in with the e-mail and password made in Firebase Authentication; the database rules
@@ -3786,6 +3799,9 @@ document.querySelectorAll('.tglnk').forEach(a => {
       fetch(`${CHAT_DB}/reactions/${k}/${i}/${myId}.json`, on ? { method: 'DELETE' } : { method: 'PUT', body: 'true' }).catch(() => {}); if (!on) play('rx');
       return;
     }
+    // The ✓✓ N button opens the list of who has read the message.
+    const sb = e.target.closest('.seen, .seenlist');
+    if (sb) { if (sb.matches('button.seen')) { seenOpen = seenOpen === k ? null : k; rxOpen = null; draw(); } return; }
     // A tap on the message opens the reaction bar (like in Telegram); a second tap or a tap elsewhere closes it.
     if (e.target.closest('.msg') && !e.target.closest('a, .rxbar') && !String(getSelection())) {
       rxOpen = rxOpen === k ? null : k; rxMore = false; draw();
@@ -3864,6 +3880,25 @@ document.querySelectorAll('.tglnk').forEach(a => {
     else textIn.value = '';
   };
   document.getElementById('editx').addEventListener('click', () => setEdit(null));
+  const readers = m => Object.entries(seenBy).filter(([id, v]) => id !== m.uid && v && m.ts && v.ts >= m.ts).map(([id, v]) => Object.assign({ id }, v));
+  const seenLine = m => {
+    if (m.uid !== myId && !isAdmin()) return '';
+    const who = readers(m);
+    if (!who.length) return m.uid === myId ? ' <span class="seen" title="Юборилди">✓</span>' : '';
+    const open = seenOpen === m.key;
+    return ` <button type="button" class="seen" title="Кимлар кўрди">✓✓ ${who.length}</button>`
+      + (open ? `<span class="seenlist"><b>Кўрганлар: ${who.length}</b>${who.map(v => `<span><i style="background:${v.admin ? '#f59e0b' : hue(v.id)}">${window.profPhotos?.get(v.id) ? `<img src="${window.profPhotos.get(v.id)}" alt="">` : esc(initials(v.name))}</i>${esc(v.name || 'Меҳмон')}</span>`).join('')}</span>` : '');
+  };
+  // Only while the chat is open on a visible page, so a message counts as read when it was really on screen.
+  const markRead = () => {
+    if (!CHAT_DB || box.hidden || document.visibilityState !== 'visible') return;
+    const top = Math.max(0, ...list.map(m => m.ts || 0));
+    if (!top || top <= seenSent) return;
+    seenSent = top;
+    fetch(`${CHAT_DB}/seen/${myId}.json`, { method: 'PUT', body: JSON.stringify({ name: (nameIn.value.trim() || getLS('bayan-chat-name', '') || 'Меҳмон').slice(0, 40), admin: isAdmin(), ts: top }) })
+      .then(r => { if (!r.ok) seenSent = 0; }).catch(() => { seenSent = 0; });
+  };
+  document.addEventListener('visibilitychange', () => markRead());
   const draw = () => {
     if (!CHAT_DB) { msgs.innerHTML = '<div class="sys">Чат уланмоқда. Тез орада бу ерда изоҳ қолдириб, бошқа фойдаланувчилар ва админ билан ёзишишингиз мумкин бўлади.</div>'; return; }
     const atEnd = msgs.scrollHeight - msgs.scrollTop - msgs.clientHeight < 40, adm = isAdmin();
@@ -3871,7 +3906,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       const ed = canEdit(m) ? '<button type="button" class="edit" title="Таҳрирлаш">✏️</button>' : '';
       const tools = adm ? `<span class="mtools">${ed}<button type="button" class="pick" title="Танлаш">✓</button><button type="button" class="del" title="Ўчириш">🗑</button>${m.admin ? '' : `<button type="button" class="blk" title="Блоклаш">⛔</button>`}</span>`
         : ed ? `<span class="mtools">${ed}</span>` : '';
-      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${window.profPhotos?.get(m.uid) ? `<img src="${window.profPhotos.get(m.uid)}" alt="">` : esc(initials(m.name))}</span><div class="msg"><i style="color:${c}"${adm && meta[m.key] ? ` title="${esc(metaText(m.key))}"` : ''}>${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${attHtml(m)}${m.file && m.text === autoText(m.file) ? '' : esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
+      return `<div class="mrow${m.uid === myId ? ' me' : ''}${m.admin ? ' admin' : ''}${picked.has(m.key) ? ' sel' : ''}${blocked[m.uid] ? ' isblk' : ''}" data-k="${esc(m.key)}"><span class="av" style="background:${c}">${window.profPhotos?.get(m.uid) ? `<img src="${window.profPhotos.get(m.uid)}" alt="">` : esc(initials(m.name))}</span><div class="msg"><i style="color:${c}"${adm && meta[m.key] ? ` title="${esc(metaText(m.key))}"` : ''}>${esc(m.name)}${m.admin ? '<span class="tag">АДМИН</span>' : ''}${adm && blocked[m.uid] ? '<span class="tag red">БЛОК</span>' : ''}</i>${attHtml(m)}${m.file && m.text === autoText(m.file) ? '' : esc(m.text).replace(/\n/g, '<br>')}<small>${m.edited ? '<em class="edtag">таҳрирланган</em> ' : ''}${m.ts ? fmt(m.ts) : ''}${seenLine(m)}</small>${rxLine(m.key)}</div>${tools}</div>`; }).join('')
       : '<div class="sys">Ҳозирча изоҳлар йўқ. Биринчи бўлиб сиз ёзинг!</div>';
     loadThumbs();
     if ((atEnd && !rxOpen) || !box.dataset.drawn) msgs.scrollTop = msgs.scrollHeight;
@@ -3902,8 +3937,9 @@ document.querySelectorAll('.tglnk').forEach(a => {
   const load = async () => {
     if (!CHAT_DB) return;
     try {
-      const [r, b, x] = await Promise.all([fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`), fetch(`${CHAT_DB}/blocked.json`), fetch(`${CHAT_DB}/reactions.json`)]);
+      const [r, b, x, sn] = await Promise.all([fetch(`${CHAT_DB}/chat.json?orderBy="$key"&limitToLast=150`), fetch(`${CHAT_DB}/blocked.json`), fetch(`${CHAT_DB}/reactions.json`), fetch(`${CHAT_DB}/seen.json`).catch(() => null)]);
       reacts = (x.ok && await x.json()) || {};
+      seenBy = (sn?.ok && await sn.json()) || {};
       if (!r.ok) { state.textContent = 'Чат вақтинча ёпиқ'; return; }
       const data = await r.json() || {};
       blocked = (b.ok && await b.json()) || {};
@@ -3912,7 +3948,7 @@ document.querySelectorAll('.tglnk').forEach(a => {
       { const top = Math.max(0, ...list.map(m => m.ts || 0)); if (heard != null && list.some(m => (m.ts || 0) > heard && m.uid !== myId)) play('in'); heard = top; }
       notify(); readOnline(); await loadMeta();
       state.textContent = isAdmin() ? 'Админ режими' : 'Фойдаланувчилар ва админ';
-      if (!box.hidden) { if (!rxOpen) draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); }
+      if (!box.hidden) { if (!rxOpen) draw(); seen = Date.now(); setLS('bayan-chat-seen', seen); markRead(); }
       unread(); drawBar();
     } catch { state.textContent = 'Алоқа йўқ, қайта уринилмоқда…'; }
   };
