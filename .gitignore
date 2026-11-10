@@ -1,0 +1,4 @@
+__pycache__/
+*.pyc
+bot/token.txt
+bot/catalog.json
