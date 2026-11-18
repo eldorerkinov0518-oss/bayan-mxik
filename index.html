@@ -1201,6 +1201,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .chkup .w { grid-column: 1 / -1; } .chkup label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); } html.mob .chkup { grid-template-columns: 1fr; }
   .chkup textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 12.5px ui-monospace, monospace; background: var(--card); color: var(--text); resize: vertical; }
   .chkup .chkpk, .pkh { font-size: 12px; color: #0b7a55; } .pkh { display: block; margin-top: 2px; } .chkup .chkcn { color: var(--brand2, #2f80ed); }
+  .chkstaff { margin: 10px 0; padding: 10px; border: 1px solid var(--line); border-radius: 12px; } .chkstaff h4 { margin: 0 0 4px; } .chkstaff .ul { display: grid; gap: 4px; max-height: 300px; overflow: auto; } .chkstaff label { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 6px 8px; border-radius: 9px; background: var(--card); border: 1px solid var(--line); cursor: pointer; } .chkstaff select { margin-left: auto; }
   .chkup input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 13.5px var(--font), sans-serif; background: var(--card); color: var(--text); min-width: 0; }
   .chkls { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-top: 8px; }
   .chkl { position: relative; } .chkl > button:first-child { width: 100%; text-align: left; display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text); font: 13px var(--font), sans-serif; cursor: pointer; }
@@ -1542,7 +1543,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1200</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1230</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -5307,8 +5308,46 @@ document.addEventListener('click', e => {
   const btn = document.getElementById('chkbtn'), box = document.getElementById('chk'), invBtn = document.getElementById('invbtn');
   let open = false, lists = {}, cnt = {}, cur = sessionStorage.getItem('bayan-chk-cur') || '', codes = new Map(), scans = new Map(), extra = new Map();
   let lastT = 0, lastE = 0, timer = 0, tab = 'todo', res = '', err = '', upOpen = false, busy = false, loading = false, pre = null;
-  // The button follows the inventory button: whoever may count may also check a series.
-  const showBtn = () => { btn.hidden = invBtn.hidden; if (btn.hidden && open) toggle(false); };
+  // Who may check a series: everyone who may count, plus chkUsers: true = a worker, 'lead' = a head of the aggregation
+  // area (Ibrohim), whom the admin names. A head adds and removes his own workers here, without the admin.
+  let role = (() => { try { return localStorage.getItem('bayan-chk-role') || ''; } catch { return ''; } })(), staffOpen = false, staff = null, staffErr = '';
+  const lead = () => ADM() || role === 'lead';
+  const showBtn = () => { btn.hidden = invBtn.hidden && !role && !ADM(); if (btn.hidden && open) toggle(false); };
+  const checkRole = async () => {
+    if (ADM()) return showBtn();
+    try { await myUid(); const v = uid ? await db(`chkUsers/${uid}`) : null; role = v === 'lead' ? 'lead' : v === true ? 'w' : ''; }
+    catch (e) { if (e.status) role = ''; }
+    try { localStorage.setItem('bayan-chk-role', role); } catch {}
+    showBtn(); draw();
+  };
+  const loadStaff = async () => {
+    staffErr = '';
+    try { const [u, c] = await Promise.all([db('users'), db('chkUsers')]); staff = { u: u || {}, c: c || {} }; }
+    catch (e) { staff = null; staffErr = L('Ходимлар рўйхатини ўқиб бўлмади. Firebase’да янги қоидаларни (firebase-rules.json) Publish қилинг.', 'Не удалось прочитать список сотрудников. Опубликуйте новые правила Firebase (firebase-rules.json).', 'Could not read the staff list. Publish the new Firebase rules (firebase-rules.json).'); }
+    draw();
+  };
+  const staffHtml = H => {
+    if (staffErr) return `<p class="er">${H(staffErr)}</p>`;
+    if (!staff) return `<p class="s">${H(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
+    const ul = Object.entries(staff.u).filter(([id]) => id !== ADMIN_ID && id !== uid).sort((a, b) => String(a[1].name).localeCompare(String(b[1].name)));
+    const nm = (id, u) => `<b>${H(u.name || '—')}</b> <small>${H(u.email || '')}</small>`;
+    const rows = ul.map(([id, u]) => { const v = staff.c[id];
+      if (ADM()) return `<label>${nm(id, u)} <select data-role="${H(id)}"><option value=""${!v ? ' selected' : ''}>—</option><option value="w"${v === true ? ' selected' : ''}>${H(L('Ходим', 'Сотрудник', 'Worker'))}</option><option value="lead"${v === 'lead' ? ' selected' : ''}>${H(L('Бошлиқ (ходим қўша олади)', 'Руководитель (может добавлять)', 'Head (may add workers)'))}</option></select></label>`;
+      if (v === 'lead') return `<label><input type="checkbox" checked disabled> ${nm(id, u)} <small>· ${H(L('бошлиқ', 'руководитель', 'head'))}</small></label>`;
+      return `<label><input type="checkbox" data-w="${H(id)}"${v === true ? ' checked' : ''}> ${nm(id, u)}</label>`; }).join('');
+    return `<div class="chkstaff"><h4>👥 ${H(L('Серия текширувчи ходимлар', 'Сотрудники, проверяющие серии', 'Staff who check series'))}</h4>`
+      + `<p class="s">${H(ADM() ? L('«Ходим» сканерлай олади. «Бошлиқ» (масалан, Иброҳим) ҳам сканерлайди, ҳам ўз ходимларини шу ерда қўшиб-олиб ташлайди. Инвентаризация ходимлари ҳам серияни текшира олади.', '«Сотрудник» может сканировать. «Руководитель» (например, Иброхим) сканирует и сам добавляет или убирает своих сотрудников здесь. Сотрудники инвентаризации тоже могут проверять серии.', 'A worker may scan. A head (e.g. Ibrohim) scans too and adds or removes his own workers here. Inventory staff may also check series.')
+        : L('Белгиланган ходимларда «✅ Серия текшируви» тугмаси кўринади ва улар сканерлай олади. Ходим аввал сайтга ўз Google ҳисоби билан кирган бўлиши керак, шунда у шу рўйхатда чиқади.', 'У отмеченных сотрудников появится кнопка «✅ Проверка серии», и они смогут сканировать. Сотрудник должен хотя бы раз войти на сайт через свой Google-аккаунт, тогда он появится в этом списке.', 'Ticked staff see the «✅ Series check» button and may scan. A worker must first sign in to the site with their Google account to appear in this list.'))}</p>`
+      + `<div class="ul">${rows || `<p class="s">${H(L('Ҳали рўйхатдан ўтган ходим йўқ.', 'Зарегистрированных сотрудников пока нет.', 'No staff have registered yet.'))}</p>`}</div></div>`;
+  };
+  box.addEventListener('change', async e => {
+    const c = e.target.closest('[data-w],[data-role]'); if (!c || !staff) return;
+    const id = c.dataset.w || c.dataset.role, v = c.dataset.w ? (c.checked ? true : null) : ({ w: true, lead: 'lead' })[c.value] || null;
+    c.disabled = true;
+    try { await db(`chkUsers/${id}`, v === null ? 'DELETE' : 'PUT', v === null ? undefined : v); if (v === null) delete staff.c[id]; else staff.c[id] = v; }
+    catch { alert(L('Сақлаб бўлмади. Firebase қоидаларини текширинг.', 'Не удалось сохранить. Проверьте правила Firebase.', 'Could not save. Check the Firebase rules.')); }
+    draw();
+  });
   new MutationObserver(showBtn).observe(invBtn, { attributes: true, attributeFilter: ['hidden'] });
 
   let ac = null;
@@ -5566,7 +5605,8 @@ document.addEventListener('click', e => {
     if (err) h += `<p class="er">${H(err)}</p>`;
     if (loading) h += `<p class="s">${H(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
     else if (!cur) {
-      h += `<div class="bt"><button type="button" class="go" data-up>📥 ${H(L('Рўйхат юклаш', 'Загрузить список', 'Upload a list'))}</button><button type="button" class="copy" data-tpl>⬇ ${H(L('Шаблон', 'Шаблон', 'Template'))}</button><button type="button" class="copy" data-rel>↻ ${H(L('Янгилаш', 'Обновить', 'Refresh'))}</button></div>`;
+      h += `<div class="bt"><button type="button" class="go" data-up>📥 ${H(L('Рўйхат юклаш', 'Загрузить список', 'Upload a list'))}</button><button type="button" class="copy" data-tpl>⬇ ${H(L('Шаблон', 'Шаблон', 'Template'))}</button><button type="button" class="copy" data-rel>↻ ${H(L('Янгилаш', 'Обновить', 'Refresh'))}</button>${lead() ? `<button type="button" class="copy${staffOpen ? ' on' : ''}" data-staff>👥 ${H(L('Ходимлар', 'Сотрудники', 'Staff'))}</button>` : ''}</div>`;
+      if (staffOpen && lead()) h += staffHtml(H);
       if (upOpen) h += `<form class="chkup"><p class="s w">${H(L('1) Дорини базадан танланг, 2) серияни ёзинг, 3) кодларни сканерланг (2D сканер ёки 📷) ёки файл бириктиринг. Дори номи фақат базадан олинади.', '1) Выберите препарат из базы, 2) впишите серию, 3) отсканируйте коды (2D-сканер или 📷) или прикрепите файл. Название препарата берётся только из базы.', '1) Pick the medicine from the base, 2) type the series, 3) scan the codes (2D scanner or 📷) or attach a file. The medicine name comes only from the base.'))}</p>`
         + `<label class="w"><span>💊 ${H(L('Дори (базадан)', 'Препарат (из базы)', 'Medicine (from the base)'))}</span><input name="prod" list="ibprods" autocomplete="off" placeholder="${H(L('Номини ёзиб, рўйхатдан танланг', 'Начните вводить и выберите из списка', 'Start typing and pick from the list'))}"><small class="chkpk s"></small></label>`
         + `<label><span>${H(L('Серия', 'Серия', 'Series'))}</span><input name="ser" list="chksers" maxlength="40" autocomplete="off" placeholder="307 10 26F"><datalist id="chksers"></datalist></label>`
@@ -5628,6 +5668,7 @@ document.addEventListener('click', e => {
     if (t.matches('[data-addc]')) { const m = lists[cur], c = m && (ownOf(m.gtin) || catByName(m.name)); pre = { p: c ? optOfC(c) : '', s: m?.ser || '' }; upOpen = true; return close(); }
     if (t.matches('[data-camadd]')) { const f = t.closest('.chkup'); return window.openCamTo?.(x => { const k = keyOf(x); if (!k) return L('Бу маркировка ёки қути коди эмас', 'Это не код маркировки или короба', 'Not a marking or box code'); const have = new Set(textRows(f.codes.value).flat().map(keyOf)); if (have.has(k)) return L('Бу код аллақачон қўшилган', 'Этот код уже добавлен', 'This code is already added'); f.codes.value = (f.codes.value.trim() ? f.codes.value.trim() + '\n' : '') + String(x).replace(/\x1d/g, '<GS>'); upInfo(f); return `✓ ${kind(k)} · ${have.size} ${L('та', '', '')}`.trim(); }); }
     if (t.matches('[data-tpl]')) return tpl();
+    if (t.matches('[data-staff]')) { staffOpen = !staffOpen; if (staffOpen) { staff = null; draw(); return loadStaff(); } return draw(); }
     if (t.matches('[data-rel]')) { await loadLists(); return draw(); }
     if (t.dataset.tab) { tab = t.dataset.tab; return draw(); }
     if (t.matches('[data-xl]')) return exportX();
@@ -5664,6 +5705,7 @@ document.addEventListener('click', e => {
     if (f.matches('.chkup')) upload(f.file.files[0] || null, f);
   });
   showBtn();
+  if (!document.documentElement.classList.contains('locked')) checkRole();
 }
 
 </script>
