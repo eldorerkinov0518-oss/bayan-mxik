@@ -1199,6 +1199,8 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .chk .bt { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 10px 0 4px; } .chk .bt button { width: auto; padding: 8px 14px; font-size: 14px; }
   .chkup { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; align-items: end; margin: 6px 0 10px; padding: 10px; border: 1px dashed var(--line); border-radius: 12px; background: var(--card); }
   .chkup .w { grid-column: 1 / -1; } .chkup label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); } html.mob .chkup { grid-template-columns: 1fr; }
+  .chkup textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 12.5px ui-monospace, monospace; background: var(--card); color: var(--text); resize: vertical; }
+  .chkup .chkpk { font-size: 12px; color: #0b7a55; } .chkup .chkcn { color: var(--brand2, #2f80ed); }
   .chkup input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 13.5px var(--font), sans-serif; background: var(--card); color: var(--text); min-width: 0; }
   .chkls { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-top: 8px; }
   .chkl { position: relative; } .chkl > button:first-child { width: 100%; text-align: left; display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text); font: 13px var(--font), sans-serif; cursor: pointer; }
@@ -1540,7 +1542,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-0700</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-0900</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -5131,7 +5133,7 @@ document.addEventListener('click', e => {
       const ents = [...new Map(lg.sers.map(x => [fk(nser(x.ser) + '_' + nrm(x.name).slice(0, 40)), x]))], N = 1000;
       for (let i = 0; i < ents.length; i += N) { await db('stock/sers', 'PATCH', Object.fromEntries(ents.slice(i, i + N))); pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`; }
       const n = Object.keys(await db('stock/sers?shallow=true') || {}).length;
-      await db('stock/info', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
+      await db('stock/info', 'PUT', { n, file: (f ? f.name : L('қўлда киритилди', 'введено вручную', 'entered by hand') + (lists[id]?.file ? ' + ' + lists[id].file : '')).slice(0, 120), at: now(), add: ents.length });
       try { localStorage.removeItem(STOCK); } catch {} await loadStock();
       alert(L(`${typed ? 'Қўшилди' : 'Файлдан ўқилди'}: ${ents.length} та серия. Базада жами ${n} та серия.`, `${typed ? 'Добавлено' : 'Прочитано из файла'}: ${ents.length} серий. Всего в базе: ${n}.`, `${typed ? 'Added' : 'Read from the file'}: ${ents.length} series. ${n} series in the base in all.`));
     } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
@@ -5174,7 +5176,7 @@ document.addEventListener('click', e => {
         pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`;
       }
       const n = Object.keys(await db('codes?shallow=true') || {}).length;
-      await db('settings/codes', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
+      await db('settings/codes', 'PUT', { n, file: (f ? f.name : L('қўлда киритилди', 'введено вручную', 'entered by hand') + (lists[id]?.file ? ' + ' + lists[id].file : '')).slice(0, 120), at: now(), add: ents.length });
       codesN = n;
       alert(L(`${typed ? 'Қўшилди' : 'Файлдан ўқилди'}: ${ents.length} та код. Базада жами ${n} та код.`, `${typed ? 'Добавлено' : 'Прочитано из файла'}: ${ents.length} кодов. Всего в базе: ${n}.`, `${typed ? 'Added' : 'Read from the file'}: ${ents.length} codes. ${n} codes in the base in all.`));
     } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
@@ -5254,11 +5256,18 @@ document.addEventListener('click', e => {
   const show = k => k[0] === 'S' ? k.slice(1) : '01' + k.slice(0, 14) + '21' + k.slice(14);
   const kind = k => k[0] === 'S' ? L('қути', 'короб', 'box') : L('қадоқ', 'упаковка', 'pack');
   const catName = r => `${r[2] || r[1]}${(n => n ? ` №${n}` : '')(packMatch(r[4])?.[1])}`;
+  // Medicine names come only from the product base (CATALOG): a name is matched to it by its GTIN or its exact name.
+  let byNm = null;
+  const nmKey = t => String(t || '').toLowerCase().replace(/[«»"']/g, '').replace(/\s+/g, ' ').trim();
+  const catByName = t => { if (!byNm) { byNm = new Map(); for (const r of CATALOG) for (const n of [catName(r), r[2], r[1]]) if (n && !byNm.has(nmKey(n))) byNm.set(nmKey(n), r); } return byNm.get(nmKey(t)); };
+  const optOfC = r => `${catName(r)} — ${r[0]}`;
+  const catOfOpt = v => { v = String(v || '').trim(); if (!v) return null; const g = (v.match(/(\d{8,14})\s*$/) || [])[1]; return (g && ownOf(g)) || catByName(v.replace(/\s+—\s+\d+\s*$/, '')) || null; };
+  const serNorm = t => String(t || '').replace(/\s+/g, ' ').trim().toUpperCase();
   const nk = (name, ser) => String(name).toLowerCase().replace(/\s+/g, ' ').trim() + '|' + String(ser).replace(/\s+/g, '').toLowerCase();
 
   const btn = document.getElementById('chkbtn'), box = document.getElementById('chk'), invBtn = document.getElementById('invbtn');
   let open = false, lists = {}, cnt = {}, cur = sessionStorage.getItem('bayan-chk-cur') || '', codes = new Map(), scans = new Map(), extra = new Map();
-  let lastT = 0, lastE = 0, timer = 0, tab = 'todo', res = '', err = '', upOpen = false, busy = false, loading = false;
+  let lastT = 0, lastE = 0, timer = 0, tab = 'todo', res = '', err = '', upOpen = false, busy = false, loading = false, pre = null;
   // The button follows the inventory button: whoever may count may also check a series.
   const showBtn = () => { btn.hidden = invBtn.hidden; if (btn.hidden && open) toggle(false); };
   new MutationObserver(showBtn).observe(invBtn, { attributes: true, attributeFilter: ['hidden'] });
@@ -5371,11 +5380,16 @@ document.addEventListener('click', e => {
     if (/\.xls$/i.test(f.name)) throw new Error(L('Эски .xls файлни Excel’да .xlsx қилиб сақлаб, қайта юкланг.', 'Сохраните старый файл .xls в Excel как .xlsx и загрузите снова.', 'Save the old .xls file as .xlsx in Excel and upload it again.'));
     const rows = [];
     if (/\.xlsx$/i.test(f.name)) { const wb = new ExcelJS.Workbook(); await wb.xlsx.load(await f.arrayBuffer()); wb.eachSheet(ws => { if (/йўриқ|инстр|guide/i.test(ws.name)) return; ws.eachRow({ includeEmpty: false }, r => rows.push((r.values || []).slice(1))); }); }
-    else for (const l of (await f.text()).split(/\r?\n/)) { const t = l.trim(); if (!t) continue; // a code may itself hold ; or , so the line is split only when a whole code (13-character serial or SSCC) comes out
+    else rows.push(...textRows(await f.text()));
+    return rows;
+  };
+  function textRows(text) {
+    const rows = [];
+    for (const l of String(text).split(/\r?\n/)) { const t = l.trim(); if (!t) continue; // a code may itself hold ; or , so the line is split only when a whole code (13-character serial or SSCC) comes out
       const cs = t.split(/[;\t,](?=(?:[^"]*"[^"]*")*[^"]*$)/).map(c => c.replace(/^"|"$/g, '').replace(/""/g, '"'));
       rows.push(cs.length > 1 && cs.some(c => { const k = keyOf(c); return k && (k[0] === 'S' || k.length >= 27); }) ? cs : keyOf(t) ? [t] : cs); }
     return rows;
-  };
+  }
   const parse = (rows, defName, defSer, defG) => {
     let cN = -1, cS = -1, cG = -1, start = 0;
     for (let i = 0; i < Math.min(rows.length, 5); i++) {
@@ -5384,34 +5398,47 @@ document.addEventListener('click', e => {
       const s = r.findIndex(c => /сер|ser/.test(c)), n = r.findIndex(c => /назв|наимен|ном|name|препарат|дори|mahsulot|nomi|товар/.test(c) && !/gtin|штрих/.test(c));
       if (s >= 0 || n >= 0) { cS = s; cN = n; cG = r.findIndex(c => /gtin|штрих/.test(c)); start = i + 1; break; }
     }
-    const groups = new Map(); let noSer = 0, noName = 0, bad = 0, dup = 0;
+    const groups = new Map(); let noSer = 0, noName = 0, bad = 0, dup = 0, wrong = 0; const unknown = new Set();
     for (const r of rows.slice(start)) {
       const cs = r.map(c => cellText(c).trim()), ks = [];
       cs.forEach((c, i) => { if (i === cN || i === cS || i === cG) return; const k = keyOf(c); if (k) ks.push(k); else if (/^\d[\d.,eE+]{15,}$/.test(c.replace(/\s/g, ''))) bad++; });
       if (!ks.length) continue;
       const pk = ks.find(k => k[0] !== 'S');
       const gc = cG >= 0 && /^\d{8,14}$/.test(cs[cG]) ? cs[cG] : pk ? pk.slice(0, 14) : '', cat = gc && ownOf(gc);
-      const name = (cN >= 0 && cs[cN]) || (cat ? catName(cat) : '') || defName;
-      const ser = (cS >= 0 && cs[cS]) || defSer;
+      let name, g;
+      if (defName) { // the medicine picked in the form wins; a pack of another medicine is refused
+        if (cat && cat[0] !== defG && catName(cat) !== defName) { wrong += ks.length; continue; }
+        name = defName; g = defG;
+      } else {
+        const c2 = cat || (cN >= 0 && cs[cN] ? catByName(cs[cN]) : null);
+        if (!c2) { noName += ks.length; if (cN >= 0 && cs[cN]) unknown.add(cs[cN]); continue; }
+        name = catName(c2); g = c2[0];
+      }
+      const ser = serNorm((cS >= 0 && cs[cS]) || defSer);
       if (!ser) { noSer += ks.length; continue; }
-      if (!name) { noName += ks.length; continue; }
       const gk = nk(name, ser);
       let e = groups.get(gk); if (!e) groups.set(gk, e = { name: name.slice(0, 120), ser: ser.slice(0, 40), gtin: '', codes: new Map() });
-      if (!e.gtin) e.gtin = cat ? cat[0] : defG || '';
+      if (!e.gtin) e.gtin = g || '';
       for (const k of ks) { if (e.codes.has(k)) dup++; e.codes.set(k, k[0] === 'S' ? 'b' : 'p'); }
     }
-    return { groups, noSer, noName, bad, dup };
+    return { groups, noSer, noName, bad, dup, wrong, unknown };
   };
   const newId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
   const upload = async (f, form) => {
+    const pc = catOfOpt(form.prod.value), manual = form.codes.value.trim();
+    if (form.prod.value.trim() && !pc) return alert(L('Дорини фақат базадаги рўйхатдан танланг (номини ёзиб, чиққан рўйхатдан босинг).', 'Выберите препарат только из списка базы (начните вводить и нажмите на вариант).', 'Pick the medicine from the base list only (start typing and click an option).'));
+    if (!f && !manual) return alert(L('Кодларни сканерланг ёки ёзинг, ёхуд файл танланг.', 'Отсканируйте или впишите коды, либо выберите файл.', 'Scan or type the codes, or pick a file.'));
+    if (manual && !f && !pc) return alert(L('Қўлда киритилган кодлар учун дорини базадан танланг.', 'Для введённых вручную кодов выберите препарат из базы.', 'Pick the medicine from the base for the codes entered by hand.'));
+    if (manual && !f && !serNorm(form.ser.value)) return alert(L('Серияни ёзинг.', 'Впишите серию.', 'Type the series.'));
     const pr = box.querySelector('.chkpr'), say = t => { if (pr) pr.textContent = t; };
     busy = true; box.querySelectorAll('.chkup button').forEach(b => { b.disabled = true; });
     try {
-      say(L('Файл ўқилмоқда…', 'Чтение файла…', 'Reading the file…'));
-      const pv = form.prod.value.trim(), pg = (pv.match(/(\d{8,14})\s*$/) || [])[1], pc = pg && ownOf(pg);
-      const p = parse(await fileRows(f), pc ? catName(pc) : pv, form.ser.value.trim(), pc ? pc[0] : '');
+      say(L('Кодлар ўқилмоқда…', 'Чтение кодов…', 'Reading the codes…'));
+      const rows = [...(f ? await fileRows(f) : []), ...(manual ? textRows(manual) : [])];
+      const p = parse(rows, pc ? catName(pc) : '', form.ser.value, pc ? pc[0] : '');
       if (!p.groups.size) throw new Error(p.noSer ? L(`Файлда серия кўрсатилмаган (${p.noSer} та код). Серияни формага ёзиб, қайта юкланг.`, `В файле не указана серия (${p.noSer} кодов). Впишите серию в форму и загрузите снова.`, `The file has no series (${p.noSer} codes). Type the series in the form and upload again.`)
-        : p.noName ? L(`Қути кодлари қайси дорига тегишли экани номаълум (${p.noName} та). Формада дорини танлаб, қайта юкланг.`, `Неизвестно, к какому препарату относятся коды коробов (${p.noName}). Выберите препарат в форме и загрузите снова.`, `It is not known which medicine the box codes belong to (${p.noName}). Pick the medicine in the form and upload again.`)
+        : p.noName ? L(`${p.noName} та код қайси дорига тегишли экани аниқланмади${p.unknown.size ? ` (базада йўқ ном: ${[...p.unknown].slice(0, 3).join(', ')})` : ''}. Формада дорини базадан танлаб, қайта юкланг.`, `Не удалось определить препарат для ${p.noName} кодов${p.unknown.size ? ` (нет в базе: ${[...p.unknown].slice(0, 3).join(', ')})` : ''}. Выберите препарат из базы в форме и загрузите снова.`, `The medicine of ${p.noName} codes is unknown${p.unknown.size ? ` (not in the base: ${[...p.unknown].slice(0, 3).join(', ')})` : ''}. Pick the medicine from the base in the form and upload again.`)
+        : p.wrong ? L(`${p.wrong} та қадоқ коди танланган дорига тегишли эмас.`, `${p.wrong} кодов упаковок не относятся к выбранному препарату.`, `${p.wrong} pack codes do not belong to the chosen medicine.`)
         : L('Файлдан маркировка коди ёки қути коди (SSCC) топилмади.', 'В файле не найдено кодов маркировки или кодов коробов (SSCC).', 'No marking codes or box codes (SSCC) were found in the file.'));
       await myUid();
       const done = [];
@@ -5428,16 +5455,17 @@ document.addEventListener('click', e => {
         }
         const all = { ...old, ...Object.fromEntries(ents.map(([k, v]) => [fk(k), v])) }, vs = Object.values(all);
         const m = { name: g.name, ser: g.ser, gtin: g.gtin || lists[id]?.gtin || '', n: vs.length, nb: vs.filter(v => v === 'b').length, np: vs.filter(v => v === 'p').length,
-          file: f.name.slice(0, 120), at: now(), by: me().slice(0, 80) || '—', uid, created: lists[id]?.created || now() };
+          file: (f ? f.name : L('қўлда киритилди', 'введено вручную', 'entered by hand') + (lists[id]?.file ? ' + ' + lists[id].file : '')).slice(0, 120), at: now(), by: me().slice(0, 80) || '—', uid, created: lists[id]?.created || now() };
         await db(`chk/lists/${id}`, 'PUT', m); lists[id] = m;
         done.push(`• ${g.name} · ${L('серия', 'серия', 'series')} ${g.ser}: +${ents.length} (${L('жами', 'всего', 'total')} ${m.n})`);
       }
       const warn = [p.dup && L(`${p.dup} та код файлда такрорланган (бир марта олинди).`, `${p.dup} кодов повторяются в файле (взяты один раз).`, `${p.dup} codes repeat in the file (taken once).`),
         p.bad && L(`${p.bad} та узун рақам код деб ўқилмади (Excel рақамни бузган бўлиши мумкин; кодларни «Текст» форматида сақланг).`, `${p.bad} длинных чисел не распознаны как коды (Excel мог испортить число; храните коды в формате «Текст»).`, `${p.bad} long numbers were not read as codes (Excel may have spoiled them; keep codes as text).`),
         p.noSer && L(`${p.noSer} та код серияси йўқлиги учун олинмади.`, `${p.noSer} кодов без серии не взяты.`, `${p.noSer} codes without a series were skipped.`),
-        p.noName && L(`${p.noName} та код дориси номаълумлиги учун олинмади.`, `${p.noName} кодов без препарата не взяты.`, `${p.noName} codes without a medicine were skipped.`)].filter(Boolean);
+        p.noName && L(`${p.noName} та код дориси базадан топилмагани учун олинмади${p.unknown.size ? ` (${[...p.unknown].slice(0, 3).join(', ')})` : ''}.`, `${p.noName} кодов не взяты: препарат не найден в базе${p.unknown.size ? ` (${[...p.unknown].slice(0, 3).join(', ')})` : ''}.`, `${p.noName} codes skipped: medicine not in the base${p.unknown.size ? ` (${[...p.unknown].slice(0, 3).join(', ')})` : ''}.`),
+        p.wrong && L(`${p.wrong} та қадоқ коди бошқа дориники бўлгани учун олинмади.`, `${p.wrong} кодов упаковок другого препарата не взяты.`, `${p.wrong} pack codes of another medicine were skipped.`)].filter(Boolean);
       alert(L('Рўйхат юкланди:', 'Список загружен:', 'List uploaded:') + '\n' + done.join('\n') + (warn.length ? '\n\n' + warn.join('\n') : ''));
-      upOpen = false;
+      upOpen = false; pre = null;
     } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
     busy = false; await loadLists(); draw();
   };
@@ -5447,8 +5475,9 @@ document.addEventListener('click', e => {
     ws.columns = [{ width: 46, style: { numFmt: '@' } }, { width: 24, style: { numFmt: '@' } }, { width: 34 }, { width: 14, style: { numFmt: '@' } }, { width: 18, style: { numFmt: '@' } }];
     hd.eachCell((c, i) => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i <= 2 ? 'FF2F80ED' : i <= 4 ? 'FF0B7A55' : 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
     hd.height = 32; ws.views = [{ state: 'frozen', ySplit: 1 }];
-    ws.addRow(['', '147800908603816735', 'Дексап 2мл №5', '307 10 26F', '4780090865883']);
-    ws.addRow(['0104780090865883217XlWGnGLwE4Ex', '', 'Дексап 2мл №5', '307 10 26F', '']);
+    const dx = ownOf('4780090865883'), dn = dx ? catName(dx) : 'Дексап 2мл №5';
+    ws.addRow(['', '147800908603816735', dn, '307 10 26F', '4780090865883']);
+    ws.addRow(['0104780090865883217XlWGnGLwE4Ex', '', dn, '307 10 26F', '']);
     const hw = wb.addWorksheet('Йўриқнома'); hw.getColumn(1).width = 110;
     ['Серия текшируви учун кодлар рўйхати', '',
       '1. «Кодлар» варағида ҳар бир қаторга битта код ёзилади: A — қадоқ коди (DataMatrix), B — гофрокаробканинг 18 хонали коди (SSCC). Қаторда биттаси бўлса етарли.',
@@ -5457,8 +5486,15 @@ document.addEventListener('click', e => {
       '4. E — GTIN (ихтиёрий). Қадоқ кодидан дори ўзи аниқланади.',
       '5. 2–3-қаторлар намуна, уларни ўчириб, ўз кодларингизни қўйинг. Кодларни бошқа файлдан кўчирганда «Вставить значения» (фақат қийматлар) билан қўйинг, акс ҳолда Excel узун рақамларни бузади.',
       '6. Сайтда: «✅ Серия текшируви» → «📥 Рўйхат юклаш». Ўша серия рўйхати бор бўлса, янги кодлар унга қўшилади.',
+      '7. Дори номи фақат базадагидек бўлиши керак («Дорилар базаси» варағидан нусха олинг). Базада йўқ ном қабул қилинмайди. Энг осони: сайтдаги формада дорини рўйхатдан танлаш, шунда файлда дори устуни керак эмас.',
+      'Кодларни файлсиз ҳам киритиш мумкин: формада дори ва серияни танлаб, кодларни 2D сканер ёки 📷 камера билан «Кодлар» майдонига сканерланг.',
       'CSV ёки TXT файл ҳам бўлади: ҳар қаторда битта код.'].forEach((t, i) => { const r = hw.addRow([t]); if (!i) r.font = { bold: true, size: 14 }; });
     ws.eachRow(r => r.eachCell(c => { if (typeof c.value === 'string' && /^\d+$/.test(c.value)) c.numFmt = '@'; }));
+    const bw = wb.addWorksheet('Дорилар базаси'); bw.columns = [{ width: 44 }, { width: 18, style: { numFmt: '@' } }];
+    const bh = bw.addRow(['Дори номи', 'GTIN']); bh.font = { bold: true, color: { argb: 'FFFFFFFF' } }; bh.eachCell(c => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B7A55' } }; });
+    bw.views = [{ state: 'frozen', ySplit: 1 }];
+    CATALOG.map(r => [catName(r), String(r[0])]).sort((a, b) => a[0].localeCompare(b[0])).forEach(r => bw.addRow(r));
+    ws.dataValidations?.add?.('C2:C5000', { type: 'list', allowBlank: true, showErrorMessage: true, errorTitle: 'Дори номи', error: 'Дори номини «Дорилар базаси» варағидан танланг.', formulae: [`'Дорилар базаси'!$A$2:$A$${CATALOG.length + 1}`] });
     save(wb, 'Seriya-tekshiruvi-shablon.xlsx');
   };
   const save = async (wb, name) => {
@@ -5492,11 +5528,12 @@ document.addEventListener('click', e => {
     if (loading) h += `<p class="s">${H(L('Юкланмоқда…', 'Загрузка…', 'Loading…'))}</p>`;
     else if (!cur) {
       h += `<div class="bt"><button type="button" class="go" data-up>📥 ${H(L('Рўйхат юклаш', 'Загрузить список', 'Upload a list'))}</button><button type="button" class="copy" data-tpl>⬇ ${H(L('Шаблон', 'Шаблон', 'Template'))}</button><button type="button" class="copy" data-rel>↻ ${H(L('Янгилаш', 'Обновить', 'Refresh'))}</button></div>`;
-      if (upOpen) h += `<form class="chkup"><p class="s w">${H(L('Excel (.xlsx), CSV ёки TXT файлни танланг. Файлда «Дори номи» ва «Серия» устунлари бўлса, кодлар ўзи тегишли серияга ажралади. Бўлмаса, дори ва серияни шу ерга ёзинг.', 'Выберите файл Excel (.xlsx), CSV или TXT. Если в файле есть столбцы «Название» и «Серия», коды сами разойдутся по сериям. Если нет, впишите препарат и серию здесь.', 'Pick an Excel (.xlsx), CSV or TXT file. With «medicine» and «series» columns the codes go to their series by themselves; otherwise type them here.'))}</p>`
-        + `<label class="w"><span>${H(L('Дори (файлда бўлмаса)', 'Препарат (если нет в файле)', 'Medicine (if not in the file)'))}</span><input name="prod" list="ibprods" autocomplete="off" placeholder="${H(L('Номини ёзиб, рўйхатдан танланг', 'Начните вводить и выберите из списка', 'Start typing and pick from the list'))}"></label>`
-        + `<label><span>${H(L('Серия (файлда бўлмаса)', 'Серия (если нет в файле)', 'Series (if not in the file)'))}</span><input name="ser" maxlength="40" autocomplete="off" placeholder="307 10 26F"></label>`
-        + `<label><span>${H(L('Файл', 'Файл', 'File'))}</span><input name="file" type="file" accept=".xlsx,.csv,.txt,.xls" required></label>`
-        + `<div class="w bt"><button type="submit" class="go">📥 ${H(L('Юклаш', 'Загрузить', 'Upload'))}</button><span class="chkpr s"></span></div></form>`;
+      if (upOpen) h += `<form class="chkup"><p class="s w">${H(L('1) Дорини базадан танланг, 2) серияни ёзинг, 3) кодларни сканерланг (2D сканер ёки 📷) ёки файл бириктиринг. Дори номи фақат базадан олинади.', '1) Выберите препарат из базы, 2) впишите серию, 3) отсканируйте коды (2D-сканер или 📷) или прикрепите файл. Название препарата берётся только из базы.', '1) Pick the medicine from the base, 2) type the series, 3) scan the codes (2D scanner or 📷) or attach a file. The medicine name comes only from the base.'))}</p>`
+        + `<label class="w"><span>💊 ${H(L('Дори (базадан)', 'Препарат (из базы)', 'Medicine (from the base)'))}</span><input name="prod" list="ibprods" autocomplete="off" placeholder="${H(L('Номини ёзиб, рўйхатдан танланг', 'Начните вводить и выберите из списка', 'Start typing and pick from the list'))}"><small class="chkpk s"></small></label>`
+        + `<label><span>${H(L('Серия', 'Серия', 'Series'))}</span><input name="ser" list="chksers" maxlength="40" autocomplete="off" placeholder="307 10 26F"><datalist id="chksers"></datalist></label>`
+        + `<label><span>${H(L('Файл (ихтиёрий)', 'Файл (необязательно)', 'File (optional)'))}</span><input name="file" type="file" accept=".xlsx,.csv,.txt,.xls"></label>`
+        + `<label class="w"><span>${H(L('Кодлар: ҳар қаторга битта (сканерланг ёки қўйинг)', 'Коды: по одному в строке (сканируйте или вставьте)', 'Codes: one per line (scan or paste)'))} <b class="chkcn"></b></span><textarea name="codes" rows="5" spellcheck="false" placeholder="0104780090865883217XlWGnGLwE4Ex&#10;147800908603816735"></textarea></label>`
+        + `<div class="w bt"><button type="button" class="copy" data-camadd>📷 ${H(L('Камера билан қўшиш', 'Добавить камерой', 'Add with camera'))}</button><button type="submit" class="go">📥 ${H(L('Сақлаш', 'Сохранить', 'Save'))}</button><span class="chkpr s"></span></div></form>`;
       const ids = Object.keys(lists).sort((a, b) => String(lists[b].at).localeCompare(String(lists[a].at)) || a.localeCompare(b));
       h += ids.length ? `<div class="chkls">${ids.map(id => { const m = lists[id], f = Math.min(cnt[id] || 0, m.n);
         return `<div class="chkl${m.done ? ' dn' : ''}"><button type="button" data-open="${H(id)}"><b>💊 ${H(m.name)}</b><small>${H(L('Серия', 'Серия', 'Series'))} <b>${H(m.ser)}</b> · 📦 ${m.nb} ${H(L('қути', 'коробов', 'boxes'))} · ▦ ${m.np} ${H(L('қадоқ', 'упаковок', 'packs'))}</small>`
@@ -5518,15 +5555,25 @@ document.addEventListener('click', e => {
       const MAX = 300;
       h += rows.length ? `<div class="chkrows">${rows.slice(0, MAX).map(r => `<div><code>${H(r[0])}</code><span>${H(r[1])}</span><small>${H(r[2])}</small></div>`).join('')}</div>${rows.length > MAX ? `<p class="s">${H(L(`Яна ${rows.length - MAX} та — тўлиқ рўйхат Excel’да.`, `Ещё ${rows.length - MAX} — полный список в Excel.`, `${rows.length - MAX} more — the full list is in Excel.`))}</p>` : ''}`
         : `<p class="s">${H(tab === 'todo' ? L('Ҳаммаси топилди.', 'Всё найдено.', 'Everything is found.') : L('Ҳозирча йўқ.', 'Пока нет.', 'None yet.'))}</p>`;
-      h += `<div class="bt"><button type="button" class="copy" data-xl>⬇ Excel</button>${m.done ? '' : `<button type="button" class="go" data-done>✓ ${H(L('Серияни якунлаш', 'Завершить серию', 'Close the series'))}</button>`}`
+      h += `<div class="bt"><button type="button" class="copy" data-xl>⬇ Excel</button><button type="button" class="copy" data-addc>➕ ${H(L('Код қўшиш', 'Добавить коды', 'Add codes'))}</button>${m.done ? '' : `<button type="button" class="go" data-done>✓ ${H(L('Серияни якунлаш', 'Завершить серию', 'Close the series'))}</button>`}`
         + (ADM() ? `<button type="button" class="copy" data-reset>↺ ${H(L('Қайтадан бошлаш', 'Начать заново', 'Start over'))}</button><button type="button" class="copy" data-del="${H(cur)}">🗑 ${H(L('Ўчириш', 'Удалить', 'Delete'))}</button>` : '') + `</div>`;
     }
     const ae = document.activeElement, keep = ae && box.contains(ae) && ae.name === 'c';
-    const upVals = box.querySelector('.chkup') && { p: box.querySelector('.chkup [name=prod]').value, s: box.querySelector('.chkup [name=ser]').value };
+    const uf = box.querySelector('.chkup'), upVals = uf ? { p: uf.prod.value, s: uf.ser.value, c: uf.codes.value } : pre ? { p: pre.p, s: pre.s, c: '' } : null;
     box.innerHTML = h;
-    if (upVals && box.querySelector('.chkup')) { box.querySelector('.chkup [name=prod]').value = upVals.p; box.querySelector('.chkup [name=ser]').value = upVals.s; }
+    const nf = box.querySelector('.chkup');
+    if (upVals && nf) { nf.prod.value = upVals.p; nf.ser.value = upVals.s; nf.codes.value = upVals.c; upInfo(nf); }
     if (keep) focusIn();
   };
+  // Upload form helpers: shows which base medicine is picked, offers the series already listed for it, counts the codes.
+  const upInfo = f => {
+    const c = catOfOpt(f.prod.value), pk = f.querySelector('.chkpk'), cn = f.querySelector('.chkcn'), dl = f.querySelector('#chksers');
+    if (pk) { pk.textContent = !f.prod.value.trim() ? '' : c ? `✓ ${catName(c)} · GTIN ${c[0]}` : L('⚠ Базада йўқ. Рўйхатдан танланг.', '⚠ Нет в базе. Выберите из списка.', '⚠ Not in the base. Pick from the list.'); pk.style.color = c || !f.prod.value.trim() ? '' : '#b91c1c'; }
+    if (dl) { const n = c ? catName(c) : ''; const ss = [...new Set(Object.values(lists).filter(m => n && m.name === n).map(m => m.ser))]; dl.innerHTML = ss.map(x => `<option value="${esc(x)}">`).join(''); }
+    if (cn) { const ks = new Set(); for (const r of textRows(f.codes.value)) for (const x of r) { const k = keyOf(x); if (k) ks.add(k); } cn.textContent = ks.size ? `· ${ks.size} ${L('та код', 'кодов', 'codes')}` : ''; }
+  };
+  box.addEventListener('input', e => { const f = e.target.closest('.chkup'); if (f) upInfo(f); });
+  box.addEventListener('change', e => { const f = e.target.closest('.chkup'); if (f && e.target.name === 'ser') e.target.value = serNorm(e.target.value); });
   const toggle = on => {
     open = on; box.hidden = !on; btn.classList.toggle('on', on);
     if (on) { const dl = document.getElementById('ibprods'); if (dl && !dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(`${catName(r)} — ${r[0]}`)}">`).join('');
@@ -5538,7 +5585,9 @@ document.addEventListener('click', e => {
     const t = e.target.closest('button'); if (!t || busy) return;
     if (t.dataset.open) return openList(t.dataset.open);
     if (t.matches('[data-back]')) return close();
-    if (t.matches('[data-up]')) { upOpen = !upOpen; return draw(); }
+    if (t.matches('[data-up]')) { upOpen = !upOpen; pre = null; return draw(); }
+    if (t.matches('[data-addc]')) { const m = lists[cur], c = m && (ownOf(m.gtin) || catByName(m.name)); pre = { p: c ? optOfC(c) : '', s: m?.ser || '' }; upOpen = true; return close(); }
+    if (t.matches('[data-camadd]')) { const f = t.closest('.chkup'); return window.openCamTo?.(x => { const k = keyOf(x); if (!k) return L('Бу маркировка ёки қути коди эмас', 'Это не код маркировки или короба', 'Not a marking or box code'); const have = new Set(textRows(f.codes.value).flat().map(keyOf)); if (have.has(k)) return L('Бу код аллақачон қўшилган', 'Этот код уже добавлен', 'This code is already added'); f.codes.value = (f.codes.value.trim() ? f.codes.value.trim() + '\n' : '') + String(x).replace(/\x1d/g, '<GS>'); upInfo(f); return `✓ ${kind(k)} · ${have.size} ${L('та', '', '')}`.trim(); }); }
     if (t.matches('[data-tpl]')) return tpl();
     if (t.matches('[data-rel]')) { await loadLists(); return draw(); }
     if (t.dataset.tab) { tab = t.dataset.tab; return draw(); }
@@ -5573,7 +5622,7 @@ document.addEventListener('click', e => {
     e.preventDefault();
     const f = e.target;
     if (f.matches('.chkin')) { const v = f.c.value.trim(); f.c.value = ''; if (v) check(v); f.c.focus(); }
-    if (f.matches('.chkup')) { const file = f.file.files[0]; if (file) upload(file, f); }
+    if (f.matches('.chkup')) upload(f.file.files[0] || null, f);
   });
   showBtn();
 }
