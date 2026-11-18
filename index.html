@@ -1213,6 +1213,8 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .chkcur .bk { border: 0; border-radius: 9px; padding: 7px 10px; background: rgba(255,255,255,.18); color: #fff; font-weight: 700; cursor: pointer; }
   .chkin { display: flex; gap: 8px; margin: 10px 0 6px; } .chkin input { flex: 1; min-width: 0; padding: 11px 12px; border: 2px solid var(--brand2, #2f80ed); border-radius: 10px; font: 15px ui-monospace, monospace; background: var(--card); color: var(--text); }
   .chkin, html.mob .chkin { flex-direction: row !important; } .chkin button, html.mob .chkin button { width: auto !important; flex: none; padding: 8px 14px; margin: 0; }
+  html.mob .chkin { flex-wrap: wrap; } html.mob .chkin input { flex: 1 1 100%; font-size: 16px; padding: 13px 12px; } html.mob .chkin button { flex: 1 1 0 !important; padding: 14px 10px; font-size: 16px; } html.mob .chkin [data-cam]::after { content: ' ' attr(data-lbl); }
+  .chkstaff label input[type=checkbox] { width: 22px !important; height: 22px; flex: none; margin: 0; } html.mob .chkstaff select { width: auto !important; flex: none; }
   .chkres { margin: 8px 0; padding: 14px 16px; border-radius: 14px; display: grid; gap: 4px; color: #fff; } .chkres b { font-size: 22px; line-height: 1.2; } .chkres small { font-size: 13px; opacity: .95; overflow-wrap: anywhere; }
   .chkres.ok { background: #0b7a55; } .chkres.all { background: linear-gradient(135deg, #0b7a55, #16a34a); } .chkres.warn { background: #b45309; } .chkres.err { background: #b91c1c; }
   html.mob .chkres b { font-size: 19px; }
@@ -1543,7 +1545,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1230</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1300</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -5623,7 +5625,7 @@ document.addEventListener('click', e => {
       const m = lists[cur], ks = [...codes.keys()], fd = ks.filter(k => scans.has(k)), fb = fd.filter(k => k[0] === 'S').length, td = ks.length - fd.length;
       h += `<div class="chkcur"><button type="button" class="bk" data-back>← ${H(L('Рўйхатлар', 'Списки', 'Lists'))}</button><span><b>💊 ${H(m.name)}</b><br><small>${H(L('Серия', 'Серия', 'Series'))} ${H(m.ser)}${m.done ? ` · ✓ ${H(L('якунланган', 'завершено', 'closed'))} ${H(m.done)}` : ''}</small></span>`
         + `<span class="n">${fd.length} / ${ks.length}<br><small>📦 ${fb}/${m.nb} · ▦ ${fd.length - fb}/${m.np}</small></span></div>${bar(fd.length, ks.length)}`;
-      h += `<form class="chkin"><input name="c" autocomplete="off" spellcheck="false" placeholder="${H(L('Кодни сканерланг (2D сканер ёки 📷)', 'Сканируйте код (2D-сканер или 📷)', 'Scan a code (2D scanner or 📷)'))}"><button type="button" class="go" data-cam>📷</button><button type="submit" class="copy">${H(L('Текшириш', 'Проверить', 'Check'))}</button></form>`;
+      h += `<form class="chkin"><input name="c" autocomplete="off" spellcheck="false" placeholder="${H(L('Кодни сканерланг (2D сканер ёки 📷)', 'Сканируйте код (2D-сканер или 📷)', 'Scan a code (2D scanner or 📷)'))}"><button type="button" class="go" data-cam data-lbl="${H(L('Камера', 'Камера', 'Camera'))}">📷</button><button type="submit" class="copy">${H(L('Текшириш', 'Проверить', 'Check'))}</button></form>`;
       if (res) h += `<div class="chkres ${res.c}"><b>${H(res.t)}</b><small>${H(res.s || '')}</small></div>`;
       else if (!td && ks.length) h += `<div class="chkres all"><b>🎉 ${H(L('Ҳамма кодлар топилди', 'Все коды найдены', 'Every code is found'))}</b></div>`;
       const T = (id, t, n) => `<button type="button" data-tab="${id}" class="${tab === id ? 'on' : ''}">${H(t)} <b>${n}</b></button>`;
@@ -5701,7 +5703,7 @@ document.addEventListener('click', e => {
   box.addEventListener('submit', e => {
     e.preventDefault();
     const f = e.target;
-    if (f.matches('.chkin')) { const v = f.c.value.trim(); f.c.value = ''; if (v) check(v); f.c.focus(); }
+    if (f.matches('.chkin')) { const v = f.c.value.trim(); f.c.value = ''; if (v) check(v); if (!matchMedia('(pointer: coarse)').matches) f.c.focus(); else f.c.blur(); }
     if (f.matches('.chkup')) upload(f.file.files[0] || null, f);
   });
   showBtn();
