@@ -1200,7 +1200,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   .chkup { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 10px; align-items: end; margin: 6px 0 10px; padding: 10px; border: 1px dashed var(--line); border-radius: 12px; background: var(--card); }
   .chkup .w { grid-column: 1 / -1; } .chkup label { display: grid; gap: 4px; font-size: 12.5px; color: var(--muted); } html.mob .chkup { grid-template-columns: 1fr; }
   .chkup textarea { width: 100%; box-sizing: border-box; padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 12.5px ui-monospace, monospace; background: var(--card); color: var(--text); resize: vertical; }
-  .chkup .chkpk { font-size: 12px; color: #0b7a55; } .chkup .chkcn { color: var(--brand2, #2f80ed); }
+  .chkup .chkpk, .pkh { font-size: 12px; color: #0b7a55; } .pkh { display: block; margin-top: 2px; } .chkup .chkcn { color: var(--brand2, #2f80ed); }
   .chkup input { padding: 8px 10px; border: 1px solid var(--line); border-radius: 9px; font: 13.5px var(--font), sans-serif; background: var(--card); color: var(--text); min-width: 0; }
   .chkls { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 8px; margin-top: 8px; }
   .chkl { position: relative; } .chkl > button:first-child { width: 100%; text-align: left; display: grid; gap: 4px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 12px; background: var(--card); color: var(--text); font: 13px var(--font), sans-serif; cursor: pointer; }
@@ -1542,7 +1542,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1130</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1200</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -2289,6 +2289,39 @@ const packMatch = pack => { const pk = normT(pack);
   return pk.match(/(\d+)\s*(?:[а-я]+(?:ых|ая|ые|ой)\s+)?(?:ампул|флакон|шприц|таблет|капсул|пакет|саше|туб|суппозитор|комплект)/)
     || pk.match(/(?:ампул[а-я]*|флакон[а-я]*)\s+(?:[\d.]+(?:мл|мг)\s+)?(\d+)шт/); };
 const normT = t => String(t || '').toLowerCase().replace(/,/g, '.').replace(/(\d)\s+(?=[a-zа-яё%])/gi, '$1').replace(/\s+/g, ' ');
+// Every base medicine gets one readable label without its GTIN: name №N, strength, ampoule volume (Latin name).
+// Labels that would still match go on with the pack type, then the blister count, and only then the last digits of the code.
+let PL = null;
+const plKey = t => String(t || '').toLowerCase().replace(/\s+/g, ' ').trim();
+const prodLbls = () => {
+  if (PL) return PL;
+  const lat = r => r[2] && r[1] && r[1].toLowerCase() !== r[2].toLowerCase() ? ` (${r[1]})` : '';
+  const n = r => packMatch(r[4])?.[1], t4 = r => normT(r[4]), t3 = r => normT(r[3]);
+  const vol = r => (t4(r).match(/([\d.]+)мл/) || t3(r).match(/([\d.]+)мл/) || [])[1];
+  const dose = r => (m => m ? m[1] + (m[2] === '%' ? '%' : ' ' + m[2]) : '')(t3(r).match(/([\d.]+)\s*(%|мг|мкг|ме|г)(?![а-я])/));
+  const base = r => [`${r[2] || r[1] || r[3]}${n(r) ? ` №${n(r)}` : ''}`, dose(r), vol(r) ? vol(r).replace(/\.0$/, '') + ' мл' : ''].filter(Boolean).join(' · ') + lat(r);
+  const steps = [r => /контурн/.test(t4(r)) ? ' · контур уяча' : ' · картон пенал',
+    r => (m => m ? ` · ${m[1]} блистер` : '')(t4(r).match(/(\d+)\s*блистер/)),
+    r => ` · …${String(r[0]).slice(-4)}`];
+  const lbl = new Map(CATALOG.map(r => [r, base(r)]));
+  for (const st of steps) {
+    const cnt = new Map(); for (const v of lbl.values()) cnt.set(plKey(v), (cnt.get(plKey(v)) || 0) + 1);
+    for (const [r, v] of lbl) if (cnt.get(plKey(v)) > 1) lbl.set(r, v + st(r));
+  }
+  PL = { byG: new Map([...lbl].map(([r, v]) => [r[0], v])), byL: new Map([...lbl].map(([r, v]) => [plKey(v), r])) };
+  return PL;
+};
+const prodLbl = r => r ? prodLbls().byG.get(r[0]) || '' : '';
+// Under a medicine picker the chosen medicine's GTIN is shown apart, so the label itself stays short.
+const pkHint = i => {
+  if (!i?.matches?.('input[list="ibprods"]') || i.closest('.chkup')) return;
+  const lb = i.closest('label'); if (!lb) return; let h = lb.querySelector('.pkh'); if (!h) { h = document.createElement('small'); h.className = 'pkh'; lb.append(h); }
+  const r = prodOf(i.value); h.textContent = r ? `GTIN ${r[0]}` : '';
+};
+for (const ev of ['input', 'change']) document.addEventListener(ev, e => pkHint(e.target));
+// The label back to its medicine; an old «… — GTIN» value still works.
+const prodOf = v => { v = String(v || '').trim(); if (!v) return null; const g = (v.match(/(\d{8,14})\s*$/) || [])[1];
+  return (g && ownOf(g)) || prodLbls().byL.get(plKey(v)) || null; };
 const reEsc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 const hasTok = (text, tok) => new RegExp('(^|[^\\d.])' + reEsc(tok) + '(?![а-яёa-z])', 'i').test(text);
 const UNITS = 'мкг|мг|г|мл|ме|ед|%';
@@ -4380,28 +4413,28 @@ document.addEventListener('click', e => {
   const CUR = 'bayan-inv-cur', cur = () => { try { return JSON.parse(localStorage.getItem(CUR)); } catch { return null; } };
   const setCur = c => { try { c ? localStorage.setItem(CUR, JSON.stringify(c)) : localStorage.removeItem(CUR); } catch {} };
   const ibF = document.getElementById('invbox'), curEl = document.getElementById('invcur');
-  const optOf = r => `${r[2] || r[1] || r[3]}${r[2] && r[1] && r[1].toLowerCase() !== r[2].toLowerCase() ? ` (${r[1]})` : ''} · ${r[3]}${(n => n ? ` · №${n}` : '')(packMatch(r[4])?.[1])} — ${r[0]}`;
-  const ibGtin = () => { const v = ibF.prod.value.trim(), m = v.match(/(\d{8,14})\s*$/); if (m && ownOf(m[1])) return m[1];
+  const optOf = prodLbl;
+  const ibGtin = () => { const v = ibF.prod.value.trim(), pr = prodOf(v); if (pr) return pr[0];
     const c = scanCode(v); if (/^\d{8,14}$/.test(c) && ownOf(c)) return c;
     const hit = CATALOG.filter(r => (r[2] || r[1]).toLowerCase() === v.toLowerCase()); return hit.length === 1 ? hit[0][0] : ''; };
   // The last series counted for each medicine is offered again, so a repeat count needs only Enter.
   const SERS = 'bayan-inv-ser', sers = () => { try { return JSON.parse(localStorage.getItem(SERS)) || {}; } catch { return {}; } };
-  const ibFill = code => { const r = ownOf(code); if (!r) return false; ibF.prod.value = optOf(r); if (!ibF.qty.value) ibF.qty.value = boxCaps()[r[0]] || '';
+  const ibFill = code => { const r = ownOf(code); if (!r) return false; ibF.prod.value = optOf(r); pkHint(ibF.prod); if (!ibF.qty.value) ibF.qty.value = boxCaps()[r[0]] || '';
     serGate(); if (!ibF.ser.value) ibF.ser.value = sers()[r[0]] || ''; ibF.ser.focus(); ibF.ser.select(); return true; };
   const ibList = () => { const dl = document.getElementById('ibprods'); if (!dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(optOf(r))}">`).join(''); };
-  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { pend = ''; ibF.prod.value = optOf(ownOf(g)); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value;
+  ibF.prod.addEventListener('change', () => { const g = ibGtin(); if (g) { pend = ''; ibF.prod.value = optOf(ownOf(g)); pkHint(ibF.prod); ibF.qty.value = boxCaps()[ownOf(g)[0]] || ibF.qty.value;
     if (ibF.ser.value && !bookSer(ibF.ser.value, g) && allSers().some(y => nser(y.ser) === nser(ibF.ser.value))) ibF.ser.value = ''; if (!ibF.ser.value) ibF.ser.value = sers()[ownOf(g)[0]] || ''; } serGate(); });
   ibF.addEventListener('submit', e => {
     e.preventDefault();
     // A scanner typing a pack code into the medicine field picks that medicine.
-    const raw = ibF.prod.value.trim(); if (raw.replace(/\s/g, '').length > 16 && !/—/.test(raw) && ibFill(scanCode(raw))) return;
+    const raw = ibF.prod.value.trim(); if (raw.replace(/\s/g, '').length > 16 && !prodOf(raw) && ibFill(scanCode(raw))) return;
     const g = ibGtin(), n = Math.round(+ibF.qty.value);
     if (!g) { alert(L('Дорини рўйхатдан танланг ёки битта қадоқни сканерланг.', 'Выберите препарат из списка или отсканируйте одну упаковку.', 'Pick the medicine from the list or scan one pack.')); ibF.prod.focus(); return; }
     if (!(n > 0)) { ibF.qty.focus(); return; }
     const r = ownOf(g), caps = boxCaps(); caps[r[0]] = n; saveCaps(caps);
     setCur({ gtin: scanCode(r[0]), name: r[2] || r[1], pack: r[4], ser: ibF.ser.value.trim(), qty: n, started: now() });
     try { localStorage.setItem(SERS, JSON.stringify({ ...sers(), [r[0]]: ibF.ser.value.trim() })); } catch {}
-    ibF.reset(); draw(); q.focus();
+    ibF.reset(); pkHint(ibF.prod); draw(); q.focus();
     // The pack that picked the medicine is counted now.
     const p = pend; pend = '';
     if (p && scanCode(p) === scanCode(r[0])) window.invAdd(p)?.then(v => window.invShow(v, p));
@@ -5214,7 +5247,7 @@ document.addEventListener('click', e => {
       const t = f.codes.value.trim(); if (!t) return f.codes.focus();
       uploadCodes(new File([t], 'qo’lda.txt', { type: 'text/plain' }), true);
     } else if (f.matches('.sadd')) {
-      const g = (f.prod.value.match(/(\d{8,14})\s*$/) || [])[1], r = g && ownOf(g), ser = f.ser.value.trim(), cap = Math.round(+f.cap.value);
+      const r = prodOf(f.prod.value), ser = f.ser.value.trim(), cap = Math.round(+f.cap.value);
       if (!r) { alert(L('Дорини рўйхатдан танланг.', 'Выберите препарат из списка.', 'Pick the medicine from the list.')); return f.prod.focus(); }
       if (!ser) return f.ser.focus();
       const q = v => `"${String(v).replace(/"/g, '""')}"`, nm = `${r[2] || r[1]}${(n => n ? ` №${n}` : '')(packMatch(r[4])?.[1])}`;
@@ -5266,8 +5299,8 @@ document.addEventListener('click', e => {
   let byNm = null;
   const nmKey = t => String(t || '').toLowerCase().replace(/[«»"']/g, '').replace(/\s+/g, ' ').trim();
   const catByName = t => { if (!byNm) { byNm = new Map(); for (const r of CATALOG) for (const n of [catName(r), r[2], r[1], `${r[1]}${(m => m ? ` №${m}` : '')(packMatch(r[4])?.[1])}`]) if (n && !byNm.has(nmKey(n))) byNm.set(nmKey(n), r); } return byNm.get(nmKey(t)) || byNm.get(nmKey(String(t).replace(/\s*\([^)]*\)\s*/g, ' '))); };
-  const optOfC = r => `${catName(r)}${r[2] && r[1] && r[1].toLowerCase() !== r[2].toLowerCase() ? ` (${r[1]})` : ''} — ${r[0]}`;
-  const catOfOpt = v => { v = String(v || '').trim(); if (!v) return null; const g = (v.match(/(\d{8,14})\s*$/) || [])[1]; return (g && ownOf(g)) || catByName(v.replace(/\s+—\s+\d+\s*$/, '')) || null; };
+  const optOfC = prodLbl;
+  const catOfOpt = v => prodOf(v) || catByName(String(v || '').trim()) || null;
   const serNorm = t => String(t || '').replace(/\s+/g, ' ').trim().toUpperCase();
   const nk = (name, ser) => String(name).toLowerCase().replace(/\s+/g, ' ').trim() + '|' + String(ser).replace(/\s+/g, '').toLowerCase();
 
@@ -5416,7 +5449,7 @@ document.addEventListener('click', e => {
         if (cat && cat[0] !== defG && catName(cat) !== defName) { wrong += ks.length; continue; }
         name = defName; g = defG;
       } else {
-        const c2 = cat || (cN >= 0 && cs[cN] ? catByName(cs[cN]) : null);
+        const c2 = cat || (cN >= 0 && cs[cN] ? prodOf(cs[cN]) || catByName(cs[cN]) : null);
         if (!c2) { noName += ks.length; if (cN >= 0 && cs[cN]) unknown.add(cs[cN]); continue; }
         name = catName(c2); g = c2[0];
       }
@@ -5481,7 +5514,7 @@ document.addEventListener('click', e => {
     ws.columns = [{ width: 46, style: { numFmt: '@' } }, { width: 24, style: { numFmt: '@' } }, { width: 34 }, { width: 14, style: { numFmt: '@' } }, { width: 18, style: { numFmt: '@' } }];
     hd.eachCell((c, i) => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: i <= 2 ? 'FF2F80ED' : i <= 4 ? 'FF0B7A55' : 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
     hd.height = 32; ws.views = [{ state: 'frozen', ySplit: 1 }];
-    const dx = ownOf('4780090865883'), dn = dx ? catName(dx) : 'Дексап 2мл №5';
+    const dx = ownOf('4780090865883'), dn = dx ? prodLbl(dx) : 'Дексап 2мл №5';
     ws.addRow(['', '147800908603816735', dn, '307 10 26F', '4780090865883']);
     ws.addRow(['0104780090865883217XlWGnGLwE4Ex', '', dn, '307 10 26F', '']);
     const hw = wb.addWorksheet('Йўриқнома'); hw.getColumn(1).width = 110;
@@ -5496,10 +5529,10 @@ document.addEventListener('click', e => {
       'Кодларни файлсиз ҳам киритиш мумкин: формада дори ва серияни танлаб, кодларни 2D сканер ёки 📷 камера билан «Кодлар» майдонига сканерланг.',
       'CSV ёки TXT файл ҳам бўлади: ҳар қаторда битта код.'].forEach((t, i) => { const r = hw.addRow([t]); if (!i) r.font = { bold: true, size: 14 }; });
     ws.eachRow(r => r.eachCell(c => { if (typeof c.value === 'string' && /^\d+$/.test(c.value)) c.numFmt = '@'; }));
-    const bw = wb.addWorksheet('Дорилар базаси'); bw.columns = [{ width: 44 }, { width: 18, style: { numFmt: '@' } }];
+    const bw = wb.addWorksheet('Дорилар базаси'); bw.columns = [{ width: 58 }, { width: 18, style: { numFmt: '@' } }];
     const bh = bw.addRow(['Дори номи', 'GTIN']); bh.font = { bold: true, color: { argb: 'FFFFFFFF' } }; bh.eachCell(c => { c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B7A55' } }; });
     bw.views = [{ state: 'frozen', ySplit: 1 }];
-    CATALOG.map(r => [catName(r), String(r[0])]).sort((a, b) => a[0].localeCompare(b[0])).forEach(r => bw.addRow(r));
+    CATALOG.map(r => [prodLbl(r), String(r[0])]).sort((a, b) => a[0].localeCompare(b[0])).forEach(r => bw.addRow(r));
     ws.dataValidations?.add?.('C2:C5000', { type: 'list', allowBlank: true, showErrorMessage: true, errorTitle: 'Дори номи', error: 'Дори номини «Дорилар базаси» варағидан танланг.', formulae: [`'Дорилар базаси'!$A$2:$A$${CATALOG.length + 1}`] });
     save(wb, 'Seriya-tekshiruvi-shablon.xlsx');
   };
