@@ -1542,7 +1542,7 @@ document.addEventListener('touchmove', e => { if (e.touches.length > 1) e.preven
   </section>
   <footer>Маълумотлар манбаи: tasnif.soliq.uz</footer>
   
-  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-0900</span></div>
+  <div class="credit">Тузувчи: <b>Элдор Эркинов</b> <span style="opacity:.6">· v18.11-1130</span></div>
 </main>
 <aside class="side l" aria-label="Каталог ҳолати">
   <div class="sc">
@@ -4380,7 +4380,7 @@ document.addEventListener('click', e => {
   const CUR = 'bayan-inv-cur', cur = () => { try { return JSON.parse(localStorage.getItem(CUR)); } catch { return null; } };
   const setCur = c => { try { c ? localStorage.setItem(CUR, JSON.stringify(c)) : localStorage.removeItem(CUR); } catch {} };
   const ibF = document.getElementById('invbox'), curEl = document.getElementById('invcur');
-  const optOf = r => `${r[2] || r[1]} · ${r[3]}${(n => n ? ` · №${n}` : '')(packMatch(r[4])?.[1])} — ${r[0]}`;
+  const optOf = r => `${r[2] || r[1] || r[3]}${r[2] && r[1] && r[1].toLowerCase() !== r[2].toLowerCase() ? ` (${r[1]})` : ''} · ${r[3]}${(n => n ? ` · №${n}` : '')(packMatch(r[4])?.[1])} — ${r[0]}`;
   const ibGtin = () => { const v = ibF.prod.value.trim(), m = v.match(/(\d{8,14})\s*$/); if (m && ownOf(m[1])) return m[1];
     const c = scanCode(v); if (/^\d{8,14}$/.test(c) && ownOf(c)) return c;
     const hit = CATALOG.filter(r => (r[2] || r[1]).toLowerCase() === v.toLowerCase()); return hit.length === 1 ? hit[0][0] : ''; };
@@ -5111,8 +5111,14 @@ document.addEventListener('click', e => {
     ws.columns = [{ width: 16, style: { numFmt: '@' } }, { width: 40 }, { width: 18, style: { numFmt: '@' } }, { width: 16 }];
     hd.eachCell(c => { c.font = { bold: true, color: { argb: 'FFFFFFFF' } }; c.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF281274' } }; c.alignment = { vertical: 'middle', wrapText: true }; });
     hd.height = 30; ws.views = [{ state: 'frozen', ySplit: 1 }];
+    hd.getCell(1).fill = hd.getCell(4).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF0B7A55' } };
+    const caps = (() => { try { return { '4780090865883': 132, ...JSON.parse(localStorage.getItem('bayan-box-cap') || '{}') }; } catch { return {}; } })();
+    const nm = r => `${r[2] || r[1] || r[3]}${(n => n ? ` №${n}` : '')(packMatch(r[4])?.[1])}`;
+    CATALOG.map(r => ['', nm(r), String(r[0]), caps[r[0]] || '']).sort((a, b) => a[1].localeCompare(b[1])).forEach(x => ws.addRow(x));
+    ws.autoFilter = 'A1:D1';
     const hw = wb.addWorksheet('Йўриқнома'); hw.getColumn(1).width = 110;
-    ['Склад базасини тўлдириш', '', '1. «Склад» варағида ҳар бир серия алоҳида қаторга ёзилади.',
+    ['Склад базасини тўлдириш', '', '0. «Склад» варағида базадаги ҳамма дорилар номи ва штрих коди (GTIN) тайёр турибди. Фақат яшил устунларни тўлдиринг: Серия ва Кол-во в коробке. Серия ёзилмаган қаторлар юкланмайди. Битта дорининг бир нечта серияси бўлса, қаторни нусхалаб, пастига қўйинг.',
+      '1. «Склад» варағида ҳар бир серия алоҳида қаторга ёзилади.',
       '2. Серия — қадоқдаги серия рақами, складдагидек ёзилади (масалан: 307 10 26F).',
       '3. Название — дори номи, масалан: Дексап 2мл №5.',
       '4. GTIN — қадоқдаги 13 хонали штрих код (ихтиёрий). Ёзилса, дори номдан эмас, шу коддан аниқланади.',
@@ -5133,7 +5139,7 @@ document.addEventListener('click', e => {
       const ents = [...new Map(lg.sers.map(x => [fk(nser(x.ser) + '_' + nrm(x.name).slice(0, 40)), x]))], N = 1000;
       for (let i = 0; i < ents.length; i += N) { await db('stock/sers', 'PATCH', Object.fromEntries(ents.slice(i, i + N))); pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`; }
       const n = Object.keys(await db('stock/sers?shallow=true') || {}).length;
-      await db('stock/info', 'PUT', { n, file: (f ? f.name : L('қўлда киритилди', 'введено вручную', 'entered by hand') + (lists[id]?.file ? ' + ' + lists[id].file : '')).slice(0, 120), at: now(), add: ents.length });
+      await db('stock/info', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
       try { localStorage.removeItem(STOCK); } catch {} await loadStock();
       alert(L(`${typed ? 'Қўшилди' : 'Файлдан ўқилди'}: ${ents.length} та серия. Базада жами ${n} та серия.`, `${typed ? 'Добавлено' : 'Прочитано из файла'}: ${ents.length} серий. Всего в базе: ${n}.`, `${typed ? 'Added' : 'Read from the file'}: ${ents.length} series. ${n} series in the base in all.`));
     } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
@@ -5176,7 +5182,7 @@ document.addEventListener('click', e => {
         pr.textContent = `${Math.min(i + N, ents.length)} / ${ents.length}`;
       }
       const n = Object.keys(await db('codes?shallow=true') || {}).length;
-      await db('settings/codes', 'PUT', { n, file: (f ? f.name : L('қўлда киритилди', 'введено вручную', 'entered by hand') + (lists[id]?.file ? ' + ' + lists[id].file : '')).slice(0, 120), at: now(), add: ents.length });
+      await db('settings/codes', 'PUT', { n, file: f.name.slice(0, 120), at: now(), add: ents.length });
       codesN = n;
       alert(L(`${typed ? 'Қўшилди' : 'Файлдан ўқилди'}: ${ents.length} та код. Базада жами ${n} та код.`, `${typed ? 'Добавлено' : 'Прочитано из файла'}: ${ents.length} кодов. Всего в базе: ${n}.`, `${typed ? 'Added' : 'Read from the file'}: ${ents.length} codes. ${n} codes in the base in all.`));
     } catch (e) { alert(e.status ? L('Базага ёзиб бўлмади. Firebase’да янги қоидаларни Publish қилинг.', 'Не удалось записать в базу. Опубликуйте новые правила Firebase.', 'Could not write to the base. Publish the new Firebase rules.') : e.message || L('Файлни очиб бўлмади.', 'Не удалось открыть файл.', 'Could not open the file.')); }
@@ -5255,12 +5261,12 @@ document.addEventListener('click', e => {
   const keyOf = raw => { const c = codeOf(raw); if (!c) return ''; const s = ssccOf(c); return s ? 'S' + s : mkey(c); };
   const show = k => k[0] === 'S' ? k.slice(1) : '01' + k.slice(0, 14) + '21' + k.slice(14);
   const kind = k => k[0] === 'S' ? L('қути', 'короб', 'box') : L('қадоқ', 'упаковка', 'pack');
-  const catName = r => `${r[2] || r[1]}${(n => n ? ` №${n}` : '')(packMatch(r[4])?.[1])}`;
+  const catName = r => `${r[2] || r[1] || r[3]}${(n => n ? ` №${n}` : '')(packMatch(r[4])?.[1])}`;
   // Medicine names come only from the product base (CATALOG): a name is matched to it by its GTIN or its exact name.
   let byNm = null;
   const nmKey = t => String(t || '').toLowerCase().replace(/[«»"']/g, '').replace(/\s+/g, ' ').trim();
-  const catByName = t => { if (!byNm) { byNm = new Map(); for (const r of CATALOG) for (const n of [catName(r), r[2], r[1]]) if (n && !byNm.has(nmKey(n))) byNm.set(nmKey(n), r); } return byNm.get(nmKey(t)); };
-  const optOfC = r => `${catName(r)} — ${r[0]}`;
+  const catByName = t => { if (!byNm) { byNm = new Map(); for (const r of CATALOG) for (const n of [catName(r), r[2], r[1], `${r[1]}${(m => m ? ` №${m}` : '')(packMatch(r[4])?.[1])}`]) if (n && !byNm.has(nmKey(n))) byNm.set(nmKey(n), r); } return byNm.get(nmKey(t)) || byNm.get(nmKey(String(t).replace(/\s*\([^)]*\)\s*/g, ' '))); };
+  const optOfC = r => `${catName(r)}${r[2] && r[1] && r[1].toLowerCase() !== r[2].toLowerCase() ? ` (${r[1]})` : ''} — ${r[0]}`;
   const catOfOpt = v => { v = String(v || '').trim(); if (!v) return null; const g = (v.match(/(\d{8,14})\s*$/) || [])[1]; return (g && ownOf(g)) || catByName(v.replace(/\s+—\s+\d+\s*$/, '')) || null; };
   const serNorm = t => String(t || '').replace(/\s+/g, ' ').trim().toUpperCase();
   const nk = (name, ser) => String(name).toLowerCase().replace(/\s+/g, ' ').trim() + '|' + String(ser).replace(/\s+/g, '').toLowerCase();
@@ -5576,7 +5582,7 @@ document.addEventListener('click', e => {
   box.addEventListener('change', e => { const f = e.target.closest('.chkup'); if (f && e.target.name === 'ser') e.target.value = serNorm(e.target.value); });
   const toggle = on => {
     open = on; box.hidden = !on; btn.classList.toggle('on', on);
-    if (on) { const dl = document.getElementById('ibprods'); if (dl && !dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(`${catName(r)} — ${r[0]}`)}">`).join('');
+    if (on) { const dl = document.getElementById('ibprods'); if (dl && !dl.children.length) dl.innerHTML = CATALOG.map(r => `<option value="${esc(optOfC(r))}">`).join('');
       draw(); loadLists().then(() => { if (cur) openList(cur); else draw(); }); tickOn(); }
     else clearInterval(timer);
   };
